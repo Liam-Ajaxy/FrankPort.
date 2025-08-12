@@ -446,8 +446,8 @@ a:hover {
 }
 
 .hero-stats {
-  display: flex;
-  gap: 3rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 2fr));
   margin-bottom: 3rem;
 }
 
@@ -1844,5 +1844,33 @@ section {
 .category-header {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
+}
+
+
+/* Added responsive design */
+/* =========================
+   Horizontal Grid Layouts
+   ========================= */
+
+/* Hero Stats */
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 3fr));
+  gap: 2rem;
+}
+
+
+/* Project filter buttons */
+.projects-filter {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+/* Project technologies */
+.tech-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 0.5rem;
 }
