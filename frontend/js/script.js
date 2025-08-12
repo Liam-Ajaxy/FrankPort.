@@ -816,6 +816,73 @@
         portfolioApp.init();
     }
 
+    // ===== Global Toast Function (Single Instance) =====
+    function showToast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('global-toast-container');
+
+    // Clear any existing toasts
+    container.innerHTML = '';
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type} show`;
+    toast.style.setProperty('--toast-duration', `${duration / 1000}s`);
+
+    const icon = document.createElement('div');
+    icon.className = 'toast-icon';
+    icon.innerHTML = {
+        success: '<i class="fas fa-check"></i>',
+        error: '<i class="fas fa-times"></i>',
+        info: '<i class="fas fa-info"></i>',
+        warning: '<i class="fas fa-exclamation"></i>'
+    }[type] || '<i class="fas fa-bell"></i>';
+
+    const msg = document.createElement('div');
+    msg.className = 'toast-message';
+    msg.textContent = message;
+
+    toast.appendChild(icon);
+    toast.appendChild(msg);
+    container.appendChild(toast);
+
+    // Remove after animation
+    setTimeout(() => {
+        toast.remove();
+    }, duration + 500);
+    }
+
+    // ===== Block Right Click =====
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        showToast('Right-click is disabled.', 'warning');
+    }, false);
+
+    // ===== Block Common DevTools Shortcuts =====
+    document.addEventListener('keydown', function (e) {
+        // List of blocked key combinations
+        if (
+            e.key === 'F12' || // Open DevTools
+            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || // Ctrl+Shift+I
+            (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) || // Ctrl+Shift+J
+            (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) || // Ctrl+Shift+C
+            (e.ctrlKey && e.key === 'U') // Ctrl+U (View source)
+        ) {
+            e.preventDefault();
+            showToast('Developer tools are disabled.', 'error');
+        }
+    });
+
+    // ===== Block Ctrl+U (both lowercase & uppercase) =====
+    document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+        e.preventDefault();
+        e.stopPropagation();
+        showToast('View Source is disabled.', 'warning', 3000);
+        return false;
+    }
+    }, true);
+
+    showToast('Welcome to my portfolio! Feel free to explore.', 'info', 6000);
+
     // Export for potential external use
     window.PortfolioApp = portfolioApp;
 
