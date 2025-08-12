@@ -645,19 +645,15 @@
                 message: formData.get('message')
             };
 
-            const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            const endpoint = isLocalhost
-                ? 'http://localhost/api/contact'
-                : 'https://your-production-backend.com/api/contact';
+        const endpoint = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:5000/api/contact'
+            : 'https://your-backend-domain.com/api/contact';
 
-            return fetch(endpoint, {
-
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
+        return fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
         },
 
         setLoading(loading) {
