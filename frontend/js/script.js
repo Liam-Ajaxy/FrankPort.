@@ -853,7 +853,7 @@
     // ===== Block Right Click =====
     document.addEventListener('contextmenu', function (e) {
         e.preventDefault();
-        showToast('Right-click is disabled.', 'warning');
+        showToast('Right-click is disabled for security reason.', 'warning');
     }, false);
 
     // ===== Block Common DevTools Shortcuts =====
@@ -867,21 +867,597 @@
             (e.ctrlKey && e.key === 'U') // Ctrl+U (View source)
         ) {
             e.preventDefault();
-            showToast('Developer tools are disabled.', 'error');
+            showToast('Developer tools are disabled for security reason.', 'error');
         }
     });
 
-    // ===== Block Ctrl+U (both lowercase & uppercase) =====
-    document.addEventListener('keydown', function (e) {
-    if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
-        e.preventDefault();
-        e.stopPropagation();
-        showToast('View Source is disabled.', 'warning', 3000);
-        return false;
-    }
-    }, true);
+        // ===== Block Ctrl+U (both lowercase & uppercase) =====
+        document.addEventListener('keydown', function (e) {
+        if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+            e.preventDefault();
+            e.stopPropagation();
+            showToast('View Source is disabled for security reason.', 'warning', 3000);
+            return false;
+        }
+        }, true);
 
-    showToast('Welcome to my portfolio! Feel free to explore.', 'info', 6000);
+        showToast('Welcome to my portfolio! Feel free to explore.', 'info', 6000);
+
+
+
+        class AdvancedFeedbackSystem {
+        constructor() {
+            this.currentSection = 0;
+            this.sections = ['rating', 'faq', 'suggestions', 'pain-points'];
+            this.feedbackData = {
+                overall_rating: 0,
+                rating_comment: '',
+                faq_ratings: {},
+                suggestion_category: '',
+                suggestion_text: '',
+                pain_points: [],
+                pain_point_details: '',
+                timestamp: null
+            };
+
+            this.faqData = [
+                {
+                    id: 'load_time',
+                    question: 'How fast did the portfolio load for you?',
+                    answer: 'Portfolio loading speed is crucial for user experience. We optimize images, minimize code, and use CDNs to ensure fast loading times.',
+                    category: 'performance'
+                },
+                {
+                    id: 'mobile_experience',
+                    question: 'How was your experience on mobile devices?',
+                    answer: 'We prioritize mobile-first design with responsive layouts, touch-friendly interfaces, and optimized performance for smaller screens.',
+                    category: 'mobile'
+                },
+                {
+                    id: 'navigation',
+                    question: 'Was it easy to find what you were looking for?',
+                    answer: 'Clear navigation is essential. We use intuitive menu structures, search functionality, and logical information architecture.',
+                    category: 'ux'
+                },
+                {
+                    id: 'content_quality',
+                    question: 'How relevant and useful was the content?',
+                    answer: 'We regularly update content based on user feedback, industry trends, and comprehensive user research to ensure maximum value.',
+                    category: 'content'
+                },
+                {
+                    id: 'visual_design',
+                    question: 'How appealing was the visual design?',
+                    answer: 'Our design follows modern UI/UX principles, accessibility guidelines, and is constantly refined based on user feedback and testing.',
+                    category: 'design'
+                },
+                {
+                    id: 'contact_process',
+                    question: 'How easy was it to get in touch?',
+                    answer: 'We provide multiple contact methods including forms, direct email, and social media to ensure easy communication.',
+                    category: 'contact'
+                }
+            ];
+
+            this.painPointsData = [
+                {
+                    category: 'Technical Issues',
+                    icon: 'fas fa-bug',
+                    options: [
+                        'Pages loading slowly',
+                        'Broken links or buttons',
+                        'Images not displaying',
+                        'Forms not working',
+                        'Browser compatibility issues'
+                    ]
+                },
+                {
+                    category: 'Design Problems',
+                    icon: 'fas fa-eye',
+                    options: [
+                        'Text is hard to read',
+                        'Layout looks messy',
+                        'Colors are too bright/dark',
+                        'Elements overlap incorrectly',
+                        'Not mobile-friendly'
+                    ]
+                },
+                {
+                    category: 'Content Issues',
+                    icon: 'fas fa-file-alt',
+                    options: [
+                        'Information is outdated',
+                        'Missing important details',
+                        'Too much text to read',
+                        'Confusing explanations',
+                        'Irrelevant content'
+                    ]
+                },
+                {
+                    category: 'Navigation Problems',
+                    icon: 'fas fa-map-marked-alt',
+                    options: [
+                        'Menu is confusing',
+                        "Can't find specific pages",
+                        'No clear path to contact',
+                        'Search function not working',
+                        'Back button issues'
+                    ]
+                }
+            ];
+
+            this.init();
+        }
+
+        init() {
+            this.bindEvents();
+            this.generateFAQItems();
+            this.generatePainPoints();
+            this.loadSavedData();
+            this.updateProgress();
+        }
+
+        bindEvents() {
+            // Floating button
+            document.getElementById('feedbackBtn').addEventListener('click', () => this.openModal());
+            
+            // Close modal
+            document.getElementById('feedbackClose').addEventListener('click', () => this.closeModal());
+            document.getElementById('feedbackOverlay').addEventListener('click', () => this.closeModal());
+            
+            // Navigation
+            document.querySelectorAll('.feedback-nav-item').forEach(item => {
+                item.addEventListener('click', (e) => this.switchSection(e.target.dataset.section));
+            });
+            
+            // Action buttons
+            document.getElementById('prevBtn').addEventListener('click', () => this.previousSection());
+            document.getElementById('nextBtn').addEventListener('click', () => this.nextSection());
+            document.getElementById('submitBtn').addEventListener('click', () => this.submitFeedback());
+            
+            // Rating stars
+            document.querySelectorAll('#overallRating .star').forEach(star => {
+                star.addEventListener('click', (e) => this.setRating(parseInt(e.target.dataset.rating)));
+                star.addEventListener('mouseenter', (e) => this.previewRating(parseInt(e.target.dataset.rating)));
+            });
+            
+            document.getElementById('overallRating').addEventListener('mouseleave', () => this.resetRatingPreview());
+            
+            // Suggestion categories
+            document.querySelectorAll('.suggestion-category').forEach(category => {
+                category.addEventListener('click', (e) => this.selectSuggestionCategory(e.currentTarget.dataset.category));
+            });
+            
+            // Form inputs with auto-save
+            document.getElementById('ratingComment').addEventListener('input', (e) => {
+                this.feedbackData.rating_comment = e.target.value;
+                this.saveData();
+            });
+            
+            document.getElementById('suggestionText').addEventListener('input', (e) => {
+                this.feedbackData.suggestion_text = e.target.value;
+                this.saveData();
+            });
+            
+            document.getElementById('painPointDetails').addEventListener('input', (e) => {
+                this.feedbackData.pain_point_details = e.target.value;
+                this.saveData();
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && this.isModalOpen()) {
+                    this.closeModal();
+                }
+            });
+        }
+
+        generateFAQItems() {
+            const faqGrid = document.getElementById('faqGrid');
+            faqGrid.innerHTML = '';
+
+            this.faqData.forEach((faq, index) => {
+                const faqItem = document.createElement('div');
+                faqItem.className = 'faq-item';
+                faqItem.innerHTML = `
+                    <button class="faq-question" onclick="feedbackSystem.toggleFAQ(${index})">
+                        <span>${faq.question}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p>${faq.answer}</p>
+                            <div class="faq-rating">
+                                <span>How helpful was this answer?</span>
+                                <div class="mini-rating" data-faq="${faq.id}">
+                                    ${[1,2,3,4,5].map(rating => 
+                                        `<i class="fas fa-star mini-star" data-rating="${rating}"></i>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Add mini-rating functionality
+                const miniStars = faqItem.querySelectorAll('.mini-star');
+                miniStars.forEach(star => {
+                    star.addEventListener('click', (e) => {
+                        const faqId = e.target.closest('.mini-rating').dataset.faq;
+                        const rating = parseInt(e.target.dataset.rating);
+                        this.setFAQRating(faqId, rating);
+                    });
+                });
+
+                faqGrid.appendChild(faqItem);
+            });
+        }
+
+        generatePainPoints() {
+            const painPointsGrid = document.getElementById('painPointsGrid');
+            painPointsGrid.innerHTML = '';
+
+            this.painPointsData.forEach(category => {
+                const painCard = document.createElement('div');
+                painCard.className = 'pain-point-card';
+                painCard.innerHTML = `
+                    <div class="pain-point-header">
+                        <div class="pain-point-icon">
+                            <i class="${category.icon}"></i>
+                        </div>
+                        <h4 class="pain-point-title">${category.category}</h4>
+                    </div>
+                    <div class="pain-point-options">
+                        ${category.options.map(option => `
+                            <div class="pain-option" data-option="${option}">
+                                <div class="pain-checkbox"></div>
+                                <span class="pain-option-text">${option}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                // Add option selection functionality
+                const options = painCard.querySelectorAll('.pain-option');
+                options.forEach(option => {
+                    option.addEventListener('click', () => this.togglePainPoint(option.dataset.option, option));
+                });
+
+                painPointsGrid.appendChild(painCard);
+            });
+        }
+
+        openModal() {
+            document.getElementById('feedbackOverlay').classList.add('active');
+            document.getElementById('feedbackModal').classList.add('active');
+            document.getElementById('feedbackBtn').classList.add('active');
+            document.getElementById('feedbackBtn').classList.remove('pulse');
+            document.body.style.overflow = 'hidden';
+        }
+
+        closeModal() {
+            document.getElementById('feedbackOverlay').classList.remove('active');
+            document.getElementById('feedbackModal').classList.remove('active');
+            document.getElementById('feedbackBtn').classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Save data when closing
+            this.saveData();
+        }
+
+        isModalOpen() {
+            return document.getElementById('feedbackModal').classList.contains('active');
+        }
+
+        switchSection(sectionName) {
+            // Save current section data
+            this.saveData();
+            
+            // Update current section
+            const sectionIndex = this.sections.indexOf(sectionName);
+            if (sectionIndex !== -1) {
+                this.currentSection = sectionIndex;
+                
+                // Update navigation
+                document.querySelectorAll('.feedback-nav-item').forEach(item => item.classList.remove('active'));
+                document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+                
+                // Update content
+                document.querySelectorAll('.feedback-section').forEach(section => section.classList.remove('active'));
+                document.getElementById(sectionName).classList.add('active');
+                
+                // Update buttons and progress
+                this.updateProgress();
+                this.updateNavigationButtons();
+            }
+        }
+
+        nextSection() {
+            if (this.currentSection < this.sections.length - 1) {
+                this.currentSection++;
+                this.switchSection(this.sections[this.currentSection]);
+            }
+        }
+
+        previousSection() {
+            if (this.currentSection > 0) {
+                this.currentSection--;
+                this.switchSection(this.sections[this.currentSection]);
+            }
+        }
+
+        updateProgress() {
+            const progressText = document.getElementById('progressText');
+            progressText.textContent = `Section ${this.currentSection + 1} of ${this.sections.length}`;
+        }
+
+        updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Show/hide previous button
+            prevBtn.style.display = this.currentSection > 0 ? 'flex' : 'none';
+
+            // Show next or submit button
+            if (this.currentSection === this.sections.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'flex';
+            } else {
+                nextBtn.style.display = 'flex';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        setRating(rating) {
+            this.feedbackData.overall_rating = rating;
+            this.updateRatingDisplay(rating);
+            this.updateRatingText(rating);
+            this.saveData();
+        }
+
+        previewRating(rating) {
+            this.updateRatingDisplay(rating);
+            this.updateRatingText(rating);
+        }
+
+        resetRatingPreview() {
+            this.updateRatingDisplay(this.feedbackData.overall_rating);
+            this.updateRatingText(this.feedbackData.overall_rating);
+        }
+
+        updateRatingDisplay(rating) {
+            const stars = document.querySelectorAll('#overallRating .star');
+            stars.forEach((star, index) => {
+                star.classList.toggle('active', index < rating);
+            });
+        }
+
+        updateRatingText(rating) {
+            const texts = {
+                0: 'Click stars to rate',
+                1: 'Poor - Needs significant improvement',
+                2: 'Fair - Some issues to address',
+                3: 'Good - Generally satisfactory',
+                4: 'Very Good - Impressive work',
+                5: 'Excellent - Outstanding experience!'
+            };
+            document.getElementById('ratingText').textContent = texts[rating] || texts[0];
+        }
+
+        toggleFAQ(index) {
+            const faqItem = document.querySelectorAll('.faq-item')[index];
+            faqItem.classList.toggle('active');
+        }
+
+        setFAQRating(faqId, rating) {
+            this.feedbackData.faq_ratings[faqId] = rating;
+            
+            // Update visual feedback
+            const miniRating = document.querySelector(`[data-faq="${faqId}"]`);
+            const stars = miniRating.querySelectorAll('.mini-star');
+            stars.forEach((star, index) => {
+                star.classList.toggle('active', index < rating);
+            });
+            
+            this.saveData();
+        }
+
+        selectSuggestionCategory(category) {
+            // Remove previous selection
+            document.querySelectorAll('.suggestion-category').forEach(cat => cat.classList.remove('selected'));
+            
+            // Add new selection
+            document.querySelector(`[data-category="${category}"]`).classList.add('selected');
+            
+            this.feedbackData.suggestion_category = category;
+            this.saveData();
+        }
+
+        togglePainPoint(option, element) {
+            const isSelected = element.classList.contains('selected');
+            
+            if (isSelected) {
+                element.classList.remove('selected');
+                this.feedbackData.pain_points = this.feedbackData.pain_points.filter(point => point !== option);
+            } else {
+                element.classList.add('selected');
+                this.feedbackData.pain_points.push(option);
+            }
+            
+            this.saveData();
+        }
+
+        saveData() {
+            this.feedbackData.timestamp = new Date().toISOString();
+            try {
+                localStorage.setItem('portfolio_feedback', JSON.stringify(this.feedbackData));
+            } catch (error) {
+                console.warn('Could not save feedback data:', error);
+            }
+        }
+
+        loadSavedData() {
+            try {
+                const saved = localStorage.getItem('portfolio_feedback');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    this.feedbackData = { ...this.feedbackData, ...data };
+                    this.populateFormData();
+                }
+            } catch (error) {
+                console.warn('Could not load saved feedback data:', error);
+            }
+        }
+
+        populateFormData() {
+            // Rating
+            if (this.feedbackData.overall_rating > 0) {
+                this.setRating(this.feedbackData.overall_rating);
+            }
+            
+            // Comments
+            if (this.feedbackData.rating_comment) {
+                document.getElementById('ratingComment').value = this.feedbackData.rating_comment;
+            }
+            
+            if (this.feedbackData.suggestion_text) {
+                document.getElementById('suggestionText').value = this.feedbackData.suggestion_text;
+            }
+            
+            if (this.feedbackData.pain_point_details) {
+                document.getElementById('painPointDetails').value = this.feedbackData.pain_point_details;
+            }
+            
+            // Suggestion category
+            if (this.feedbackData.suggestion_category) {
+                document.querySelector(`[data-category="${this.feedbackData.suggestion_category}"]`).classList.add('selected');
+            }
+            
+            // Pain points
+            this.feedbackData.pain_points.forEach(point => {
+                const element = document.querySelector(`[data-option="${point}"]`);
+                if (element) {
+                    element.classList.add('selected');
+                }
+            });
+            
+            // FAQ ratings
+            Object.entries(this.feedbackData.faq_ratings).forEach(([faqId, rating]) => {
+                this.setFAQRating(faqId, rating);
+            });
+        }
+
+        submitFeedback() {
+            // Validate required fields
+            if (this.feedbackData.overall_rating === 0) {
+                showToast('Please provide an overall rating', 'error');
+                this.switchSection('rating');
+                return;
+            }
+
+            // Final save with completion flag
+            this.feedbackData.timestamp = new Date().toISOString();
+            this.feedbackData.completed = true;
+            
+            try {
+                localStorage.setItem('portfolio_feedback_completed', JSON.stringify(this.feedbackData));
+                this.simulateSubmission();
+            } catch (error) {
+                showToast('Failed to save feedback data', 'error');
+            }
+        }
+
+        simulateSubmission() {
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                showToast('Thank you! Your feedback has been submitted successfully.', 'success');
+                this.closeModal();
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                // Reset form after successful submission
+                setTimeout(() => this.resetForm(), 1000);
+            }, 2000);
+        }
+
+        resetForm() {
+            this.feedbackData = {
+                overall_rating: 0,
+                rating_comment: '',
+                faq_ratings: {},
+                suggestion_category: '',
+                suggestion_text: '',
+                pain_points: [],
+                pain_point_details: '',
+                timestamp: null
+            };
+            
+            // Clear localStorage
+            try {
+                localStorage.removeItem('portfolio_feedback');
+            } catch (error) {
+                console.warn('Could not clear feedback data:', error);
+            }
+            
+            // Reset UI
+            this.currentSection = 0;
+            this.switchSection('rating');
+            
+            // Clear form fields
+            document.getElementById('ratingComment').value = '';
+            document.getElementById('suggestionText').value = '';
+            document.getElementById('painPointDetails').value = '';
+            
+            // Reset rating
+            this.updateRatingDisplay(0);
+            this.updateRatingText(0);
+            
+            // Clear selections
+            document.querySelectorAll('.suggestion-category').forEach(cat => cat.classList.remove('selected'));
+            document.querySelectorAll('.pain-option').forEach(option => option.classList.remove('selected'));
+            document.querySelectorAll('.mini-star').forEach(star => star.classList.remove('active'));
+            
+            // Restart pulse animation
+            document.getElementById('feedbackBtn').classList.add('pulse');
+        }
+
+        // Public method to get feedback data (for debugging or integration)
+        getFeedbackData() {
+            return this.feedbackData;
+        }
+    }
+
+    // Initialize the feedback system
+    const feedbackSystem = new AdvancedFeedbackSystem();
+
+    // Make it globally accessible for debugging
+    window.feedbackSystem = feedbackSystem;
+
+
+    // Toast and Modal Z-Index Management
+    // Ensure toasts appear above modals when active
+    const modal = document.querySelector('.feedback-modal');
+    const toastContainer = document.getElementById('global-toast-container');
+
+    const observer = new MutationObserver(() => {
+    if (modal.classList.contains('active')) {
+        toastContainer.style.zIndex = '10000'; // higher than modal
+    } else {
+        toastContainer.style.zIndex = ''; // reset to default
+    }
+    });
+
+    observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+
+
 
     // Export for potential external use
     window.PortfolioApp = portfolioApp;

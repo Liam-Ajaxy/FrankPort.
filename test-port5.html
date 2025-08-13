@@ -7,19 +7,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --accent-color: #f093fb;
-            --text-color: #ffffff;
-            --card-bg: rgba(255,255,255,0.15);
-            --card-border: rgba(255,255,255,0.2);
+            --primary-color: #1B1F3B;
+            --secondary-color: #0D111C;
+            --accent-color: #FF6B6B;
+            --text-color: #EAEAFF;
+            --card-bg: rgba(255, 255, 255, 0.07);
+            --card-border: rgba(255, 255, 255, 0.12);
             --sidebar-width: 280px;
-            --header-height: 70px;
-            --border-radius: 16px;
-            --blur-strength: 20px;
-            --animation-speed: 0.3s;
-            --theme-transition: all 0.5s ease;
+            --header-height: 72px;
+            --border-radius: 20px;
+            --blur-strength: 24px;
+            --animation-speed: 0.32s;
+            --theme-transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
         }
+
 
         * {
             margin: 0;
@@ -46,11 +47,30 @@
             transition: var(--theme-transition);
         }
 
-        .weather-bg.sunny { background: linear-gradient(135deg, #FFD89B 0%, #19547B 100%); }
-        .weather-bg.rainy { background: linear-gradient(135deg, #4B79A1 0%, #283E51 100%); }
-        .weather-bg.cloudy { background: linear-gradient(135deg, #BDC3C7 0%, #2C3E50 100%); }
-        .weather-bg.snowy { background: linear-gradient(135deg, #E6DEDD 0%, #649173 100%); }
-        .weather-bg.night { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); }
+        .weather-bg.sunny {
+            background: linear-gradient(160deg, #2C2F4A 0%, #1B1F3B 40%, #36366F 100%);
+            background-blend-mode: overlay;
+        }
+
+        .weather-bg.rainy {
+            background: linear-gradient(160deg, #0B1D3A 0%, #1E3C72 50%, #0D111C 100%);
+            background-blend-mode: multiply;
+        }
+
+        .weather-bg.cloudy {
+            background: linear-gradient(160deg, #1A1E2F 0%, #252B44 40%, #0D111C 100%);
+            background-blend-mode: soft-light;
+        }
+
+        .weather-bg.snowy {
+            background: linear-gradient(160deg, #2B2F3F 0%, #3C4B64 50%, #1B1F3B 100%);
+            background-blend-mode: lighten;
+        }
+
+        .weather-bg.night {
+            background: linear-gradient(160deg, #0D111C 0%, #121826 40%, #1B1F3B 100%);
+            background-blend-mode: overlay;
+        }
 
         /* App Layout Container */
         .app-layout {
@@ -916,8 +936,8 @@
                         <i class="fas fa-cloud-sun"></i>
                     </div>
                     <div class="brand-info">
-                        <h1>WeatherPro</h1>
-                        <p>Advanced Edition</p>
+                        <h1>FrankCloud</h1>
+                        <p>Weather App Advanced Edition</p>
                     </div>
                 </div>
                 
