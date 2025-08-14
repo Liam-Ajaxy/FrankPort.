@@ -684,13 +684,21 @@
         init() {
             this.scrollBtn = document.getElementById('scroll-to-top');
             if (!this.scrollBtn) return;
-            
+
+            this.checkVisibility(); // Check once on load
             this.bindEvents();
         },
 
         bindEvents() {
-            // Show/hide scroll button
+            // Handle window resize (hide on small screens)
+            window.addEventListener('resize', () => this.checkVisibility());
+
+            // Show/hide scroll button on scroll
             window.addEventListener('scroll', utils.throttle(() => {
+                if (window.innerWidth <= 768) { // Small screen
+                    this.scrollBtn.classList.remove('show');
+                    return;
+                }
                 if (window.scrollY > 300) {
                     this.scrollBtn.classList.add('show');
                 } else {
@@ -705,8 +713,18 @@
                     behavior: 'smooth'
                 });
             });
+        },
+
+        checkVisibility() {
+            // If screen is small, always hide
+            if (window.innerWidth <= 768) {
+                this.scrollBtn.style.display = 'none';
+            } else {
+                this.scrollBtn.style.display = '';
+            }
         }
     };
+
 
     // Intersection Observer for Animations
     const animationManager = {

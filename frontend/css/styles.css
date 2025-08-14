@@ -1770,10 +1770,7 @@ section {
   }
   
   .scroll-to-top {
-    bottom: 1rem;
-    right: 1rem;
-    width: 50px;
-    height: 50px;
+    display: none !important;
   }
 }
 
@@ -2234,7 +2231,7 @@ section {
   writing-mode: vertical-rl;
   text-orientation: mixed;
   box-shadow: -2px 2px 10px rgba(0,0,0,.25);
-  z-index: 9999;
+  z-index: 999;
   display: flex;
   align-items: center;
   gap: clamp(4px, 0.5vw, 6px);
@@ -2274,7 +2271,7 @@ section {
   transform: rotate(45deg);
 }
 
-@keyframes pulse {
+@keyframes feedback-pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(244, 208, 63, 0.7);
   }
@@ -2287,7 +2284,7 @@ section {
 }
 
 .feedback-float-btn.pulse {
-  animation: pulse 2s infinite;
+  animation: feedback-pulse 2s infinite;
 }
 
 /* ===================================
