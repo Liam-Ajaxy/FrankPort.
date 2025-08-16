@@ -989,15 +989,15 @@
         // Welcome Toast =========================
         // =======================================
         const welcomeMessages = [
-            "Hey there! Welcome to FrankPort — dive in and explore!",
+            "Hey there! Welcome to FrankPort. Dive in and explore!",
             "Glad you’re here! Discover what FrankPort has to offer.",
             "Hello! Take a peek around and enjoy the experience.",
-            "Hey! FrankPort’s doors are open — explore freely!",
+            "Hey! FrankPort’s doors are open. Explore freely!",
             "Welcome aboard! Let FrankPort show you something cool.",
             "Hi there! Enjoy your journey through FrankPort.",
             "👋 Hello! Dive into FrankPort and see what awaits.",
             "Hey! Explore, learn, and enjoy every corner of FrankPort.",
-            "Welcome! FrankPort is glad to have you here. enjoy your stay!"
+            "Welcome! FrankPort is glad to have you here. Enjoy your stay!"
         ];
         const msg = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
         setTimeout(() => {
@@ -1639,6 +1639,569 @@
     });
 
     observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+
+
+
+
+
+
+    /* ===================================
+    THEME TOGGLE FUNCTIONALITY
+    Dark/Light Mode Toggle System
+    =================================== */
+
+    class ThemeController {
+    constructor() {
+        this.body = document.body;
+        this.themeKey = 'portfolio-theme';
+        this.currentTheme = this.getStoredTheme() || this.getSystemTheme();
+        
+        this.init();
+    }
+
+    init() {
+        // Apply initial theme
+        this.applyTheme(this.currentTheme);
+        
+        // Create theme toggle button
+        this.createToggleButton();
+        
+        // Listen for system theme changes
+        this.watchSystemTheme();
+        
+        // Add keyboard shortcut (Ctrl/Cmd + Shift + L)
+        this.addKeyboardShortcut();
+    }
+
+    getStoredTheme() {
+        try {
+        return localStorage.getItem(this.themeKey);
+        } catch (error) {
+        console.warn('localStorage not available:', error);
+        return null;
+        }
+    }
+
+    getSystemTheme() {
+        if (window.matchMedia) {
+        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        return 'dark'; // Default fallback
+    }
+
+    storeTheme(theme) {
+        try {
+        localStorage.setItem(this.themeKey, theme);
+        } catch (error) {
+        console.warn('Could not store theme preference:', error);
+        }
+    }
+
+    applyTheme(theme) {
+        const isLight = theme === 'light';
+        
+        // Apply theme class
+        this.body.classList.toggle('light-mode', isLight);
+        
+        // Update theme toggle button state
+        this.updateToggleButton(isLight);
+        
+        // Update meta theme-color for mobile browsers
+        this.updateMetaThemeColor(isLight);
+        
+        // Store preference
+        this.storeTheme(theme);
+        
+        // Update current theme
+        this.currentTheme = theme;
+        
+        // Dispatch custom event for other components
+        this.dispatchThemeChangeEvent(theme);
+        
+        // Show theme change toast
+        this.showThemeChangeToast(theme);
+    }
+
+    toggleTheme() {
+        const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+        this.applyTheme(newTheme);
+    }
+
+    createToggleButton() {
+        // Check if toggle already exists
+        if (document.querySelector('.theme-toggle')) return;
+
+        // Create toggle button
+        const toggle = document.createElement('button');
+        toggle.className = 'theme-toggle';
+        toggle.setAttribute('aria-label', 'Toggle theme');
+        toggle.setAttribute('title', 'Switch between light and dark mode');
+        
+        // Add icons
+        toggle.innerHTML = `
+        <i class="fas fa-sun theme-icon sun" aria-hidden="true"></i>
+        <i class="fas fa-moon theme-icon moon" aria-hidden="true"></i>
+        `;
+        
+        // Add click handler
+        toggle.addEventListener('click', () => {
+        this.toggleTheme();
+        
+        // Add visual feedback
+        toggle.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            toggle.style.transform = 'scale(1)';
+        }, 100);
+        });
+        
+        // Add to navigation
+        this.addToggleToNavigation(toggle);
+    }
+
+    addToggleToNavigation(toggle) {
+        // Try to add to navigation menu first
+        const navMenu = document.querySelector('.nav-menu');
+        if (navMenu) {
+        // Create wrapper for better styling
+        const toggleWrapper = document.createElement('li');
+        toggleWrapper.className = 'nav-item theme-toggle-wrapper';
+        toggleWrapper.appendChild(toggle);
+        navMenu.appendChild(toggleWrapper);
+        return;
+        }
+
+        // Fallback: add to nav container
+        const navContainer = document.querySelector('.nav-container');
+        if (navContainer) {
+        navContainer.appendChild(toggle);
+        return;
+        }
+
+        // Last resort: add to body (fixed position)
+        toggle.style.position = 'fixed';
+        toggle.style.top = '20px';
+        toggle.style.right = '20px';
+        toggle.style.zIndex = '1001';
+        document.body.appendChild(toggle);
+    }
+
+    updateToggleButton(isLight) {
+        const toggle = document.querySelector('.theme-toggle');
+        if (toggle) {
+        toggle.classList.toggle('light', isLight);
+        toggle.setAttribute('aria-label', `Switch to ${isLight ? 'dark' : 'light'} mode`);
+        toggle.setAttribute('title', `Switch to ${isLight ? 'dark' : 'light'} mode`);
+        }
+    }
+
+    updateMetaThemeColor(isLight) {
+        let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        
+        if (!metaThemeColor) {
+        metaThemeColor = document.createElement('meta');
+        metaThemeColor.name = 'theme-color';
+        document.head.appendChild(metaThemeColor);
+        }
+        
+        metaThemeColor.content = isLight ? '#ffffff' : '#0a0f1c';
+    }
+
+    dispatchThemeChangeEvent(theme) {
+        const event = new CustomEvent('themechange', {
+        detail: { theme, isLight: theme === 'light' }
+        });
+        document.dispatchEvent(event);
+    }
+
+    showThemeChangeToast(theme) {
+        // Only show toast if the toast system exists
+        if (typeof showToast === 'function') {
+        const message = `Switched to ${theme} mode`;
+        const icon = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+        showToast(message, 'info', 4000, icon);
+        }
+    }
+
+    watchSystemTheme() {
+        if (!window.matchMedia) return;
+
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+        
+        const handleChange = (e) => {
+        // Only auto-switch if user hasn't manually set a preference
+        if (!this.getStoredTheme()) {
+            const systemTheme = e.matches ? 'light' : 'dark';
+            this.applyTheme(systemTheme);
+        }
+        };
+
+        // Use addEventListener if available, fallback to addListener
+        if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', handleChange);
+        } else {
+        mediaQuery.addListener(handleChange);
+        }
+    }
+
+    addKeyboardShortcut() {
+        document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + Shift + L
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'l') {
+            e.preventDefault();
+            this.toggleTheme();
+        }
+        });
+    }
+
+    // Public methods for external usage
+    setTheme(theme) {
+        if (theme === 'light' || theme === 'dark') {
+        this.applyTheme(theme);
+        }
+    }
+
+    getCurrentTheme() {
+        return this.currentTheme;
+    }
+
+    isLightMode() {
+        return this.currentTheme === 'light';
+    }
+
+    resetToSystemTheme() {
+        try {
+        localStorage.removeItem(this.themeKey);
+        } catch (error) {
+        console.warn('Could not remove theme preference:', error);
+        }
+        
+        const systemTheme = this.getSystemTheme();
+        this.applyTheme(systemTheme);
+    }
+    }
+
+    /* ===================================
+    THEME-AWARE COMPONENT UTILITIES
+    =================================== */
+
+    // Utility function to get current theme
+    function getCurrentTheme() {
+    return document.body.classList.contains('light-mode') ? 'light' : 'dark';
+    }
+
+    // Utility function to check if in light mode
+    function isLightMode() {
+    return document.body.classList.contains('light-mode');
+    }
+
+    // Event listener helper for theme changes
+    function onThemeChange(callback) {
+    document.addEventListener('themechange', callback);
+    }
+
+    // Remove theme change listener
+    function offThemeChange(callback) {
+    document.removeEventListener('themechange', callback);
+    }
+
+    /* ===================================
+    COMPONENT-SPECIFIC THEME HANDLERS
+    =================================== */
+
+    // Update chart colors based on theme
+    function updateChartColors() {
+    const isLight = isLightMode();
+    
+    // If you have charts (Chart.js, D3, etc.), update their colors here
+    // Example for Chart.js:
+    /*
+    if (window.myChart) {
+        myChart.options.scales.x.grid.color = isLight ? '#e1e8ed' : '#2d3142';
+        myChart.options.scales.y.grid.color = isLight ? '#e1e8ed' : '#2d3142';
+        myChart.update('none');
+    }
+    */
+    }
+
+    // Update any dynamic elements that need theme-specific styling
+    function updateDynamicElements() {
+    const isLight = isLightMode();
+    
+    // Update any dynamically created elements
+    const dynamicElements = document.querySelectorAll('[data-theme-dynamic]');
+    dynamicElements.forEach(element => {
+        if (isLight) {
+        element.classList.add('light-theme');
+        element.classList.remove('dark-theme');
+        } else {
+        element.classList.add('dark-theme');
+        element.classList.remove('light-theme');
+        }
+    });
+    }
+
+    /* ===================================
+    INITIALIZATION
+    =================================== */
+
+    // Initialize theme system when DOM is ready
+    function initializeThemeSystem() {
+    // Create global theme controller instance
+    window.themeController = new ThemeController();
+    
+    // Listen for theme changes to update components
+    onThemeChange(() => {
+        updateChartColors();
+        updateDynamicElements();
+        updateCustomCursor();
+        updateLoadingScreen();
+    });
+    
+    console.log('Theme system initialized');
+    }
+
+    // Update custom cursor for theme
+    function updateCustomCursor() {
+    const cursor = document.querySelector('.custom-cursor');
+    const cursorDot = document.querySelector('.custom-cursor-dot');
+    
+    if (cursor && cursorDot) {
+        // Colors are handled by CSS, but you can add specific logic here if needed
+        cursor.style.transition = 'border-color 0.3s ease';
+        cursorDot.style.transition = 'background-color 0.3s ease';
+    }
+    }
+
+    // Update loading screen theme
+    function updateLoadingScreen() {
+    const loadingScreen = document.querySelector('.loading-screen');
+    if (loadingScreen) {
+        // Smooth transition for loading screen
+        loadingScreen.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+    }
+    }
+
+    /* ===================================
+    THEME TRANSITION ANIMATIONS
+    =================================== */
+
+    // Add smooth transitions when switching themes
+    function addThemeTransitions() {
+    const transitionElements = [
+        'body', 
+        '.navbar', 
+        '.hero', 
+        '.section', 
+        '.card',
+        '.btn',
+        '.form-input',
+        '.project-card',
+        '.skill-category',
+        '.contact-form-container'
+    ];
+    
+    const transitionStyle = document.createElement('style');
+    transitionStyle.id = 'theme-transitions';
+    
+    const transitions = transitionElements.map(selector => 
+        `${selector} { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important; }`
+    ).join('\n');
+    
+    transitionStyle.textContent = transitions;
+    document.head.appendChild(transitionStyle);
+    
+    // Remove transitions after animation completes to avoid interfering with other animations
+    setTimeout(() => {
+        const styleElement = document.getElementById('theme-transitions');
+        if (styleElement) {
+        styleElement.remove();
+        }
+    }, 300);
+    }
+
+    /* ===================================
+    ACCESSIBILITY ENHANCEMENTS
+    =================================== */
+
+    // Announce theme changes to screen readers
+    function announceThemeChange(theme) {
+    const announcement = document.createElement('div');
+    announcement.setAttribute('aria-live', 'polite');
+    announcement.setAttribute('aria-atomic', 'true');
+    announcement.className = 'sr-only';
+    announcement.textContent = `Theme switched to ${theme} mode`;
+    
+    document.body.appendChild(announcement);
+    
+    // Remove after announcement
+    setTimeout(() => {
+        document.body.removeChild(announcement);
+    }, 1000);
+    }
+
+    // Respect user's reduced motion preference
+    function respectReducedMotion() {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) {
+        // Disable theme transition animations
+        const style = document.createElement('style');
+        style.textContent = `
+        *, *::before, *::after {
+            transition-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+        }
+        `;
+        document.head.appendChild(style);
+    }
+    }
+
+    /* ===================================
+    THEME PERSISTENCE & SYNC
+    =================================== */
+
+    // Sync theme across multiple tabs
+    function syncThemeAcrossTabs() {
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'portfolio-theme' && e.newValue !== e.oldValue) {
+        if (window.themeController) {
+            window.themeController.applyTheme(e.newValue || 'dark');
+        }
+        }
+    });
+    }
+
+    /* ===================================
+    THEME-SPECIFIC UTILITIES
+    =================================== */
+
+    // Get theme-appropriate color values
+    function getThemeColors() {
+    const isLight = isLightMode();
+    
+    return {
+        primary: isLight ? '#ffffff' : '#0a0f1c',
+        secondary: isLight ? '#f8f9fa' : '#1a1d29',
+        textPrimary: isLight ? '#2c3e50' : '#ffffff',
+        textSecondary: isLight ? '#5a6c7d' : '#b8bcc8',
+        textMuted: isLight ? '#8b9dc3' : '#6c7293',
+        border: isLight ? '#e1e8ed' : '#2d3142',
+        accent: '#f4d03f', // Always the same
+        shadow: isLight ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0.3)'
+    };
+    }
+
+    // Apply theme to dynamically created elements
+    function applyThemeToElement(element, options = {}) {
+    const isLight = isLightMode();
+    const colors = getThemeColors();
+    
+    if (options.background) {
+        element.style.backgroundColor = colors.primary;
+    }
+    
+    if (options.text) {
+        element.style.color = colors.textPrimary;
+    }
+    
+    if (options.border) {
+        element.style.borderColor = colors.border;
+    }
+    
+    // Add theme class for CSS-based styling
+    element.classList.toggle('light-theme', isLight);
+    element.classList.toggle('dark-theme', !isLight);
+    }
+
+    /* ===================================
+    THEME DEBUGGING & DEVELOPMENT
+    =================================== */
+
+    // Debug function to log theme state
+    function debugTheme() {
+    console.group('Theme Debug Info');
+    console.log('Current theme:', getCurrentTheme());
+    console.log('Is light mode:', isLightMode());
+    console.log('System preference:', window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    console.log('Stored preference:', localStorage.getItem('portfolio-theme'));
+    console.log('Body classes:', document.body.className);
+    console.groupEnd();
+    }
+
+    // Development helper to test theme switching
+    function testThemeSwitching(interval = 2000) {
+    console.log('Testing theme switching...');
+    let count = 0;
+    const maxSwitches = 4;
+    
+    const testInterval = setInterval(() => {
+        if (window.themeController) {
+        window.themeController.toggleTheme();
+        count++;
+        
+        if (count >= maxSwitches) {
+            clearInterval(testInterval);
+            console.log('Theme switching test completed');
+        }
+        }
+    }, interval);
+    }
+
+    /* ===================================
+    MAIN INITIALIZATION
+    =================================== */
+
+    // Initialize everything when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+    initializeThemeSystem();
+    addThemeTransitions();
+    respectReducedMotion();
+    syncThemeAcrossTabs();
+    
+    // Add theme change announcement for accessibility
+    onThemeChange((e) => {
+        announceThemeChange(e.detail.theme);
+    });
+    });
+
+    // Initialize immediately if DOM is already loaded
+    if (document.readyState === 'loading') {
+    // DOM is still loading, wait for DOMContentLoaded
+    } else {
+    // DOM is already loaded
+    initializeThemeSystem();
+    addThemeTransitions();
+    respectReducedMotion();
+    syncThemeAcrossTabs();
+    }
+
+    /* ===================================
+    GLOBAL THEME API
+    =================================== */
+
+    // Expose theme functions globally for easy access
+    window.themeAPI = {
+    toggle: () => window.themeController?.toggleTheme(),
+    setTheme: (theme) => window.themeController?.setTheme(theme),
+    getCurrentTheme,
+    isLightMode,
+    getThemeColors,
+    applyThemeToElement,
+    resetToSystem: () => window.themeController?.resetToSystemTheme(),
+    debug: debugTheme,
+    test: testThemeSwitching
+    };
+
+    // Console welcome message with theme shortcuts
+    console.log(`
+    🎨 Theme System Ready!
+    Commands:
+    - themeAPI.toggle() - Toggle theme
+    - themeAPI.setTheme('light'|'dark') - Set specific theme  
+    - themeAPI.debug() - Show theme debug info
+    - Keyboard shortcut: Ctrl/Cmd + Shift + L
+    `);
+
 
 
 
