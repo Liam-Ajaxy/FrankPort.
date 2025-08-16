@@ -835,71 +835,174 @@
     }
 
     // ===== Global Toast Function (Single Instance) =====
-    function showToast(message, type = 'info', duration = 3000) {
-    const container = document.getElementById('global-toast-container');
+    function showToast(message, type = 'info', duration = 6000) {
+        const container = document.getElementById('global-toast-container');
 
-    // Clear any existing toasts
-    container.innerHTML = '';
+        // Clear any existing toasts
+        container.innerHTML = '';
 
-    const toast = document.createElement('div');
-    toast.className = `toast ${type} show`;
-    toast.style.setProperty('--toast-duration', `${duration / 1000}s`);
+        const toast = document.createElement('div');
+        toast.className = `toast ${type} show`;
+        toast.style.setProperty('--toast-duration', `${duration / 1000}s`);
 
-    const icon = document.createElement('div');
-    icon.className = 'toast-icon';
-    icon.innerHTML = {
-        success: '<i class="fas fa-check"></i>',
-        error: '<i class="fas fa-times"></i>',
-        info: '<i class="fas fa-info"></i>',
-        warning: '<i class="fas fa-exclamation"></i>'
-    }[type] || '<i class="fas fa-bell"></i>';
+        // Icon
+        const icon = document.createElement('div');
+        icon.className = 'toast-icon';
+        icon.innerHTML = {
+            success: '<i class="fas fa-check"></i>',
+            error: '<i class="fas fa-times"></i>',
+            info: '<i class="fas fa-info"></i>',
+            warning: '<i class="fas fa-exclamation"></i>'
+        }[type] || '<i class="fas fa-bell"></i>';
 
-    const msg = document.createElement('div');
-    msg.className = 'toast-message';
-    msg.textContent = message;
+        // Message
+        const msg = document.createElement('div');
+        msg.className = 'toast-message';
+        msg.textContent = message;
 
-    toast.appendChild(icon);
-    toast.appendChild(msg);
-    container.appendChild(toast);
+        // Close button
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'toast-close';
+        closeBtn.innerHTML = '&times;'; // × symbol
+        closeBtn.onclick = () => toast.remove();
 
-    // Remove after animation
-    setTimeout(() => {
-        toast.remove();
-    }, duration + 500);
+        toast.appendChild(icon);
+        toast.appendChild(msg);
+        toast.appendChild(closeBtn);
+        container.appendChild(toast);
+
+        // Auto-remove after duration
+        setTimeout(() => {
+            toast.remove();
+        }, duration + 1000);
     }
 
-    // ===== Block Right Click =====
-    document.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-        showToast('Right-click is disabled for security reason.', 'warning');
-    }, false);
 
-    // ===== Block Common DevTools Shortcuts =====
-    document.addEventListener('keydown', function (e) {
-        // List of blocked key combinations
-        if (
-            e.key === 'F12' || // Open DevTools
-            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || // Ctrl+Shift+I
-            (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) || // Ctrl+Shift+J
-            (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c')) || // Ctrl+Shift+C
-            (e.ctrlKey && e.key === 'U') // Ctrl+U (View source)
-        ) {
-            e.preventDefault();
-            showToast('Developer tools are disabled for security reason.', 'error');
-        }
-    });
 
-        // ===== Block Ctrl+U (both lowercase & uppercase) =====
-        document.addEventListener('keydown', function (e) {
-        if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+    // ======================================================
+    // ===== Max In-Page DevTools/View-Source Hardening =====
+    // ======================================================
+
+    (function DevtoolsHardening(){
+        // Random friendly messages
+        const blockedShortcutMessages = [
+            "Hey friend! Those shortcuts are resting 😴 but everything else in FrankPort is all yours to explore!",
+            "Oops! That shortcut is taking a nap 🛌 enjoy exploring FrankPort instead!",
+            "Whoa! Shortcuts are off-limits here 😎 FrankPort welcomes you to roam freely!",
+            "Friendly heads-up! 🔒 Those keys are locked, but the rest is all yours!",
+            "Sneaky keys detected! 😁 But FrankPort has plenty to explore without them."
+        ];
+
+        const TOAST_TYPE = 'warning';
+
+        // Normalize key descriptor
+        const keySig = (e) => ({
+            ctrl: !!(e.ctrlKey),
+            meta: !!(e.metaKey),
+            alt:  !!(e.altKey),
+            shift:!!(e.shiftKey),
+            key: (e.key || '').toLowerCase(),
+            code: (e.code || '').toLowerCase()
+        });
+
+        const blockers = [
+            (s)=> ( (s.ctrl||s.meta) && !s.shift && !s.alt && (s.key==='u') ),
+            (s)=> ( s.shift && (s.ctrl||s.meta) && (s.key==='i') ),
+            (s)=> ( s.shift && (s.ctrl||s.meta) && (s.key==='j') ),
+            (s)=> ( s.shift && (s.ctrl||s.meta) && (s.key==='k') ),
+            (s)=> ( s.shift && (s.ctrl||s.meta) && (s.key==='m') ),
+            (s)=> ( s.shift && (s.ctrl||s.meta) && (s.key==='e') ),
+            (s)=> ( s.shift && (s.ctrl||s.meta) && (s.key==='c') ),
+            (s)=> ( s.ctrl && s.alt && (s.key==='i') ),
+            (s)=> ( !s.ctrl && !s.meta && !s.alt && !s.shift && (s.key==='f12' || s.code==='f12') ),
+        ];
+
+        const getRandomMessage = () => blockedShortcutMessages[Math.floor(Math.random() * blockedShortcutMessages.length)];
+
+        const handleKey = (e) => {
+            const ALLOW_WHEN_EDITING = false;
+            if (ALLOW_WHEN_EDITING) {
+                const t = e.target;
+                const tag = (t && t.tagName) ? t.tagName.toLowerCase() : '';
+                const isEditable = (t && (t.isContentEditable || tag === 'input' || tag === 'textarea' || tag === 'select'));
+                if (isEditable) return;
+            }
+
+            const s = keySig(e);
+            for (const match of blockers) {
+                if (match(s)) {
+                    try { showToast(getRandomMessage(), TOAST_TYPE, 4000); } catch(_) {}
+                    killEvent(e);
+                    return false;
+                }
+            }
+        };
+
+        const killEvent = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            showToast('View Source is disabled for security reason.', 'warning', 3000);
+            e.stopImmediatePropagation?.();
             return false;
-        }
-        }, true);
+        };
 
-        showToast('Welcome to my portfolio! Feel free to explore.', 'info', 6000);
+        const handleContextMenu = (e) => {
+            try { showToast(getRandomMessage(), TOAST_TYPE, 6000); } catch(_) {}
+            killEvent(e);
+        };
+
+        const attachAll = (root) => {
+            const targets = [window, document];
+            for (const t of targets) {
+                t.addEventListener('keydown', handleKey, { capture: true, passive: false });
+                t.addEventListener('keydown', handleKey, { capture: false, passive: false });
+                t.addEventListener('keyup',   handleKey, { capture: true, passive: false });
+                t.addEventListener('contextmenu', handleContextMenu, { capture: true, passive: false });
+                t.addEventListener('contextmenu', handleContextMenu, { capture: false, passive: false });
+            }
+        };
+
+        const bindIframes = () => {
+            const iframes = document.querySelectorAll('iframe');
+            for (const f of iframes) {
+                try {
+                    const d = f.contentWindow?.document;
+                    if (!d) continue;
+                    d.addEventListener('keydown', handleKey, { capture: true, passive: false });
+                    d.addEventListener('keydown', handleKey, { capture: false, passive: false });
+                    d.addEventListener('keyup',   handleKey, { capture: true, passive: false });
+                    d.addEventListener('contextmenu', handleContextMenu, { capture: true, passive: false });
+                    d.addEventListener('contextmenu', handleContextMenu, { capture: false, passive: false });
+                } catch {}
+            }
+        };
+
+        const mo = new MutationObserver(() => bindIframes());
+        mo.observe(document.documentElement, { childList: true, subtree: true });
+
+        attachAll(document);
+        bindIframes();
+    })();
+    // End of DevTools Hardening ==================
+    // ============================================
+
+
+        // Welcome Toast =========================
+        // =======================================
+        const welcomeMessages = [
+            "Hey there! Welcome to FrankPort — dive in and explore!",
+            "Glad you’re here! Discover what FrankPort has to offer.",
+            "Hello! Take a peek around and enjoy the experience.",
+            "Hey! FrankPort’s doors are open — explore freely!",
+            "Welcome aboard! Let FrankPort show you something cool.",
+            "Hi there! Enjoy your journey through FrankPort.",
+            "👋 Hello! Dive into FrankPort and see what awaits.",
+            "Hey! Explore, learn, and enjoy every corner of FrankPort.",
+            "Welcome! FrankPort is glad to have you here. enjoy your stay!"
+        ];
+        const msg = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+        setTimeout(() => {
+            showToast(msg, 'info', 6000);
+        }, 4000);
 
 
 
@@ -1366,24 +1469,85 @@
             });
         }
 
-        submitFeedback() {
-            // Validate required fields
-            if (this.feedbackData.overall_rating === 0) {
-                showToast('Please provide an overall rating', 'error');
-                this.switchSection('rating');
-                return;
+            async submitFeedback() {
+                if (!this.hasFeedback()) {
+                    showToast('Please provide some feedback before submitting', 'error');
+                    return;
+                }
+
+                const submitBtn = document.getElementById('submitBtn');
+                const originalText = submitBtn.innerHTML;
+                
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                submitBtn.disabled = true;
+
+                // Dynamic endpoint
+                const endpoint = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? 'http://localhost:5000/api/feedback'
+                    : 'https://fp-backend-phi.vercel.app/api/feedback';
+
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(this.feedbackData)
+                    });
+
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Get a random message based on pain points
+                        const messages = this.feedbackData.pain_points && this.feedbackData.pain_points.length > 0
+                            ? [
+                                "Thanks! FrankPort’s taking notes to improve things for you.",
+                                "You helped FrankPort get better and friendlier. Cheers!",
+                                "We’re listening! FrankPort’s ready to level up thanks to you.",
+                                "Thanks for your honesty. FrankPort will shine brighter!"
+                            ]
+                            : [
+                                "Feedback received and pinned to FrankPort’s heart. Thanks!",
+                                "What you shared will echo in every step FrankPort takes. Thanks!",
+                                "Feedback fades, but yours is part of FrankPort’s DNA. Thanks!"
+                            ];
+
+                        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                        showToast(randomMessage, 'success');
+
+                        this.closeModal();
+                        
+                        // Save to localStorage as completed
+                        localStorage.setItem('portfolio_feedback_completed', JSON.stringify({
+                            ...this.feedbackData,
+                            completed: true,
+                            timestamp: new Date().toISOString()
+                        }));
+                        
+                        setTimeout(() => this.resetForm(), 1000);
+                    } else {
+                        showToast(result.error || 'Failed to send feedback', 'error');
+                    }
+                } catch (error) {
+                    console.error('Feedback submission error:', error);
+                    showToast('Failed to send feedback. Please try again.', 'error');
+                } finally {
+                    // Reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
             }
 
-            // Final save with completion flag
-            this.feedbackData.timestamp = new Date().toISOString();
-            this.feedbackData.completed = true;
-            
-            try {
-                localStorage.setItem('portfolio_feedback_completed', JSON.stringify(this.feedbackData));
-                this.simulateSubmission();
-            } catch (error) {
-                showToast('Failed to save feedback data', 'error');
-            }
+        hasFeedback() {
+            // Check if user has provided any feedback
+            return (
+                this.feedbackData.overall_rating > 0 ||
+                this.feedbackData.rating_comment.trim() !== '' ||
+                Object.keys(this.feedbackData.faq_ratings).length > 0 ||
+                this.feedbackData.suggestion_category !== '' ||
+                this.feedbackData.suggestion_text.trim() !== '' ||
+                this.feedbackData.pain_points.length > 0 ||
+                this.feedbackData.pain_point_details.trim() !== ''
+            );
         }
 
         simulateSubmission() {
@@ -1458,6 +1622,7 @@
 
     // Make it globally accessible for debugging
     window.feedbackSystem = feedbackSystem;
+
 
 
     // Toast and Modal Z-Index Management
