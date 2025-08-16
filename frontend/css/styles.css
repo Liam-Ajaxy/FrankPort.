@@ -4113,9 +4113,6 @@ body.light-mode .theme-toggle.light .theme-icon.moon {
    ACCESSIBILITY ENHANCEMENTS
    =================================== */
 
-.theme-toggle[aria-pressed="true"] {
-  /* Indicate pressed state for screen readers */
-}
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
