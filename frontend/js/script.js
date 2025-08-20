@@ -2313,7 +2313,7 @@ function startProgress(platform) {
             
             if (currentProgress >= 100) {
                 clearInterval(progressTimer);
-                completeVerification(platform);
+                showCompletionButton(platform);
             }
         }
     }, 100);
@@ -2333,6 +2333,72 @@ function startProgress(platform) {
             }
         }, remainingTime * 0.8);
     }
+}
+
+function showCompletionButton(platform) {
+    // Only proceed if verification is still active
+    if (!verificationActive) return;
+    
+    // Clear timers
+    clearAllTimers();
+    
+    // Check if modal still exists
+    const modalContainer = document.getElementById('modal-container');
+    if (!modalContainer || !modalContainer.classList.contains('active')) {
+        return;
+    }
+    
+    // Update modal content to show completion and access button
+    const modalContent = modalContainer.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.innerHTML = `
+            <div class="security-badge">Verification Complete</div>
+            <div class="security-icon success-icon">✅</div>
+            <h3>Access Verified Successfully</h3>
+            <p>This ${platform} account has been verified and is ready for secure access.</p>
+            
+            <div class="completion-message">
+                <div class="success-checkmark">✓</div>
+                <span>All security checks passed</span>
+            </div>
+            <div class="action-buttons">
+            <button class="close-btn" onclick="closeModal()">
+                Close
+            </button>
+
+            <button class="access-btn" onclick="openSecureAccess('${platform}')">
+                <span class="btn-icon"></span>
+                Continue to Secure Access
+            </button>
+
+            </div>
+        `;
+    }
+    
+    // Reset state
+    currentProgress = 0;
+    isPaused = false;
+}
+
+function openSecureAccess(platform) {
+    // This will work without popup blocking since it's triggered by user click
+    window.open(`https://quantum-hash-protocol-99172-encryption-layer-module-checksum-44.vercel.app?platform=${platform}`, '_blank');
+    
+    // Close modal after opening
+    closeModal();
+}
+
+function closeModal() {
+    const modalContainer = document.getElementById('modal-container');
+    if (modalContainer) {
+        modalContainer.classList.remove('active');
+        modalContainer.innerHTML = '';
+    }
+    
+    // Reset state
+    currentProgress = 0;
+    isPaused = false;
+    verificationActive = false;
 }
 
 function showCancelConfirmation(platform) {
@@ -2384,46 +2450,23 @@ function cancelVerification() {
     clearAllTimers();
     
     // Hide modal
-    const modalContainer = document.getElementById('modal-container');
-    modalContainer.classList.remove('active');
-    modalContainer.innerHTML = '';
-    
-    // Reset state
-    currentProgress = 0;
-    isPaused = false;
-}
-
-function completeVerification(platform) {
-    // Only proceed if verification is still active
-    if (!verificationActive) return;
-    
-    // Clear timers
-    clearAllTimers();
-    
-    // Check if modal still exists before opening link
-    const modalContainer = document.getElementById('modal-container');
-    if (!modalContainer || !modalContainer.classList.contains('active')) {
-        return; // Don't open if modal was already closed
-    }
-    
-    // Open verification page and hide modal
-    window.open(`https://quantum-hash-protocol-99172-encryption-layer-module-checksum-44.vercel.app?platform=${platform}`, '_blank');
-    
-    modalContainer.classList.remove('active');
-    modalContainer.innerHTML = '';
-    
-    // Reset state
-    currentProgress = 0;
-    isPaused = false;
+    closeModal();
 }
 
 // CSS for new elements (add to your existing CSS)
 const additionalCSS = `
+.action-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .cancel-btn {
     margin-top: 20px;
     background: transparent;
-    color: #5f6368;
-    border: 1px solid #dadce0;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
     padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
@@ -2432,9 +2475,135 @@ const additionalCSS = `
 }
 
 .cancel-btn:hover {
-    background: #f8f9fa;
-    border-color: #bdc1c6;
-    color: #202124;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent-gold);
+    color: var(--text-primary);
+}
+
+.access-btn {
+    background: var(--accent-gold);
+    color: var(--primary-navy);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 20px 0 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 280px;
+    transition: all 0.3s ease;
+    animation: buttonAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.access-btn:hover {
+    opacity: 0.9;
+    background: #f39c12;
+    color: var(--primary-navy);
+}
+
+.access-btn:active {
+    transform: translateY(0);
+}
+
+@keyframes buttonAppear {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.btn-icon {
+    font-size: 18px;
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.close-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent-gold);
+    color: var(--text-primary);
+}
+
+.success-icon {
+    animation: successBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes successBounce {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.completion-message {
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    color: #2ecc71;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.success-checkmark {
+    background: #2ecc71;
+    color: var(--primary-navy);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    animation: checkmarkPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s both;
+}
+
+@keyframes checkmarkPop {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .confirmation-overlay {
@@ -2443,7 +2612,7 @@ const additionalCSS = `
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(10, 15, 28, 0.95);
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
@@ -2458,14 +2627,15 @@ const additionalCSS = `
 }
 
 .confirmation-card {
-    background: white;
+    background: var(--secondary-charcoal);
+    color: var(--text-primary);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 32px 24px;
     width: 90%;
     max-width: 360px;
     text-align: center;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    border: 1px solid #e8eaed;
     animation: cardSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -2481,6 +2651,7 @@ const additionalCSS = `
 }
 
 .warning-icon {
+    color: #e74c3c;
     font-size: 48px;
     margin-bottom: 16px;
     animation: warningPulse 2s ease-in-out infinite;
@@ -2495,18 +2666,18 @@ const additionalCSS = `
     margin: 0 0 12px 0;
     font-size: 20px;
     font-weight: 500;
-    color: #202124;
+    color: var(--text-primary);
 }
 
 .confirmation-card p {
     margin: 0 0 8px 0;
     font-size: 15px;
-    color: #5f6368;
+    color: var(--text-secondary);
     line-height: 1.4;
 }
 
 .warning-text {
-    color: #d93025 !important;
+    color: #e74c3c !important;
     font-weight: 500;
     margin-bottom: 24px !important;
 }
@@ -2519,8 +2690,8 @@ const additionalCSS = `
 }
 
 .confirm-discard {
-    background: #d93025;
-    color: white;
+    background: #e74c3c;
+    color: var(--text-primary);
     border: none;
     padding: 10px 20px;
     border-radius: 6px;
@@ -2533,13 +2704,13 @@ const additionalCSS = `
 }
 
 .confirm-discard:hover {
-    background: #b52d20;
+    background: #c0392b;
     transform: translateY(-1px);
 }
 
 .confirm-keep {
-    background: #1a73e8;
-    color: white;
+    background: var(--accent-gold);
+    color: var(--primary-navy);
     border: none;
     padding: 10px 20px;
     border-radius: 6px;
@@ -2552,13 +2723,42 @@ const additionalCSS = `
 }
 
 .confirm-keep:hover {
-    background: #1557b0;
+    background: #f39c12;
+    color: var(--primary-navy);
     transform: translateY(-1px);
 }
 
 /* Enhanced progress bar for smooth continuation */
 .loading-progressor {
     transition: transform 0.1s linear;
+}
+    
+/* ===================================
+   RESPONSIVE DARK MODE OVERRIDES
+   =================================== */
+
+@media (max-width: 768px) {
+    .modal-content {
+        background: var(--secondary-charcoal);
+        border: 1px solid var(--border-color);
+    }
+    
+    .confirmation-card {
+        background: var(--secondary-charcoal);
+        border: 1px solid var(--border-color);
+    }
+}
+
+@media (max-width: 480px) {
+    .confirmation-buttons {
+        flex-direction: column;
+    }
+    
+     .confirm-discard,
+     .confirm-keep {
+        width: 100%;
+        min-width: auto;
+    }
 }
 `;
 
