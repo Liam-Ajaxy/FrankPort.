@@ -70,7 +70,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css-obf">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <!-- Custom Cursor -->
@@ -159,18 +159,18 @@
                     </a>
                 </div>
                 <div class="hero-social">
-                    <a href="http://127.0.0.1:5500/verification.html?continue=https%3A%2F%2Fundefined&service=verify&hl=en" class="social-link" target="_blank" rel="noopener">
+                    <button onclick="requestSecureAccess('GitHub')" class="social-link">
                         <i class="fab fa-github"></i>
-                    </a>
-                    <a href="https://linkedin.com/in/yourusername" class="social-link" target="_blank" rel="noopener">
+                    </button>
+                    <button onclick="requestSecureAccess('LinkedIn')" class="social-link">
                         <i class="fab fa-linkedin"></i>
-                    </a>
-                    <a href="https://gitlab.com/Liam-Ajax" class="social-link" target="_blank" rel="noopener">
+                    </button>
+                    <button onclick="requestSecureAccess('GitLab')" class="social-link">
                         <i class="fab fa-gitlab"></i>
-                    </a>
-                    <a href="https://telegram.com/yourusername" class="social-link" target="_blank" rel="noopener">
+                    </button>
+                    <button onclick="requestSecureAccess('Telegram')" class="social-link">
                         <i class="fab fa-telegram"></i>
-                    </a>
+                    </button>
                 </div>
             </div>
             <div class="hero-visual">
@@ -814,18 +814,18 @@
                     <div class="contact-social">
                         <h4>Follow Me</h4>
                         <div class="social-links">
-                            <a href="https://github.com/Liam-Ajaxy" class="social-link" target="_blank" rel="noopener">
+                            <button onclick="requestSecureAccess('GitHub')" class="social-link">
                                 <i class="fab fa-github"></i>
-                            </a>
-                            <a href="https://linkedin.com/in/yourusername" class="social-link" target="_blank" rel="noopener">
+                            </button>
+                            <button onclick="requestSecureAccess('LinkedIn')" class="social-link">
                                 <i class="fab fa-linkedin"></i>
-                            </a>
-                            <a href="https://twitter.com/yourusername" class="social-link" target="_blank" rel="noopener">
+                            </button>
+                            <button onclick="requestSecureAccess('Twitter')" class="social-link">
                                 <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="https://instagram.com/yourusername" class="social-link" target="_blank" rel="noopener">
+                            </button>
+                            <button onclick="requestSecureAccess('Instagram')" class="social-link">
                                 <i class="fab fa-instagram"></i>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -872,7 +872,7 @@
         </div>
     </section>
 
-    
+    <div id="modal-container"></div>
 
 <!-- Floating Feedback Button -->
 <button class="feedback-float-btn pulse" id="feedbackBtn">
@@ -1115,6 +1115,6 @@
     <div id="global-toast-container"></div>
 
     <!-- JavaScript Files -->
-    <script src="js-obf/script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>

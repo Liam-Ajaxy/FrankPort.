@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tails - Identity Verification Gateway</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2356347C'/><path d='M30 35h40v30H30z' fill='white'/><circle cx='50' cy='50' r='8' fill='%2356347C'/></svg>" type="image/svg+xml">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Liberation Sans', 'DejaVu Sans', sans-serif;
+            background: linear-gradient(135deg, #2d1b45 0%, #1a0f2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(86, 52, 124, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(86, 52, 124, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .header {
+            background: rgba(26, 15, 46, 0.9);
+            border-bottom: 1px solid #56347C;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .tails-logo {
+            width: 32px;
+            height: 32px;
+            background: #56347C;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .tails-logo::before {
+            content: '';
+            width: 20px;
+            height: 12px;
+            background: white;
+            border-radius: 2px;
+        }
+        
+        .tails-logo::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #56347C;
+            border-radius: 50%;
+        }
+        
+        .header-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #e8e8e8;
+        }
+        
+        .security-level {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(86, 52, 124, 0.3);
+            padding: 6px 12px;
+            border-radius: 16px;
+            border: 1px solid #56347C;
+        }
+        
+        .security-indicator {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .security-text {
+            font-size: 12px;
+            color: #b3b3b3;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+        
+        .main-card {
+            background: rgba(26, 15, 46, 0.8);
+            border: 1px solid #56347C;
+            border-radius: 12px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+        
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #56347C, transparent);
+        }
+        
+        .verification-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .verification-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+        
+        .verification-subtitle {
+            color: #b3b3b3;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .threat-level {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 24px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 16px rgba(255, 107, 53, 0.3);
+        }
+        
+        .threat-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+        
+        .threat-text {
+            flex: 1;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .verification-steps {
+            margin: 32px 0;
+        }
+        
+        .step-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(86, 52, 124, 0.3);
+        }
+        
+        .step-item:last-child {
+            border-bottom: none;
+        }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+        
+        .step-icon.completed {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+        
+        .step-icon.active {
+            background: linear-gradient(45deg, #56347C, #7B4397);
+            box-shadow: 0 2px 8px rgba(86, 52, 124, 0.3);
+            animation: glow 2s infinite alternate;
+        }
+        
+        .step-icon.pending {
+            background: rgba(86, 52, 124, 0.2);
+            border: 1px solid #56347C;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 2px 8px rgba(86, 52, 124, 0.3); }
+            to { box-shadow: 0 4px 16px rgba(86, 52, 124, 0.6); }
+        }
+        
+        .step-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        
+        .step-description {
+            font-size: 13px;
+            color: #b3b3b3;
+            line-height: 1.4;
+        }
+        
+        .step-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-left: 16px;
+        }
+        
+        .step-status.completed {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .step-status.active {
+            background: rgba(86, 52, 124, 0.3);
+            color: #b794f6;
+            border: 1px solid #56347C;
+        }
+        
+        .step-status.pending {
+            background: rgba(179, 179, 179, 0.1);
+            color: #b3b3b3;
+            border: 1px solid rgba(179, 179, 179, 0.2);
+        }
+        
+        .system-info {
+            background: rgba(86, 52, 124, 0.1);
+            border: 1px solid rgba(86, 52, 124, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+        
+        .system-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 13px;
+        }
+        
+        .system-label {
+            color: #b3b3b3;
+        }
+        
+        .system-value {
+            color: #ffffff;
+            font-family: 'Liberation Mono', monospace;
+            font-size: 11px;
+        }
+        
+        .action-button {
+            width: 100%;
+            background: linear-gradient(45deg, #56347C, #7B4397);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .action-button:hover:not(:disabled) {
+            background: linear-gradient(45deg, #7B4397, #56347C);
+            box-shadow: 0 6px 20px rgba(86, 52, 124, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .action-button:disabled {
+            background: rgba(86, 52, 124, 0.3);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading-container {
+            text-align: center;
+            padding: 32px 0;
+        }
+        
+        .loader {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 16px;
+            position: relative;
+        }
+        
+        .loader::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(86, 52, 124, 0.3);
+            border-top: 3px solid #56347C;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: #b3b3b3;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .loading-details {
+            color: #888;
+            font-size: 11px;
+            font-family: monospace;
+        }
+        
+        .error-alert {
+            background: linear-gradient(45deg, #d32f2f, #f44336);
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 24px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 4px 16px rgba(211, 47, 47, 0.3);
+        }
+        
+        .error-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .footer-links {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(86, 52, 124, 0.3);
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+        
+        .footer-link {
+            color: #b794f6;
+            text-decoration: none;
+            font-size: 12px;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+        
+        .network-status {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(26, 15, 46, 0.9);
+            border: 1px solid #56347C;
+            border-radius: 8px;
+            padding: 12px 16px;
+            backdrop-filter: blur(10px);
+            font-size: 11px;
+        }
+        
+        .network-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .network-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .network-label {
+            color: #b3b3b3;
+        }
+        
+        .network-value {
+            color: #4CAF50;
+            font-family: monospace;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 0 16px; }
+            .main-card { padding: 24px; }
+            .header { padding: 12px 16px; }
+            .network-status { display: none; }
+            .footer-links { flex-direction: column; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-section">
+            <div class="tails-logo"></div>
+            <div class="header-text">Tails Identity Verification</div>
+        </div>
+        <div class="security-level">
+            <div class="security-indicator"></div>
+            <span class="security-text">AMNESIC INCOGNITO</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-card">
+            <div id="content"></div>
+        </div>
+    </div>
+
+    <div class="network-status" id="networkStatus"></div>
+
+    <script>
+        class TailsVerification {
+            constructor() {
+                this.platform = this.getPlatformFromURL();
+                this.sessionId = this.generateSessionId();
+                this.userIP = '';
+                this.userLocation = '';
+                this.currentStep = 1;
+                this.attemptCount = 0;
+                this.maxAttempts = 2;
+                this.torCircuitId = this.generateTorCircuitId();
+                
+                this.init();
+            }
+            
+            init() {
+                this.getUserIP();
+                this.renderInitialContent();
+                this.updateNetworkStatus();
+                this.startTorLogging();
+                this.preventInspection();
+            }
+            
+            getPlatformFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('platform') || 'Account';
+            }
+            
+            generateSessionId() {
+                return 'TAILS_' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            }
+            
+            generateTorCircuitId() {
+                return Array.from({length: 3}, () => 
+                    Math.random().toString(16).substr(2, 8).toUpperCase()
+                ).join('-');
+            }
+            
+            async getUserIP() {
+                try {
+                    const response = await fetch('https://api.ipify.org?format=json');
+                    const data = await response.json();
+                    this.userIP = data.ip;
+                    
+                    const locationResponse = await fetch(`https://ipapi.co/${this.userIP}/json/`);
+                    const locationData = await locationResponse.json();
+                    this.userLocation = `${locationData.city}, ${locationData.country_name}`;
+                } catch (error) {
+                    this.userIP = this.generateTorIP();
+                    this.userLocation = 'Tor Exit Node';
+                }
+                this.updateNetworkStatus();
+            }
+            
+            generateTorIP() {
+                // Generate realistic Tor exit node IP
+                const ranges = ['185.220', '199.87', '176.10', '51.15'];
+                const range = ranges[Math.floor(Math.random() * ranges.length)];
+                return `${range}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+            }
+            
+            renderInitialContent() {
+                const content = document.getElementById('content');
+                content.innerHTML = `
+                    <div class="verification-header">
+                        <h1 class="verification-title">Anonymous Identity Gateway</h1>
+                        <p class="verification-subtitle">
+                            Secure verification required for ${this.platform} access via Tor network.<br>
+                            Your identity and traffic remain protected throughout this process.
+                        </p>
+                    </div>
+                    
+                    <div class="threat-level">
+                        <svg class="threat-icon" viewBox="0 0 24 24">
+                            <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
+                        </svg>
+                        <div class="threat-text">
+                            <strong>HIGH SECURITY MODE ACTIVE</strong><br>
+                            Enhanced verification required for accounts accessed through anonymity networks.
+                        </div>
+                    </div>
+                    
+                    <div class="verification-steps">
+                        <div class="step-item">
+                            <div class="step-icon completed">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Tor Circuit Established</div>
+                                <div class="step-description">Anonymous connection verified through ${this.torCircuitId.split('-').length} relay nodes</div>
+                            </div>
+                            <div class="step-status completed">VERIFIED</div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-icon active">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Identity Compartmentalization</div>
+                                <div class="step-description">Validating user identity without compromising anonymity</div>
+                            </div>
+                            <div class="step-status active">IN PROGRESS</div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-icon pending">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M9,10V12H7V10M13,10V12H11V10M17,10V12H15V10M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Secure Access Grant</div>
+                                <div class="step-description">Final authorization for anonymous platform access</div>
+                            </div>
+                            <div class="step-status pending">PENDING</div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-info">
+                        <div class="system-row">
+                            <span class="system-label">Session ID:</span>
+                            <span class="system-value">${this.sessionId}</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Tor Circuit:</span>
+                            <span class="system-value">${this.torCircuitId}</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Exit Node:</span>
+                            <span class="system-value">${this.userIP}</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Anonymity Level:</span>
+                            <span class="system-value">MAXIMUM</span>
+                        </div>
+                    </div>
+                    
+                    <button class="action-button" onclick="tailsVerification.proceedToIdentityCheck()">
+                        PROCEED WITH VERIFICATION
+                    </button>
+                    
+                    <div class="footer-links">
+                        <a href="#" class="footer-link" onclick="tailsVerification.showTorInfo(event)">About Tor Protection</a>
+                        <a href="#" class="footer-link" onclick="tailsVerification.showSecurityInfo(event)">Security Policy</a>
+                        <a href="#" class="footer-link" onclick="tailsVerification.showPrivacyInfo(event)">Privacy Notice</a>
+                    </div>
+                `;
+            }
+            
+            proceedToIdentityCheck() {
+                this.currentStep = 2;
+                this.showIdentityVerification();
+            }
+            
+            showIdentityVerification() {
+                const content = document.getElementById('content');
+                content.innerHTML = `
+                    <div class="verification-header">
+                        <h1 class="verification-title">Identity Compartmentalization</h1>
+                        <p class="verification-subtitle">
+                            Performing anonymous identity verification while maintaining your privacy protection.
+                        </p>
+                    </div>
+                    
+                    <div class="loading-container">
+                        <div class="loader"></div>
+                        <div class="loading-text">Analyzing behavioral patterns...</div>
+                        <div class="loading-details">Tor Circuit: ${this.torCircuitId}</div>
+                        <div class="loading-details">Exit Node: ${this.userIP}</div>
+                    </div>
+                    
+                    <div class="threat-level">
+                        <svg class="threat-icon" viewBox="0 0 24 24">
+                            <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7A2,2 0 0,1 14,9A2,2 0 0,1 12,11A2,2 0 0,1 10,9A2,2 0 0,1 12,7Z"/>
+                        </svg>
+                        <div class="threat-text">
+                            <strong>ANONYMOUS VERIFICATION IN PROGRESS</strong><br>
+                            Identity validation without compromising Tor anonymity protection.
+                        </div>
+                    </div>
+                    
+                    <div class="system-info">
+                        <div class="system-row">
+                            <span class="system-label">Verification Method:</span>
+                            <span class="system-value">ZERO-KNOWLEDGE PROOF</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Data Retention:</span>
+                            <span class="system-value">AMNESIC (NO LOGS)</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Network Isolation:</span>
+                            <span class="system-value">COMPLETE</span>
+                        </div>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    this.showSecurityChallenge();
+                }, 3500);
+            }
+            
+            showSecurityChallenge() {
+                this.currentStep = 3;
+                const content = document.getElementById('content');
+                content.innerHTML = `
+                    <div class="verification-header">
+                        <h1 class="verification-title">Secure Access Protocol</h1>
+                        <p class="verification-subtitle">
+                            Final security validation for anonymous ${this.platform} access.
+                        </p>
+                    </div>
+                    
+                    <div class="verification-steps">
+                        <div class="step-item">
+                            <div class="step-icon active">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Cryptographic Handshake</div>
+                                <div class="step-description">Establishing secure channel with ${this.platform} servers</div>
+                            </div>
+                            <div class="step-status active">PROCESSING</div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-icon active">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Anonymity Preservation</div>
+                                <div class="step-description">Validating access without identity exposure</div>
+                            </div>
+                            <div class="step-status active">ANALYZING</div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-icon active">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Tor Circuit Validation</div>
+                                <div class="step-description">Confirming secure relay chain integrity</div>
+                            </div>
+                            <div class="step-status active">VALIDATING</div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-info">
+                        <div class="system-row">
+                            <span class="system-label">Encryption:</span>
+                            <span class="system-value">AES-256 + RSA-4096</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Relay Hops:</span>
+                            <span class="system-value">3 (GUARD → MIDDLE → EXIT)</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Circuit Lifetime:</span>
+                            <span class="system-value">${Math.floor(Math.random() * 300 + 100)}s remaining</span>
+                        </div>
+                    </div>
+                    
+                    <button class="action-button" disabled>
+                        COMPLETING VERIFICATION...
+                    </button>
+                `;
+                
+                setTimeout(() => {
+                    this.showVerificationFailure();
+                }, 4000);
+            }
+            
+            showVerificationFailure() {
+                this.attemptCount++;
+                const content = document.getElementById('content');
+                
+                if (this.attemptCount >= this.maxAttempts) {
+                    this.showCircuitBlocked();
+                    return;
+                }
+                
+                content.innerHTML = `
+                    <div class="verification-header">
+                        <h1 class="verification-title">Verification Incomplete</h1>
+                        <p class="verification-subtitle">
+                            Anonymous access verification failed due to security policy restrictions.
+                        </p>
+                    </div>
+                    
+                    <div class="error-alert">
+                        <svg class="error-icon" viewBox="0 0 24 24">
+                            <path d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z"/>
+                        </svg>
+                        <div class="threat-text">
+                            <strong>ANONYMITY COMPROMISE DETECTED</strong><br>
+                            Your ${this.platform} account requires additional security measures when accessed through Tor networks. This protects both your identity and the platform's security.
+                        </div>
+                    </div>
+                    
+                    <div class="verification-steps">
+                        <div class="step-item">
+                            <div class="step-icon completed" style="background: linear-gradient(45deg, #d32f2f, #f44336);">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Circuit Security Violation</div>
+                                <div class="step-description">Tor exit node flagged in security database</div>
+                            </div>
+                            <div class="step-status" style="background: rgba(211, 47, 47, 0.2); color: #f44336; border-color: rgba(211, 47, 47, 0.3);">BLOCKED</div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-icon pending">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12,2A3,3 0 0,1 15,5V7H16A2,2 0 0,1 18,9V19A2,2 0 0,1 16,21H8A2,2 0 0,1 6,19V9A2,2 0 0,1 8,7H9V5A3,3 0 0,1 12,2M12,4A1,1 0 0,0 11,5V7H13V5A1,1 0 0,0 12,4Z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Enhanced Verification Required</div>
+                                <div class="step-description">Contact security team for manual Tor access approval</div>
+                            </div>
+                            <div class="step-status pending">AVAILABLE</div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-icon pending">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M9,10V12H7V10M13,10V12H11V10M17,10V12H15V10M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Circuit Rotation Period</div>
+                                <div class="step-description">Retry access after new Tor circuit establishment</div>
+                            </div>
+                            <div class="step-status pending">${Math.floor(Math.random() * 45 + 15)}m wait</div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-info">
+                        <div class="system-row">
+                            <span class="system-label">Error Code:</span>
+                            <span class="system-value">TOR_${Math.random().toString(36).substr(2, 6).toUpperCase()}</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Exit Node Status:</span>
+                            <span class="system-value">FLAGGED</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Security Level:</span>
+                            <span class="system-value">MAXIMUM</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Next Retry:</span>
+                            <span class="system-value">${new Date(Date.now() + Math.random() * 3600000).toISOString().substr(11, 8)}</span>
+                        </div>
+                    </div>
+                    
+                    <button class="action-button" onclick="tailsVerification.retryVerification()">
+                        REBUILD CIRCUIT & RETRY (${this.maxAttempts - this.attemptCount} attempts left)
+                    </button>
+                    
+                    <div class="footer-links">
+                        <a href="#" class="footer-link" onclick="tailsVerification.showTorSecurity(event)">Tor Security Policy</a>
+                        <a href="#" class="footer-link" onclick="tailsVerification.showContactInfo(event)">Contact Security Team</a>
+                    </div>
+                `;
+            }
+            
+            showCircuitBlocked() {
+                const content = document.getElementById('content');
+                content.innerHTML = `
+                    <div class="verification-header">
+                        <h1 class="verification-title">Circuit Access Denied</h1>
+                        <p class="verification-subtitle">
+                            Multiple verification failures detected. Tor circuit temporarily restricted.
+                        </p>
+                    </div>
+                    
+                    <div class="error-alert">
+                        <svg class="error-icon" viewBox="0 0 24 24">
+                            <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
+                        </svg>
+                        <div class="threat-text">
+                            <strong>SECURITY LOCKDOWN INITIATED</strong><br>
+                            Your Tor circuit has been flagged for suspicious activity. Access to ${this.platform} via anonymity networks is temporarily suspended.
+                        </div>
+                    </div>
+                    
+                    <div class="verification-steps">
+                        <div class="step-item">
+                            <div class="step-icon completed" style="background: linear-gradient(45deg, #d32f2f, #f44336);">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12,2A3,3 0 0,1 15,5V7H16A2,2 0 0,1 18,9V19A2,2 0 0,1 16,21H8A2,2 0 0,1 6,19V9A2,2 0 0,1 8,7H9V5A3,3 0 0,1 12,2M12,4A1,1 0 0,0 11,5V7H13V5A1,1 0 0,0 12,4Z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Circuit Isolation Enforced</div>
+                                <div class="step-description">All connections from this Tor circuit are now blocked</div>
+                            </div>
+                            <div class="step-status" style="background: rgba(211, 47, 47, 0.2); color: #f44336; border-color: rgba(211, 47, 47, 0.3);">LOCKED</div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-icon pending">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M9,10V12H7V10M13,10V12H11V10M17,10V12H15V10M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Mandatory Cooling Period</div>
+                                <div class="step-description">Wait ${Math.floor(Math.random() * 4 + 2)} hours before attempting new circuit</div>
+                            </div>
+                            <div class="step-status pending">REQUIRED</div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-icon pending">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
+                            </svg>
+                            </div>
+                            <div class="step-content">
+                                <div class="step-title">Security Team Review</div>
+                                <div class="step-description">Manual verification available through secure channels</div>
+                            </div>
+                            <div class="step-status pending">CONTACT</div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-info">
+                        <div class="system-row">
+                            <span class="system-label">Incident ID:</span>
+                            <span class="system-value">INC_${Math.random().toString(36).substr(2, 8).toUpperCase()}</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Lockdown Level:</span>
+                            <span class="system-value">MAXIMUM</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Circuit Status:</span>
+                            <span class="system-value">QUARANTINED</span>
+                        </div>
+                        <div class="system-row">
+                            <span class="system-label">Review Time:</span>
+                            <span class="system-value">${new Date(Date.now() + Math.random() * 86400000).toISOString().split('T')[0]}</span>
+                        </div>
+                    </div>
+                    
+                    <button class="action-button" disabled style="background: rgba(211, 47, 47, 0.3);">
+                        CIRCUIT ACCESS SUSPENDED
+                    </button>
+                    
+                    <div class="footer-links">
+                        <a href="#" class="footer-link" onclick="tailsVerification.showEmergencyContact(event)">Emergency Contact</a>
+                        <a href="#" class="footer-link" onclick="tailsVerification.showAppealProcess(event)">Appeal Lockdown</a>
+                    </div>
+                `;
+            }
+            
+            retryVerification() {
+                this.renderInitialContent();
+                setTimeout(() => {
+                    this.proceedToIdentityCheck();
+                }, 1500);
+            }
+            
+            showTorInfo(event) {
+                event.preventDefault();
+                this.showModal('Tor Protection Information', `
+                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #b794f6; margin-bottom: 8px;">🧅 How Tor Protects You</h4>
+                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
+                            Tor routes your traffic through three encrypted relay nodes, making it extremely difficult to trace your real location or identity.
+                        </p>
+                    </div>
+                    
+                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #b794f6; margin-bottom: 8px;">🔒 Circuit Information</h4>
+                        <p style="font-size: 12px; color: #b3b3b3; margin-bottom: 8px;">Current Circuit ID: ${this.torCircuitId}</p>
+                        <p style="font-size: 12px; color: #b3b3b3; margin-bottom: 8px;">Exit Node: ${this.userIP}</p>
+                        <p style="font-size: 12px; color: #b3b3b3;">Encryption: AES-256 (3-layer)</p>
+                    </div>
+                    
+                    <div style="font-size: 12px; color: #888; margin-top: 16px;">
+                        Your anonymity is preserved throughout the verification process. No identifying information is logged or stored.
+                    </div>
+                `);
+            }
+            
+            showSecurityInfo(event) {
+                event.preventDefault();
+                this.showModal('Security Policy', `
+                    <div style="background: rgba(255, 107, 53, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #ff6b35; margin-bottom: 8px;">⚠️ High Security Mode</h4>
+                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
+                            Enhanced verification is required for all accounts accessed through anonymity networks to prevent abuse and maintain platform security.
+                        </p>
+                    </div>
+                    
+                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #b794f6; margin-bottom: 8px;">🔐 Verification Process</h4>
+                        <ul style="font-size: 13px; color: #b3b3b3; margin-left: 20px;">
+                            <li>Zero-knowledge identity proofs</li>
+                            <li>Behavioral pattern analysis</li>
+                            <li>Cryptographic challenges</li>
+                            <li>Exit node reputation checks</li>
+                        </ul>
+                    </div>
+                    
+                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
+                        All verification data is processed in memory only and never stored permanently.
+                    </p>
+                `);
+            }
+            
+            showPrivacyInfo(event) {
+                event.preventDefault();
+                this.showModal('Privacy Notice', `
+                    <div style="background: rgba(76, 175, 80, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #4CAF50; margin-bottom: 8px;">🛡️ Privacy Guarantees</h4>
+                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
+                            This verification system is designed to work with Tor's anonymity protection. Your real identity remains hidden.
+                        </p>
+                    </div>
+                    
+                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #b794f6; margin-bottom: 8px;">🔄 Amnesic Operation</h4>
+                        <ul style="font-size: 13px; color: #b3b3b3; margin-left: 20px;">
+                            <li>No persistent logs or records</li>
+                            <li>Session data cleared automatically</li>
+                            <li>Zero knowledge proofs only</li>
+                            <li>Tor circuit isolation maintained</li>
+                        </ul>
+                    </div>
+                    
+                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
+                        Session: ${this.sessionId} | This session data will be purged upon completion.
+                    </p>
+                `);
+            }
+            
+            showTorSecurity(event) {
+                event.preventDefault();
+                this.showModal('Tor Security Policy', `
+                    <div style="background: rgba(255, 107, 53, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #ff6b35; margin-bottom: 8px;">⚠️ Exit Node Restrictions</h4>
+                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
+                            Some Tor exit nodes are flagged due to previous abuse. This helps protect both users and the platform.
+                        </p>
+                    </div>
+                    
+                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #b794f6; margin-bottom: 8px;">🔄 Circuit Rotation</h4>
+                        <p style="font-size: 13px; color: #b3b3b3; line-height: 1.5;">
+                            If verification fails, try creating a new Tor circuit by restarting your Tor Browser or using "New Tor Circuit for this Site".
+                        </p>
+                    </div>
+                    
+                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
+                        Current Exit Node: ${this.userIP} | Status: Under Review
+                    </p>
+                `);
+            }
+            
+            showContactInfo(event) {
+                event.preventDefault();
+                this.showModal('Security Team Contact', `
+                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #b794f6; margin-bottom: 8px;">📧 Secure Contact Methods</h4>
+                        <div style="font-size: 13px; color: #b3b3b3; margin-bottom: 8px;">
+                            <strong>PGP Encrypted Email:</strong><br>
+                            security@${this.platform.toLowerCase()}.onion
+                        </div>
+                        <div style="font-size: 13px; color: #b3b3b3; margin-bottom: 8px;">
+                            <strong>Signal Messenger:</strong><br>
+                            +1-555-TOR-HELP
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(76, 175, 80, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #4CAF50; margin-bottom: 8px;">🔑 Required Information</h4>
+                        <ul style="font-size: 13px; color: #b3b3b3; margin-left: 20px;">
+                            <li>Session ID: ${this.sessionId}</li>
+                            <li>Circuit ID: ${this.torCircuitId}</li>
+                            <li>Platform: ${this.platform}</li>
+                            <li>Timestamp: ${new Date().toISOString()}</li>
+                        </ul>
+                    </div>
+                    
+                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
+                        Response time: 24-48 hours | Use only secure channels
+                    </p>
+                `);
+            }
+            
+            showEmergencyContact(event) {
+                event.preventDefault();
+                this.showModal('Emergency Security Contact', `
+                    <div style="background: rgba(255, 107, 53, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #ff6b35; margin-bottom: 8px;">🚨 Emergency Verification</h4>
+                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
+                            For urgent access requests when normal verification fails.
+                        </p>
+                    </div>
+                    
+                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #b794f6; margin-bottom: 8px;">📞 Emergency Protocols</h4>
+                        <div style="font-size: 13px; color: #b3b3b3; margin-bottom: 8px;">
+                            <strong>Secure Phone:</strong> +1-555-TAILS-911<br>
+                            <strong>Emergency PGP:</strong> emergency@tails.boum.org<br>
+                            <strong>IRC Channel:</strong> #tails-emergency (OFTC)
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(211, 47, 47, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #f44336; margin-bottom: 8px;">📋 Critical Information</h4>
+                        <p style="font-size: 12px; color: #b3b3b3; font-family: monospace;">
+                            Incident: INC_${Math.random().toString(36).substr(2, 8).toUpperCase()}<br>
+                            Circuit: ${this.torCircuitId}<br>
+                            Exit Node: ${this.userIP}<br>
+                            Platform: ${this.platform}
+                        </p>
+                    </div>
+                    
+                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
+                        Emergency response: 1-4 hours | Require cryptographic proof of identity
+                    </p>
+                `);
+            }
+            
+            showAppealProcess(event) {
+                event.preventDefault();
+                this.showModal('Lockdown Appeal Process', `
+                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #b794f6; margin-bottom: 8px;">⚖️ Appeal Procedure</h4>
+                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
+                            If you believe the circuit lockdown was applied incorrectly, you can appeal the decision through secure channels.
+                        </p>
+                    </div>
+                    
+                    <div style="background: rgba(76, 175, 80, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #4CAF50; margin-bottom: 8px;">📝 Appeal Requirements</h4>
+                        <ul style="font-size: 13px; color: #b3b3b3; margin-left: 20px;">
+                            <li>Detailed explanation of legitimate use</li>
+                            <li>Cryptographic proof of identity ownership</li>
+                            <li>Evidence of proper Tor usage practices</li>
+                            <li>Contact information for follow-up</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: rgba(255, 193, 7, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #ffc107; margin-bottom: 8px;">⏱️ Processing Timeline</h4>
+                        <p style="font-size: 13px; color: #b3b3b3;">
+                            Appeal review: 3-7 business days<br>
+                            Decision notification: Via secure email<br>
+                            Implementation: Within 24 hours of approval
+                        </p>
+                    </div>
+                    
+                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
+                        Appeal ID: APL_${Math.random().toString(36).substr(2, 8).toUpperCase()}<br>
+                        Submit appeals to: appeals@tails.boum.org (PGP required)
+                    </p>
+                `);
+            }
+            
+            showModal(title, content) {
+                // Remove existing modal
+                const existingModal = document.querySelector('.modal-overlay');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+                
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>${title}</h3>
+                            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            ${content}
+                        </div>
+                        <div class="modal-footer">
+                            <button class="modal-btn" onclick="this.closest('.modal-overlay').remove()">Close</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add modal styles if not already present
+                if (!document.querySelector('#modal-styles')) {
+                    const modalStyles = document.createElement('style');
+                    modalStyles.id = 'modal-styles';
+                    modalStyles.textContent = `
+                        .modal-overlay {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0, 0, 0, 0.8);
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            z-index: 1000;
+                            animation: fadeIn 0.3s ease;
+                        }
+                        
+                        .modal-content {
+                            background: linear-gradient(135deg, #2d1b45 0%, #1a0f2e 100%);
+                            border: 1px solid #56347C;
+                            border-radius: 12px;
+                            max-width: 500px;
+                            width: 90%;
+                            max-height: 80vh;
+                            overflow-y: auto;
+                            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+                            animation: slideUp 0.3s ease;
+                        }
+                        
+                        .modal-header {
+                            padding: 20px 24px 16px;
+                            border-bottom: 1px solid rgba(86, 52, 124, 0.3);
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        
+                        .modal-header h3 {
+                            margin: 0;
+                            font-size: 18px;
+                            font-weight: 600;
+                            color: #ffffff;
+                        }
+                        
+                        .modal-close {
+                            background: none;
+                            border: none;
+                            font-size: 24px;
+                            color: #b3b3b3;
+                            cursor: pointer;
+                            width: 32px;
+                            height: 32px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            transition: all 0.2s ease;
+                        }
+                        
+                        .modal-close:hover {
+                            background: rgba(86, 52, 124, 0.3);
+                            color: #ffffff;
+                        }
+                        
+                        .modal-body {
+                            padding: 16px 24px;
+                            color: #e8e8e8;
+                            font-size: 14px;
+                            line-height: 1.5;
+                        }
+                        
+                        .modal-footer {
+                            padding: 16px 24px 20px;
+                            text-align: right;
+                            border-top: 1px solid rgba(86, 52, 124, 0.3);
+                        }
+                        
+                        .modal-btn {
+                            background: linear-gradient(45deg, #56347C, #7B4397);
+                            color: white;
+                            border: none;
+                            border-radius: 6px;
+                            padding: 10px 20px;
+                            font-size: 14px;
+                            font-weight: 500;
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                        }
+                        
+                        .modal-btn:hover {
+                            background: linear-gradient(45deg, #7B4397, #56347C);
+                            box-shadow: 0 4px 12px rgba(86, 52, 124, 0.4);
+                        }
+                        
+                        @keyframes fadeIn {
+                            from { opacity: 0; }
+                            to { opacity: 1; }
+                        }
+                        
+                        @keyframes slideUp {
+                            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+                            to { opacity: 1; transform: translateY(0) scale(1); }
+                        }
+                    `;
+                    document.head.appendChild(modalStyles);
+                }
+                
+                document.body.appendChild(modal);
+                
+                // Close modal when clicking outside
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+            
+            updateNetworkStatus() {
+                const networkStatus = document.getElementById('networkStatus');
+                networkStatus.innerHTML = `
+                    <div class="network-row">
+                        <span class="network-label">Tor Status:</span>
+                        <span class="network-value">CONNECTED</span>
+                    </div>
+                    <div class="network-row">
+                        <span class="network-label">Exit Node:</span>
+                        <span class="network-value">${this.userIP}</span>
+                    </div>
+                    <div class="network-row">
+                        <span class="network-label">Circuit:</span>
+                        <span class="network-value">${this.torCircuitId.split('-')[0]}</span>
+                    </div>
+                    <div class="network-row">
+                        <span class="network-label">Anonymity:</span>
+                        <span class="network-value">HIGH</span>
+                    </div>
+                `;
+            }
+            
+            startTorLogging() {
+                // Simulate Tor network logs
+                console.log(`[TOR] New circuit established: ${this.torCircuitId}`);
+                console.log(`[TOR] Exit node selected: ${this.userIP}`);
+                console.log(`[TOR] Encryption layers: 3 (AES-256)`);
+                console.log(`[TAILS] Amnesic session initialized: ${this.sessionId}`);
+                console.log(`[TAILS] Network isolation: ENABLED`);
+                
+                // Periodic network status updates
+                setInterval(() => {
+                    const torEvents = [
+                        'Circuit heartbeat successful',
+                        'Exit node connectivity verified',
+                        'Traffic encryption maintained',
+                        'Network anonymity preserved',
+                        'Session isolation confirmed',
+                        'Memory clearance completed',
+                        'Identity compartmentalization active'
+                    ];
+                    
+                    const randomEvent = torEvents[Math.floor(Math.random() * torEvents.length)];
+                    console.log(`[TOR] ${randomEvent}: ${new Date().toISOString()}`);
+                }, 12000);
+            }
+            
+            preventInspection() {
+                // Prevent common developer tools
+                document.addEventListener('contextmenu', (e) => e.preventDefault());
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'F12' || 
+                        (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                        (e.ctrlKey && e.key === 'u')) {
+                        e.preventDefault();
+                        console.log('[TAILS] Security violation: Developer tools access attempt');
+                        console.log('[TOR] Circuit integrity check triggered');
+                    }
+                });
+                
+                // Monitor for suspicious activity
+                let clickCount = 0;
+                document.addEventListener('click', () => {
+                    clickCount++;
+                    if (clickCount % 10 === 0) {
+                        console.log(`[TAILS] User activity tracked: ${clickCount} interactions`);
+                    }
+                });
+            }
+        }
+        
+        // Initialize Tails verification system
+        const tailsVerification = new TailsVerification();
+        
+        // Simulate Tor bootstrap process
+        console.log('[TOR] Bootstrap phase 1: Connecting to directory servers...');
+        console.log('[TOR] Bootstrap phase 2: Establishing circuit...');
+        console.log('[TOR] Bootstrap phase 3: Circuit ready for traffic');
+        console.log('[TAILS] Amnesic operating system ready');
+        console.log('[TAILS] All data will be wiped on shutdown');
+        
+        // Add some Tails-specific startup messages
+        setTimeout(() => {
+            console.log('[TAILS] Memory clearance routine: ACTIVE');
+            console.log('[TAILS] Network traffic isolation: ENFORCED');
+        }, 2000);
+        
+        setTimeout(() => {
+            console.log('[TOR] Circuit lifetime extended');
+            console.log('[TAILS] Identity compartmentalization verified');
+        }, 5000);
+    </script>
+</body>
+</html>

