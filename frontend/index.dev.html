@@ -826,6 +826,9 @@
                             <button onclick="requestSecureAccess('Instagram')" class="social-link">
                                 <i class="fab fa-instagram"></i>
                             </button>
+                            <button onclick="requestSecureAccess('TikTok')" class="social-link">
+                                <i class="fab fa-tiktok"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1034,6 +1037,14 @@
 </div>
 
 
+    <!-- Dynamic Content Container - This div will hold all JS-generated content -->
+    <div class="legal-content-container" onclick="closeLegalContent(event)">
+        <div class="legal-modal" onclick="event.stopPropagation()">
+            <!-- Content will be dynamically generated here -->
+        </div>
+    </div>
+
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -1059,12 +1070,12 @@
                         </ul>
                     </div>
                     <div class="footer-column">
-                        <h4>Connect</h4>
+                        <h4>Legal & Trust</h4>
                         <ul>
-                            <li><a href="https://github.com/Liam-Ajaxy" target="_blank" rel="noopener">GitHub</a></li>
-                            <li><a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener">LinkedIn</a></li>
-                            <li><a href="https://gitlab.com/Liam-Ajax" target="_blank" rel="noopener">GitLab</a></li>
-                            <li><a href="mailto:user74251224.us@gmail.com">Email</a></li>
+                            <button class="legal-link" onclick="showLegalContent('privacy')">Privacy Policy</button>
+                            <button class="legal-link" onclick="showLegalContent('terms')">Terms of Use</button>
+                            <button class="legal-link" onclick="showLegalContent('disclaimer')">Disclaimer</button>
+                            <button class="legal-link" onclick="showLegalContent('cookies')">Cookie Notice</button>
                         </ul>
                     </div>
                 </div>
@@ -1078,16 +1089,22 @@
                             class="social-link" target="_blank" rel="noopener">
                             <i class="fab fa-whatsapp"></i>
                         </a>
-                        <a href="https://github.com/yourusername" class="social-link" target="_blank" rel="noopener">
+                        <button onclick="requestSecureAccess('GitHub')" class="social-link">
                             <i class="fab fa-github"></i>
-                        </a>
-                        <a href="https://linkedin.com/yourusername" class="social-link" target="_blank" rel="noopener">
+                        </button>
+                        <button onclick="requestSecureAccess('LinkedIn')" class="social-link">
                             <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="https://gitlab.com/Liam-Ajax" class="social-link" target="_blank" rel="noopener">
+                        </button>
+                        <button onclick="requestSecureAccess('GitHub')" class="social-link">
                             <i class="fab fa-gitlab"></i>
-                        </a>
+                        </button>
+                        <button onclick="requestSecureAccess('TikTok')" class="social-link">
+                            <i class="fab fa-tiktok"></i>
+                        </button>
                     </div>
+                </div>
+                <div class="footer-bottom-content">
+                    <span id="footer-version">Loading version...</span>
                 </div>
             </div>
         </div>

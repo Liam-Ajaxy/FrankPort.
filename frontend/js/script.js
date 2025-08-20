@@ -2766,3 +2766,351 @@ const additionalCSS = `
 const style = document.createElement('style');
 style.textContent = additionalCSS;
 document.head.appendChild(style);
+
+
+
+// Legal Content Data
+const legalData = {
+    privacy: {
+        title: 'Privacy Policy',
+        isLong: true,
+        content: {
+            intro: 'This Privacy Policy describes how we collect, use, and protect your information when you use our service.',
+            sections: [
+                {
+                    title: 'Information We Collect',
+                    content: 'We collect information you provide directly to us, such as when you create an account, use our services, or contact us for support.',
+                    highlight: 'This is a demonstration/educational project. No actual personal data is collected or stored.'
+                },
+                {
+                    title: 'Types of Information',
+                    list: [
+                        'Account information (username, email)',
+                        'Usage data and analytics',
+                        'Device information and IP addresses',
+                        'Cookies and similar technologies'
+                    ]
+                },
+                {
+                    title: 'How We Use Information',
+                    content: 'We use the information we collect to:',
+                    list: [
+                        'Provide and improve our services',
+                        'Communicate with you',
+                        'Ensure security and prevent fraud',
+                        'Comply with legal requirements'
+                    ]
+                },
+                {
+                    title: 'Information Sharing',
+                    content: 'We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except as described in this policy.'
+                },
+                {
+                    title: 'Data Security',
+                    content: 'We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.'
+                },
+                {
+                    title: 'Your Rights',
+                    content: 'You have the right to:',
+                    list: [
+                        'Access your personal information',
+                        'Correct inaccurate data',
+                        'Request deletion of your data',
+                        'Opt-out of certain communications'
+                    ]
+                },
+                {
+                    title: 'Changes to This Policy',
+                    content: 'We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page.'
+                }
+            ],
+            contact: {
+                title: 'Contact Us',
+                content: 'If you have questions about this Privacy Policy, contact us at: privacy@example.com'
+            }
+        }
+    },
+    terms: {
+        title: 'Terms of Use',
+        isLong: true,
+        content: {
+            intro: 'These Terms of Use govern your access to and use of our website and services.',
+            highlight: 'Demonstration Project: These terms apply to this educational/demonstration website.',
+            sections: [
+                {
+                    title: 'Acceptance of Terms',
+                    content: 'By accessing and using this website, you accept and agree to be bound by the terms and provision of this agreement.'
+                },
+                {
+                    title: 'Use License',
+                    content: 'Permission is granted to temporarily download one copy of the materials on this website for personal, non-commercial transitory viewing only.'
+                },
+                {
+                    title: 'Disclaimer',
+                    content: 'The materials on this website are provided on an "as is" basis. We make no warranties, expressed or implied, and hereby disclaim all other warranties.'
+                },
+                {
+                    title: 'Limitations',
+                    content: 'In no event shall our company or its suppliers be liable for any damages arising out of the use or inability to use the materials on this website.'
+                },
+                {
+                    title: 'Privacy',
+                    content: 'Your privacy is important to us. Please review our Privacy Policy, which also governs your use of the website.'
+                },
+                {
+                    title: 'User Conduct',
+                    content: 'You agree not to use the service to:',
+                    list: [
+                        'Violate any applicable laws or regulations',
+                        'Infringe on intellectual property rights',
+                        'Transmit harmful or malicious code',
+                        'Engage in unauthorized access attempts'
+                    ]
+                },
+                {
+                    title: 'Modifications',
+                    content: 'We may revise these terms of service at any time without notice. By using this website, you agree to be bound by the then current version of these terms.'
+                }
+            ],
+            contact: {
+                title: 'Contact Us',
+                content: 'Questions about the Terms of Use should be sent to: legal@example.com'
+            }
+        }
+    },
+    disclaimer: {
+        title: 'Disclaimer',
+        isLong: false,
+        content: {
+            highlight: 'Educational & Demonstration Purposes Only - This website and all its content are created solely for educational and demonstration purposes.',
+            sections: [
+                {
+                    title: 'Purpose',
+                    content: 'This project serves as a portfolio demonstration and educational resource to showcase web development skills, security awareness concepts, and user interface design.'
+                },
+                {
+                    title: 'No Real Services',
+                    content: 'No actual services, products, or business operations are conducted through this website. All content is simulated for demonstration purposes only.'
+                },
+                {
+                    title: 'No Data Collection',
+                    content: 'While this demo may simulate data collection processes, no actual personal information is collected, stored, or processed.'
+                },
+                {
+                    title: 'Educational Use',
+                    content: 'This content may be used for educational purposes, learning, and professional development demonstrations.'
+                }
+            ],
+            contact: {
+                title: 'Questions?',
+                content: 'For questions about this disclaimer: demo@example.com'
+            }
+        }
+    },
+    cookies: {
+        title: 'Cookie Notice',
+        isLong: true,
+        content: {
+            intro: 'This notice explains how we use cookies and similar technologies on our website.',
+            highlight: 'EU Compliance: This notice complies with GDPR and ePrivacy regulations.',
+            sections: [
+                {
+                    title: 'What Are Cookies',
+                    content: 'Cookies are small text files that are placed on your computer or mobile device when you visit a website. They are widely used to make websites work more efficiently and provide information to site owners.'
+                },
+                {
+                    title: 'Types of Cookies We Use',
+                    subsections: [
+                        {
+                            title: 'Essential Cookies',
+                            content: 'These cookies are necessary for the website to function properly. They enable basic functions like page navigation and access to secure areas.'
+                        },
+                        {
+                            title: 'Performance Cookies',
+                            content: 'These cookies collect information about how visitors use our website, such as which pages are visited most often. This data helps us improve our website.'
+                        },
+                        {
+                            title: 'Functionality Cookies',
+                            content: 'These cookies allow the website to remember choices you make and provide enhanced, personalized features.'
+                        },
+                        {
+                            title: 'Targeting Cookies',
+                            content: 'These cookies are used to deliver advertisements more relevant to you and your interests.'
+                        }
+                    ]
+                },
+                {
+                    title: 'Managing Cookies',
+                    content: 'You can control and manage cookies in various ways:',
+                    list: [
+                        'Browser settings - most browsers allow you to refuse cookies',
+                        'Third-party tools for managing cookies',
+                        'Opt-out links provided by advertising networks'
+                    ]
+                },
+                {
+                    title: 'Your Consent',
+                    content: 'By continuing to use our website, you consent to our use of cookies in accordance with this notice.'
+                },
+                {
+                    title: 'Changes to This Notice',
+                    content: 'We may update this Cookie Notice from time to time. Please check back regularly for updates.'
+                }
+            ],
+            contact: {
+                title: 'Contact Us',
+                content: 'For questions about cookies: cookies@example.com'
+            }
+        }
+    }
+};
+
+// Generate HTML content dynamically
+function generateContent(data) {
+    let html = `
+        <div class="modal-header">
+            <button class="back-button" onclick="closeLegalContent()">←</button>
+            <h2 class="modal-title">${data.title}</h2>
+            <button class="close-button" onclick="closeLegalContent()">×</button>
+        </div>
+        <div class="modal-body">
+            <h2>${data.title}</h2>
+            <p class="last-updated">Last Updated: January 2025</p>
+    `;
+
+    if (data.content.intro) {
+        html += `<p>${data.content.intro}</p>`;
+    }
+
+    if (data.content.highlight) {
+        html += `
+            <div class="highlight-box">
+                <p><strong>${data.content.highlight.split(' - ')[0]}:</strong> ${data.content.highlight.split(' - ')[1] || data.content.highlight}</p>
+            </div>
+        `;
+    }
+
+    if (data.content.sections) {
+        data.content.sections.forEach(section => {
+            html += `<h3>${section.title}</h3>`;
+            if (section.content) {
+                html += `<p>${section.content}</p>`;
+            }
+            if (section.highlight) {
+                html += `
+                    <div class="highlight-box">
+                        <p><strong>Important:</strong> ${section.highlight}</p>
+                    </div>
+                `;
+            }
+            if (section.list) {
+                html += '<ul>';
+                section.list.forEach(item => {
+                    html += `<li>${item}</li>`;
+                });
+                html += '</ul>';
+            }
+            if (section.subsections) {
+                section.subsections.forEach(subsection => {
+                    html += `<h4>${subsection.title}</h4>`;
+                    html += `<p>${subsection.content}</p>`;
+                });
+            }
+        });
+    }
+
+    if (data.content.contact) {
+        html += `
+            <div class="contact-info-modal">
+                <h4>${data.content.contact.title}</h4>
+                <p>${data.content.contact.content}</p>
+            </div>
+        `;
+    }
+
+    html += '</div>';
+    return html;
+}
+
+// Show legal content
+function showLegalContent(type) {
+    const container = document.querySelector('.legal-content-container');
+    const modal = document.querySelector('.legal-modal');
+    const data = legalData[type];
+
+    if (!data) return;
+
+    // Generate dynamic content
+    modal.innerHTML = generateContent(data);
+
+    // Check if should be fullscreen on mobile
+    if (data.isLong && window.innerWidth <= 768) {
+        modal.classList.add('fullscreen');
+    } else {
+        modal.classList.remove('fullscreen');
+    }
+
+    // Show modal
+    container.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close legal content
+function closeLegalContent(event) {
+    if (event && event.target !== event.currentTarget) return;
+    
+    const container = document.querySelector('.legal-content-container');
+    const modal = document.querySelector('.legal-modal');
+    
+    container.classList.remove('active');
+    document.body.style.overflow = '';
+    
+    // Clean up after transition
+    setTimeout(() => {
+        modal.classList.remove('fullscreen');
+        modal.innerHTML = '';
+    }, 300);
+}
+
+// Handle escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeLegalContent();
+    }
+});
+
+// Handle window resize
+window.addEventListener('resize', function() {
+    const container = document.querySelector('.legal-content-container');
+    const modal = document.querySelector('.legal-modal');
+    
+    if (container.classList.contains('active')) {
+        const title = modal.querySelector('.modal-title');
+        if (title) {
+            const type = Object.keys(legalData).find(key => 
+                legalData[key].title === title.textContent
+            );
+            
+            if (type && legalData[type].isLong && window.innerWidth <= 768) {
+                modal.classList.add('fullscreen');
+            } else {
+                modal.classList.remove('fullscreen');
+            }
+        }
+    }
+});
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("version.json")
+    .then(res => {
+      if (!res.ok) throw new Error("version.json not found");
+      return res.json();
+    })
+    .then(v => {
+      const versionText = `v${v.major}.${v.minor}.${v.patch} • build ${v.build} • ${v.commit} • ${new Date(v.releaseDate).toLocaleString()}`;
+      document.getElementById("footer-version").textContent = versionText;
+    })
+    .catch(err => {
+      console.warn("Version load failed:", err);
+      document.getElementById("footer-version").textContent = "version unavailable";
+    });
+});
