@@ -71,6 +71,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <!-- HTML: swappable stylesheet -->
+    <link id="theme-stylesheet" rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <!-- Custom Cursor -->
@@ -878,7 +880,7 @@
     <div id="modal-container"></div>
 
 <!-- Floating Feedback Button -->
-<button class="feedback-float-btn pulse" id="feedbackBtn">
+<button class="feedback-float-btn pulse" id="feedbackBtn"  title="Share your feedback">
     <i class="fas fa-comment-dots"></i>
 </button>
 
@@ -1072,33 +1074,41 @@
                     <div class="footer-column">
                         <h4>Legal & Trust</h4>
                         <ul>
-                            <button class="legal-link" onclick="showLegalContent('privacy')">Privacy Policy</button>
-                            <button class="legal-link" onclick="showLegalContent('terms')">Terms of Use</button>
-                            <button class="legal-link" onclick="showLegalContent('disclaimer')">Disclaimer</button>
-                            <button class="legal-link" onclick="showLegalContent('cookies')">Cookie Notice</button>
+                            <li><button class="legal-link" onclick="showLegalContent('privacy')" aria-label="Privacy Policy">Privacy Policy</button></li>
+                            <li><button class="legal-link" onclick="showLegalContent('terms')" aria-label="Terms of Use">Terms of Use</button></li>
+                            <li><button class="legal-link" onclick="showLegalContent('disclaimer')" aria-label="Disclaimer">Disclaimer</button></li>
+                            <li><button class="legal-link" onclick="showLegalContent('cookies')" aria-label="Cookie Notice">Cookie Notice</button></li>
                         </ul>
                     </div>
+                <div class="footer-column">
+                <h4>Accessibility</h4>
+                <ul>
+                    <li><button class="theme-button" onclick="themeController.setTheme('dark')" aria-label="Dark Mode">Dark Mode</button></li>
+                    <li><button class="theme-button" onclick="themeController.setTheme('dark-blue')" aria-label="Dark Blue Mode">Dark Blue Mode</button></li>
+                    <li><button class="theme-button" onclick="themeController.setTheme('light')" aria-label="Light Mode">Light Mode</button></li>
+                </ul>
+                </div>
                 </div>
             </div>
             <div class="footer-bottom">
                 <div class="footer-divider"></div>
                 <div class="footer-bottom-content">
-                    <p>&copy; 2024 Frank Portfolio. All rights reserved.</p>
-                    <div class="footer-social">
-                        <a href="https://wa.me/+250794359825?text=Hi%20Frank%2C%20I%20just%20checked%20out%20your%20portfolio%20and%20I%27m%20interested%20in%20chatting%20about%20working%20together."
-                            class="social-link" target="_blank" rel="noopener">
+                    <p>&copy; <span id="footer-year"></span> Frank Portfolio. All rights reserved.</p>
+                   <div class="footer-social">
+                        <a href="https://wa.me/+250794359825?text=Hi%20Frank%2C%20I%20just%20checked%20out%20your%20portfolio%20and%20I%27m%20interested%20in%20chatting%20about%20working%20together." 
+                            class="social-link" target="_blank" rel="noopener" aria-label="WhatsApp">
                             <i class="fab fa-whatsapp"></i>
                         </a>
-                        <button onclick="requestSecureAccess('GitHub')" class="social-link">
+                        <button onclick="requestSecureAccess('GitHub')" class="social-link" aria-label="GitHub">
                             <i class="fab fa-github"></i>
                         </button>
-                        <button onclick="requestSecureAccess('LinkedIn')" class="social-link">
+                        <button onclick="requestSecureAccess('LinkedIn')" class="social-link" aria-label="LinkedIn">
                             <i class="fab fa-linkedin"></i>
                         </button>
-                        <button onclick="requestSecureAccess('GitHub')" class="social-link">
+                        <button onclick="requestSecureAccess('GitLab')" class="social-link" aria-label="GitLab">
                             <i class="fab fa-gitlab"></i>
                         </button>
-                        <button onclick="requestSecureAccess('TikTok')" class="social-link">
+                        <button onclick="requestSecureAccess('TikTok')" class="social-link" aria-label="TikTok">
                             <i class="fab fa-tiktok"></i>
                         </button>
                     </div>

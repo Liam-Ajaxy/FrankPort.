@@ -480,8 +480,8 @@
             ctx.clearRect(0, 0, width, height);
             
             // Set styles
-            ctx.fillStyle = '#f4d03f';
-            ctx.strokeStyle = '#f4d03f';
+            ctx.fillStyle = '#ffa200';
+            ctx.strokeStyle = '#ffa200';
             ctx.lineWidth = 2;
             
             // Draw bars
@@ -503,7 +503,7 @@
                 ctx.fillText(item.day, x + barWidth / 2, height - 5);
                 
                 // Reset color
-                ctx.fillStyle = '#f4d03f';
+                ctx.fillStyle = '#ffa200';
             });
         }
     };
@@ -886,11 +886,11 @@
     (function DevtoolsHardening(){
         // Random friendly messages
         const blockedShortcutMessages = [
-            "Hey friend! Those shortcuts are resting 😴 but everything else in FrankPort is all yours to explore!",
-            "Oops! That shortcut is taking a nap 🛌 enjoy exploring FrankPort instead!",
-            "Whoa! Shortcuts are off-limits here 😎 FrankPort welcomes you to roam freely!",
-            "Friendly heads-up! 🔒 Those keys are locked, but the rest is all yours!",
-            "Sneaky keys detected! 😁 But FrankPort has plenty to explore without them."
+        "Sorry, shortcuts are disabled.",
+        "This key is locked for security reason.",
+        "Shortcuts aren’t available here.",
+        "Keys are blocked for security reasons.",
+        "That action is disabled in FrankPort."
         ];
 
         const TOAST_TYPE = 'warning';
@@ -931,7 +931,7 @@
             const s = keySig(e);
             for (const match of blockers) {
                 if (match(s)) {
-                    try { showToast(getRandomMessage(), TOAST_TYPE, 4000); } catch(_) {}
+                    try { showToast(getRandomMessage(), 'error', 4000); } catch(_) {}
                     killEvent(e);
                     return false;
                 }
@@ -946,7 +946,7 @@
         };
 
         const handleContextMenu = (e) => {
-            try { showToast(getRandomMessage(), TOAST_TYPE, 6000); } catch(_) {}
+            try { showToast(getRandomMessage(), 'warning', 6000); } catch(_) {}
             killEvent(e);
         };
 
@@ -989,16 +989,17 @@
         // Welcome Toast =========================
         // =======================================
         const welcomeMessages = [
-            "Hey there! Welcome to FrankPort. Dive in and explore!",
-            "Glad you’re here! Discover what FrankPort has to offer.",
-            "Hello! Take a peek around and enjoy the experience.",
-            "Hey! FrankPort’s doors are open. Explore freely!",
-            "Welcome aboard! Let FrankPort show you something cool.",
-            "Hi there! Enjoy your journey through FrankPort.",
-            "👋 Hello! Dive into FrankPort and see what awaits.",
-            "Hey! Explore, learn, and enjoy every corner of FrankPort.",
-            "Welcome! FrankPort is glad to have you here. Enjoy your stay!"
+        "Hey there! Welcome to FrankPort.",
+        "Glad you’re here! Discover FrankPort.",
+        "Hello! Enjoy exploring FrankPort.",
+        "Hey! FrankPort is open for you.",
+        "Welcome aboard! Check out FrankPort.",
+        "Hi! Enjoy your journey here.",
+        "Hello! Dive into FrankPort.",
+        "Hey! Explore and enjoy FrankPort.",
+        "Welcome! Glad to have you here."
         ];
+
         const msg = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
         setTimeout(() => {
             showToast(msg, 'info', 6000);
@@ -1499,17 +1500,18 @@
                     if (result.success) {
                         // Get a random message based on pain points
                         const messages = this.feedbackData.pain_points && this.feedbackData.pain_points.length > 0
-                            ? [
-                                "Thanks! FrankPort’s taking notes to improve things for you.",
-                                "You helped FrankPort get better and friendlier. Cheers!",
-                                "We’re listening! FrankPort’s ready to level up thanks to you.",
-                                "Thanks for your honesty. FrankPort will shine brighter!"
-                            ]
-                            : [
-                                "Feedback received and pinned to FrankPort’s heart. Thanks!",
-                                "What you shared will echo in every step FrankPort takes. Thanks!",
-                                "Feedback fades, but yours is part of FrankPort’s DNA. Thanks!"
-                            ];
+                        ? [
+                            "Feedback sent successfully. Thanks!",
+                            "Your input was sent and logged.",
+                            "Sent and received! Thanks for pointing it out.",
+                            "Success! your feedback is now with us."
+                        ]
+                        : [
+                            "Shared successfully! Thank you.",
+                            "Your note was sent and received.",
+                            "Sent. your input is on record.",
+                            "Success! Feedback delivered."
+                        ];
 
                         const randomMessage = messages[Math.floor(Math.random() * messages.length)];
                         showToast(randomMessage, 'success');
@@ -1655,6 +1657,7 @@
         this.body = document.body;
         this.themeKey = 'portfolio-theme';
         this.currentTheme = this.getStoredTheme() || this.getSystemTheme();
+        this.stylesheet = document.getElementById('theme-stylesheet');
         
         this.init();
     }
@@ -1712,11 +1715,29 @@
         // Store preference
         this.storeTheme(theme);
         
-        // Update current theme
-        this.currentTheme = theme;
-        
         // Dispatch custom event for other components
         this.dispatchThemeChangeEvent(theme);
+
+         let cssPath;
+
+        switch(theme) {
+            case 'dark':
+            case 'light':
+                cssPath = 'css/styles.css'; // default main CSS
+                break;
+            case 'dark-blue':
+                cssPath = 'css/dark-blue.css'; // fully standalone
+                break;
+            default:
+                cssPath = 'css/styles.css';
+        }
+
+        if (this.stylesheet) this.stylesheet.setAttribute('href', cssPath);
+
+        localStorage.setItem('portfolio-theme', theme);
+
+        // Update current theme
+        this.currentTheme = theme;
         
         // Show theme change toast
         this.showThemeChangeToast(theme);
@@ -1855,8 +1876,8 @@
 
     // Public methods for external usage
     setTheme(theme) {
-        if (theme === 'light' || theme === 'dark') {
-        this.applyTheme(theme);
+        if (['light', 'dark', 'dark-blue'].includes(theme)) {
+            this.applyTheme(theme);
         }
     }
 
@@ -2086,7 +2107,7 @@
         textSecondary: isLight ? '#5a6c7d' : '#b8bcc8',
         textMuted: isLight ? '#8b9dc3' : '#6c7293',
         border: isLight ? '#e1e8ed' : '#2d3142',
-        accent: '#f4d03f', // Always the same
+        accent: '#ff7700ff', // Always the same
         shadow: isLight ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0.3)'
     };
     }
@@ -2612,8 +2633,7 @@ const additionalCSS = `
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(10, 15, 28, 0.95);
-    backdrop-filter: blur(8px);
+    background: #000000ff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3114,3 +3134,8 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("footer-version").textContent = "version unavailable";
     });
 });
+
+// ===================================
+// Dynamic current year
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+// ===================================

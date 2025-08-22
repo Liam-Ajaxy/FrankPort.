@@ -1,0 +1,8 @@
+// controllers/authController.js
+export const login = (req, res) => {
+  return res.json({ message: "Login endpoint hit" });
+};
+
+export const forgotPassword = (req, res) => {
+  return res.json({ message: "Forgot Password endpoint hit" });
+};

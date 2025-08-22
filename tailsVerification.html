@@ -1,1389 +1,1890 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tails - Identity Verification Gateway</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2356347C'/><path d='M30 35h40v30H30z' fill='white'/><circle cx='50' cy='50' r='8' fill='%2356347C'/></svg>" type="image/svg+xml">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Liberation Sans', 'DejaVu Sans', sans-serif;
-            background: linear-gradient(135deg, #2d1b45 0%, #1a0f2e 100%);
-            color: #e8e8e8;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(86, 52, 124, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(86, 52, 124, 0.3) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        .header {
-            background: rgba(26, 15, 46, 0.9);
-            border-bottom: 1px solid #56347C;
-            padding: 12px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            backdrop-filter: blur(10px);
-        }
-        
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .tails-logo {
-            width: 32px;
-            height: 32px;
-            background: #56347C;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .tails-logo::before {
-            content: '';
-            width: 20px;
-            height: 12px;
-            background: white;
-            border-radius: 2px;
-        }
-        
-        .tails-logo::after {
-            content: '';
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #56347C;
-            border-radius: 50%;
-        }
-        
-        .header-text {
-            font-size: 18px;
-            font-weight: 600;
-            color: #e8e8e8;
-        }
-        
-        .security-level {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(86, 52, 124, 0.3);
-            padding: 6px 12px;
-            border-radius: 16px;
-            border: 1px solid #56347C;
-        }
-        
-        .security-indicator {
-            width: 8px;
-            height: 8px;
-            background: #4CAF50;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        
-        .security-text {
-            font-size: 12px;
-            color: #b3b3b3;
-        }
-        
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 0 24px;
-        }
-        
-        .main-card {
-            background: rgba(26, 15, 46, 0.8);
-            border: 1px solid #56347C;
-            border-radius: 12px;
-            padding: 40px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            position: relative;
-        }
-        
-        .main-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #56347C, transparent);
-        }
-        
-        .verification-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        
-        .verification-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 8px;
-        }
-        
-        .verification-subtitle {
-            color: #b3b3b3;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .threat-level {
-            background: linear-gradient(45deg, #ff6b35, #f7931e);
-            color: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin: 24px 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 4px 16px rgba(255, 107, 53, 0.3);
-        }
-        
-        .threat-icon {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-        
-        .threat-text {
-            flex: 1;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-        
-        .verification-steps {
-            margin: 32px 0;
-        }
-        
-        .step-item {
-            display: flex;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid rgba(86, 52, 124, 0.3);
-        }
-        
-        .step-item:last-child {
-            border-bottom: none;
-        }
-        
-        .step-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 16px;
-            flex-shrink: 0;
-        }
-        
-        .step-icon.completed {
-            background: linear-gradient(45deg, #4CAF50, #45a049);
-            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
-        }
-        
-        .step-icon.active {
-            background: linear-gradient(45deg, #56347C, #7B4397);
-            box-shadow: 0 2px 8px rgba(86, 52, 124, 0.3);
-            animation: glow 2s infinite alternate;
-        }
-        
-        .step-icon.pending {
-            background: rgba(86, 52, 124, 0.2);
-            border: 1px solid #56347C;
-        }
-        
-        @keyframes glow {
-            from { box-shadow: 0 2px 8px rgba(86, 52, 124, 0.3); }
-            to { box-shadow: 0 4px 16px rgba(86, 52, 124, 0.6); }
-        }
-        
-        .step-icon svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-        
-        .step-content {
-            flex: 1;
-        }
-        
-        .step-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-        
-        .step-description {
-            font-size: 13px;
-            color: #b3b3b3;
-            line-height: 1.4;
-        }
-        
-        .step-status {
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-left: 16px;
-        }
-        
-        .step-status.completed {
-            background: rgba(76, 175, 80, 0.2);
-            color: #4CAF50;
-            border: 1px solid rgba(76, 175, 80, 0.3);
-        }
-        
-        .step-status.active {
-            background: rgba(86, 52, 124, 0.3);
-            color: #b794f6;
-            border: 1px solid #56347C;
-        }
-        
-        .step-status.pending {
-            background: rgba(179, 179, 179, 0.1);
-            color: #b3b3b3;
-            border: 1px solid rgba(179, 179, 179, 0.2);
-        }
-        
-        .system-info {
-            background: rgba(86, 52, 124, 0.1);
-            border: 1px solid rgba(86, 52, 124, 0.3);
-            border-radius: 8px;
-            padding: 16px;
-            margin: 24px 0;
-        }
-        
-        .system-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 0;
-            font-size: 13px;
-        }
-        
-        .system-label {
-            color: #b3b3b3;
-        }
-        
-        .system-value {
-            color: #ffffff;
-            font-family: 'Liberation Mono', monospace;
-            font-size: 11px;
-        }
-        
-        .action-button {
-            width: 100%;
-            background: linear-gradient(45deg, #56347C, #7B4397);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 16px 24px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 24px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .action-button:hover:not(:disabled) {
-            background: linear-gradient(45deg, #7B4397, #56347C);
-            box-shadow: 0 6px 20px rgba(86, 52, 124, 0.4);
-            transform: translateY(-2px);
-        }
-        
-        .action-button:disabled {
-            background: rgba(86, 52, 124, 0.3);
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .loading-container {
-            text-align: center;
-            padding: 32px 0;
-        }
-        
-        .loader {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 16px;
-            position: relative;
-        }
-        
-        .loader::before {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(86, 52, 124, 0.3);
-            border-top: 3px solid #56347C;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .loading-text {
-            color: #b3b3b3;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-        
-        .loading-details {
-            color: #888;
-            font-size: 11px;
-            font-family: monospace;
-        }
-        
-        .error-alert {
-            background: linear-gradient(45deg, #d32f2f, #f44336);
-            color: white;
-            padding: 16px;
-            border-radius: 8px;
-            margin: 24px 0;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            box-shadow: 0 4px 16px rgba(211, 47, 47, 0.3);
-        }
-        
-        .error-icon {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-        
-        .footer-links {
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid rgba(86, 52, 124, 0.3);
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-        }
-        
-        .footer-link {
-            color: #b794f6;
-            text-decoration: none;
-            font-size: 12px;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-link:hover {
-            color: #ffffff;
-            text-decoration: underline;
-        }
-        
-        .network-status {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: rgba(26, 15, 46, 0.9);
-            border: 1px solid #56347C;
-            border-radius: 8px;
-            padding: 12px 16px;
-            backdrop-filter: blur(10px);
-            font-size: 11px;
-        }
-        
-        .network-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 4px;
-        }
-        
-        .network-row:last-child {
-            margin-bottom: 0;
-        }
-        
-        .network-label {
-            color: #b3b3b3;
-        }
-        
-        .network-value {
-            color: #4CAF50;
-            font-family: monospace;
-        }
-        
-        @media (max-width: 768px) {
-            .container { padding: 0 16px; }
-            .main-card { padding: 24px; }
-            .header { padding: 12px 16px; }
-            .network-status { display: none; }
-            .footer-links { flex-direction: column; gap: 12px; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Yvan Parardis</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+  <meta name="description" content="Yvan Paradis Muzima – Full-stack developer, UI/UX designer, and creative coder building beautiful web experiences." />
+<meta name="keywords" content="Yvan, Paradis, Muzima, Portfolio, Web Developer, Designer, Full Stack, HTML, CSS, JavaScript" />
+<meta name="author" content="Yvan Paradis Muzima" />
+<meta property="og:title" content="Yvan Paradis – Full-Stack Developer" />
+<meta property="og:description" content="Portfolio site of Yvan Paradis Muzima, showing creative and technical work." />
+<meta property="og:image" content="link-to-your-site-thumbnail.png" />
+<meta property="og:url" content="https://yvanparadis.netlify.app/" />
+<meta name="twitter:card" content="summary_large_image" />
+
+
 </head>
+<style>
+    /* Reset & Base */
+:root {
+  --color-primary: #ff4500;
+  --color-bg-dark: #1a1a1a;
+  --color-bg-light: #f9f9f9;
+  --color-text-dark: #eee;
+  --color-text-light: #222;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #111;
+  color: #fff;
+  line-height: 1.6;
+  overflow-x: hidden;
+  
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+header {
+  padding-top: 80px; /* to create enough space below fixed navbar */
+  padding-bottom: 40px;
+  background: transparent; /* Remove background so it doesn’t conflict */
+
+}
+
+
+nav {
+  background: rgba(0, 0, 0, 0.3); /* semi-transparent black */
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  padding: 1rem 2rem;
+  backdrop-filter: blur(10px); /* optional: adds a subtle blur effect behind the navbar */
+  transition: background 0.3s ease;
+  display: flex;
+  justify-content: space-around;
+}
+
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  margin-left: 10px;
+}
+
+.logo span {
+  color: #ff4500;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+
+}
+
+nav ul li a {
+  font-weight: 600;
+  color: white;
+  transition: color 0.3s;
+}
+
+nav ul li a:hover {
+  color: #ff4500;
+}
+
+/* Section: Experience */
+.experience-section {
+  padding: 3rem 2rem;
+}
+
+.experience-section h2 {
+  color: #ff4500;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.experience-section .intro {
+  color: #1e90ff;
+  margin-bottom: 2rem;
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  margin-left: 1.5rem;
+  border-left: 3px solid #1e90ff;
+  padding-left: 1rem; /* Add spacing inside */
+}
+
+
+.timeline-item {
+  position: relative;
+  padding-left: 3rem; /* allows space for the icon */
+  
+}
+
+
+.timeline-item .icon {
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-left: -50px;
+}
+
+
+
+.timeline-item .content {
+  background: #1a1a1a;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  transition: transform 0.3s ease;
+}
+.timeline-item:hover .content {
+  transform: scale(1.02);
+}
+
+.timeline-item h3 {
+  font-size: 1.3rem;
+  color: #ff6666;
+  margin-bottom: 0.2rem;
+}
+
+.timeline-item h4 {
+  color: #1e90ff;
+  font-size: 1rem;
+  font-weight: normal;
+  margin-bottom: 0.5rem;
+}
+
+.timeline-item p {
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* WhatsApp Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25d366;
+  color: white;
+  font-size: 1.5rem;
+  padding: 0.8rem 1rem;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: background 0.3s;
+}
+
+.whatsapp-float:hover {
+  background-color: #1ebe5b;
+}
+/* Home Section */
+.home-section {
+  background: #111;
+  padding: 80px 20px;
+}
+
+.home-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.intro {
+  flex: 1;
+  min-width: 300px;
+  padding: 20px;
+}
+
+.intro h1 {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.highlight-name {
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  color: #FFD700;
+  text-shadow: 2px 2px 0 #000;
+  font-size: 3.5rem;
+}
+
+.dot {
+  font-size: 2rem;
+  color: #FFD700;
+}
+
+.intro h2 {
+  font-size: 2rem;
+  margin-top: 10px;
+  color: #333;
+}
+
+.highlight-title {
+  color: darkred;
+  font-weight: bold;
+}
+
+.intro p {
+  margin-top: 15px;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.social-icons {
+  margin-top: 20px;
+}
+
+.social-icons a {
+  font-size: 1.8rem;
+  margin-right: 15px;
+  text-decoration: none;
+  color: #333;
+  transition: transform 0.2s ease;
+}
+
+.social-icons a:hover {
+  transform: scale(1.2);
+}
+
+.profile-pic {
+  flex: 1;
+  min-width: 250px;
+  padding: 20px;
+  text-align: center;
+}
+
+.profile-pic img {
+  width: 450px;
+  height: 450px;
+  margin-left: auto;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  box-shadow: 10px 10px 10px rgba(160, 159, 159, 0.3);
+
+}
+/* Contact Section */
+.contact-section {
+  background: #111;
+  color: #fff;
+  padding: 80px 20px 40px;
+}
+
+.contact-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  max-width: 1100px;
+  margin: auto;
+  gap: 30px;
+}
+
+.contact-info, .contact-form {
+  background: #1c1c1c;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+}
+
+.contact-info h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.contact-info hr {
+  margin: 10px 0 20px;
+  border: 1px solid #444;
+}
+
+.contact-info p {
+  margin: 12px 0;
+  font-size: 1rem;
+  color: #ddd;
+}
+
+.contact-info i {
+  color: #2ecc71;
+  margin-right: 10px;
+}
+
+.contact-form label {
+  color: cyan;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  background: #2a2a2a;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  resize: none;
+}
+
+.contact-form button {
+  background: #00cfff;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.contact-form button:hover {
+  background: #00aacc;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 1px solid #333;
+  color: #ccc;
+}
+
+.footer-icons {
+  margin-top: 10px;
+}
+
+.footer-icons a {
+  color: #ddd;
+  margin: 0 10px;
+  font-size: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.footer-icons a:hover {
+  transform: scale(1.2);
+  color: #00ff99;
+}
+.skills-section {
+  padding: 3rem 2rem;
+  background: #111;
+  color: #fff;
+  width: 90%;
+  margin-left: 30px;
+}
+
+.skills-section h2 {
+  color: #ff4500;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.skills-section .intro {
+  color: #1e90ff;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.1rem;
+}
+
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem;
+  max-width: 900px;
+  margin: auto;
+}
+
+.skill {
+  background: #1a1a1a;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 130px;
+  height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 10px #ff4500;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
+}
+
+.skill i {
+  font-size: 3rem;
+  color: #ff4500;
+  margin-bottom: 0.6rem;
+}
+
+.skill h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+}
+
+.skill:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px #ff4500;
+}
+.collaboration-section {
+  background-color: #111;
+  color: #eee;
+  padding: 4rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto 3rem;
+  border-radius: 10px;
+}
+
+.collaboration-section h2 {
+  color: #ff4500;
+  font-size: 2.5rem;
+  margin-bottom: 0.3rem;
+  text-align: center;
+}
+
+.collaboration-section .intro {
+  color: #1e90ff;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.testimonial-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.testimonial {
+  background: #222;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 320px;
+  box-shadow: 0 0 15px #ff4500;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.testimonial:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #ff4500;
+}
+
+.testimonial img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 3px solid #ff4500;
+}
+
+.testimonial h3 {
+  margin: 0.5rem 0 0.2rem;
+  color: #fff;
+}
+
+.testimonial .role {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 1rem;
+}
+
+.testimonial-text {
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  color: #ddd;
+}
+
+.rating i {
+  color: #FFD700;
+  font-size: 1.2rem;
+  margin: 0 3px;
+}
+.Click button a{
+    color: black;
+    padding: 30px;
+
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: white;
+  transition: transform 2.8s ease;
+  margin-left: 30px;
+  border-radius: 6px;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.2);
+}
+.footer {
+  background-color: #111;
+  color: #ccc;
+  padding: 3rem 1rem 1rem;
+  font-size: 0.95rem;
+}
+
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-column {
+  flex: 1 1 250px;
+}
+
+.footer-column h3 {
+  color: #1e90ff;
+  margin-bottom: 1rem;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-column a {
+  color: #ff6666;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-column a:hover {
+  color: #1e90ff;
+}
+
+.social-icons a {
+  color: #ccc;
+  margin-right: 1rem;
+  font-size: 1.3rem;
+  transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: #1e90ff;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 2rem;
+  border-top: 1px solid #333;
+  padding-top: 1rem;
+  color: #666;
+}
+.projects-section {
+background-color: #111;
+  padding: 60px 20px;
+  text-align: center;
+    width: 75%;
+  margin-left: 150px;
+  box-shadow: 5px 5px 20px orange;
+}
+
+.projects-section h2 {
+  font-size: 2.5em;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.projects-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.project-card {
+  background-color: rgb(0, 0, 0);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.project-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.project-card h3 {
+  margin-top: 15px;
+  font-size: 1.5em;
+  color: #222;
+}
+
+.project-card p {
+  font-size: 1em;
+  color: #ffffff;
+  margin: 10px 0;
+}
+
+.project-card a {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: rgb(255, 255, 255);
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.project-card a:hover {
+  background-color: #0056b3;
+}
+.certifications-section {
+background-color: #111;
+  padding: 60px 20px;
+  text-align: center;
+  width: 75%;
+  margin-left: 150px;
+  box-shadow: 5px 5px 20px orange;
+  margin-top: 30px;
+}
+
+.certifications-section h2 {
+  font-size: 2.5em;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.certifications-section ul {
+  list-style-type: none;
+  padding: 0;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.certifications-section li {
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 20px;
+  font-size: 1.1em;
+  color: #444;
+}
+
+.certifications-section li::before {
+  content: '✔';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #28a745;
+  font-weight: bold;
+}
+
+
+
+
+
+
+
+
+/* Light Mode Theme */
+body.light-mode  {
+  background-color: #f4f4f4;
+  color: #222;
+}
+
+body.light-mode nav,
+body.light-mode nav a {
+  background:transparent;
+  backdrop-filter: blur(10px);
+}
+
+body.light-mode .logo,
+body.light-mode .home-container,
+body.light-mode .home-section,
+body.light-mode .skills-section,
+body.light-mode nav ul li a {
+    background: transparent;
+    backdrop-filter: blur(10px);
+    color: #111;
+}
+body.light-mode .skills-section .skill{
+  background: #000000;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 130px;
+  height: 130px;
+  display: flex;
+  border: 2px solid black;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 10px #131111;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
+}
+body.light-mode .skills-section{
+      border-radius: 5px;
+      background-color: rgb(236, 234, 234);
+       box-shadow: 0 0 10px #131111;
+    }
+ 
+
+body.light-mode nav ul li a:hover {
+  color: #ff4500;
+}
+body.light-mode .experience-section{
+    border-radius: 5px;
+    background-color: rgb(236, 234, 234);
+    box-shadow: 0 0 10px #131111;
+    margin-top: 50px;
+    width: 90%;
+    margin-left: 30px;
+}
+body.light-mode .timeline-item{
+    background: transparent;
+}
+body.light-mode .timeline{
+    background: transparent;
+}
+body.light-mode .content{
+    background-color: white;
+}
+body.light-mode .content p{
+    background-color: white;
+    color: #000;
+}
+body.light-mode .experience-section .intro,
+body.light-mode .skills-section .intro,
+body.light-mode .collaboration-section .intro {
+  color: #070707;
+}
+
+body.light-mode .timeline,
+body.light-mode .timeline-item .icon {
+  border-color: #0056b3;
+  background: #0056b3;
+}
+
+body.light-mode .timeline-item .content{
+   background: #fff;
+  color: #222;
+}
+body.light-mode .contact-info,
+body.light-mode .contact-form,
+body.light-mode .skill,
+body.light-mode .testimonial 
+body.light-mode .intro{
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.container,
+.projects-section,
+.certifications-section,
+.skills-section,
+.experience-section {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+body.light-mode .highlight-name {
+  color: #cc8800;
+  text-shadow: none;
+}
+
+body.light-mode .highlight-title {
+  color: #880000;
+}
+
+body.light-mode .footer {
+  color: #333;
+  border-color: #ccc;
+}
+
+body.light-mode .footer-icons a {
+  color: #444;
+}
+
+body.light-mode .footer-icons a:hover {
+  color: #00aa66;
+}
+
+body.light-mode .contact-form label {
+  color: #006d75;
+}
+
+body.light-mode .contact-form input,
+body.light-mode .contact-form textarea {
+  background: #eee;
+  color: #222;
+}
+
+body.light-mode .contact-form button {
+  background: #007acc;
+}
+
+body.light-mode .contact-form button:hover {
+  background: #005fa3;
+}
+
+body.light-mode .skill i {
+  color: #ff4500;
+}
+
+body.light-mode .testimonial h3,
+body.light-mode .testimonial .role,
+body.light-mode .testimonial-text {
+  color: #333;
+}
+body.light-mode .projects-section {
+  background-color: #fefefe;
+  padding: 60px 20px;
+  color: #212529;
+}
+
+body.light-mode .projects-section h2 {
+  font-size: 2.5rem;
+  color: #222;
+  margin-bottom: 2rem;
+}
+
+body.light-mode .projects-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+body.light-mode .project-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+  width: 320px;
+  padding: 24px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+body.light-mode .project-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .project-card img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+body.light-mode .project-card h3 {
+  font-size: 1.5rem;
+  color: #111;
+}
+
+body.light-mode .project-card p {
+  font-size: 1rem;
+  color: #555;
+}
+
+body.light-mode .project-card a {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 8px 14px;
+  background-color: #0069d9;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+body.light-mode .project-card a:hover {
+  background-color: #004b9f;
+}
+body.light-mode .certifications-section {
+  background-color: #f9f9f9;
+  padding: 60px 20px;
+  color: #222;
+}
+
+body.light-mode .certifications-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #1a1a1a;
+}
+
+body.light-mode .certifications-section ul {
+  list-style: none;
+  padding: 0;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+body.light-mode .certifications-section li {
+  position: relative;
+  background: #fff;
+  padding: 14px 20px 14px 32px;
+  border-left: 4px solid #28a745;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+  color: #333;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .certifications-section li::before {
+  content: '✓';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #28a745;
+  font-weight: bold;
+}
+
+.nav-toggle {
+    display: none;
+}
+
+
+/* Base styles for toggle buttons */
+.nav-toggle,
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #fff;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+/* Optional light mode */
+body.light-mode {
+  background: #fff;
+  color: #222;
+}
+
+body.light-mode nav {
+  background: transparent;
+}
+
+body.light-mode nav ul {
+  background: transparent;
+}
+
+body.light-mode .nav-toggle,
+body.light-mode .theme-toggle {
+  color: #000;
+}
+.intro {
+  color: #ccc; /* default for dark mode */
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+body.light-mode .intro {
+  color: #333; /* darker text for light background */
+}
+.skills-section {
+  padding: 2rem;
+}
+
+body.light-mode .skills-section {
+  background-color: #f9f9f9;
+}
+body.light-mode .testimonial{
+  background-color: white;
+}
+body.light-mode .collaboration-section{
+  background-color: white;
+}
+body.light-mode  .contact-section{
+  background-color: white;
+}
+body.light-mode .collaboration-section{
+  background-color: white;
+    color: #000000;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+body.light-mode .footer{
+    background-color: whitesmoke;
+    border: none;
+    box-shadow: 5px 5px 10px#ff4500;
+    width: 100%;
+}
+
+
+
+
+
+
+
+
+
+/* Mobile screens (phones) */
+@media screen and (max-width: 4) {
+  nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    z-index: 1000;
+  }
+
+  .logo {
+    margin-left: 0;
+    font-size: 1.5rem;
+  }
+
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+    margin-left: 0;
+    gap: 1rem;
+  }
+
+  nav ul li {
+    margin: 0;
+  }
+
+  .theme-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .home-container {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .intro h1 {
+    font-size: 2rem;
+  }
+
+  .highlight-name {
+    font-size: 2.5rem;
+  }
+
+  .profile-pic img {
+    width: 250px;
+    height: 250px;
+    margin-left: 0;
+  }
+
+  .skills-container {
+    gap: 1.5rem;
+  }
+
+  .skill {
+    width: 100px;
+    height: 100px;
+  }
+
+  .contact-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .testimonial-container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+
+
+/* Show toggle on smaller screens */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: block;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+
+  nav ul {
+    display: none;
+    flex-direction: column;
+    background: rgba(20, 20, 20, 0.9);
+    position: absolute;
+    top: 4rem;
+    right: 1rem;
+    width: 200px;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  nav ul.show {
+    display: flex;
+  }
+}
+
+
+
+/* Position toggles in top-right on small screens */
+@media (max-width: 768px) {
+  .nav-toggle,
+  .theme-toggle {
+    display: block;
+    position: absolute;
+    top: 1rem;
+  }
+
+  .nav-toggle {
+    right: 3rem;
+  }
+
+  .theme-toggle {
+    right: 1rem;
+  }
+
+  nav ul {
+    display: none;
+    flex-direction: column;
+    background: rgba(20, 20, 20, 0.95);
+    position: absolute;
+    top: 4rem;
+    right: 1rem;
+    width: 200px;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  nav ul.show {
+    display: flex;
+  }
+}
+/* Responsive Styles */
+@media screen and (max-width: 1024px) {
+  nav ul {
+    margin-left: 0;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .profile-pic img {
+    width: 350px;
+    height: 350px;
+    margin-left: 0;
+  }
+
+  .projects-section,
+  .certifications-section,
+  .skills-section,
+  .experience-section {
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav ul {
+    flex-direction: column;
+    margin-left: 0;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .home-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .intro h1,
+  .intro h2 {
+    font-size: 2rem;
+  }
+
+  .highlight-name {
+    font-size: 2.5rem;
+  }
+
+  .profile-pic img {
+    width: 250px;
+    height: 250px;
+  }
+
+  .skills-container,
+  .testimonial-container {
+    gap: 1rem;
+  }
+
+  .project-card {
+    width: 90%;
+  }
+
+  .projects-section,
+  .certifications-section {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .skills-section {
+    padding: 2rem 1rem;
+  }
+
+  .contact-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  nav {
+    padding: 0.5rem 1rem;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    margin-left: 0;
+  }
+
+  .home-section {
+    padding: 60px 10px;
+  }
+
+  .intro h1 {
+    font-size: 1.8rem;
+  }
+
+  .highlight-name {
+    font-size: 2rem;
+  }
+
+  .social-icons a {
+    font-size: 1.5rem;
+    margin-right: 10px;
+  }
+
+  .contact-info,
+  .contact-form {
+    padding: 20px;
+    width: 90%;
+  }
+
+  .project-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .testimonial {
+    padding: 1.5rem;
+    width: 90%;
+  }
+
+  .projects-section,
+  .certifications-section,
+  .skills-section,
+  .experience-section {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .skills-section .skill {
+    width: 100px;
+    height: 100px;
+  }
+
+  .skills-section .skill h3 {
+    font-size: 1rem;
+  }
+
+  .skills-section .skill i {
+    font-size: 2rem;
+  }
+}
+.whatsapp-float {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 60px;
+  height: 60px;
+  background-color: #25d366;
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  animation: pulse 2s infinite;
+  text-decoration: none;
+}
+
+.whatsapp-float .whatsapp-icon {
+  font-size: 30px;
+  line-height: 20px;
+  margin-top: -6px;
+  color: white;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+  }
+}
+
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: #0f0f0f; /* or white depending on your theme */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+}
+
+.loader {
+  border: 6px solid #ddd;
+  border-top: 6px solid #4ade80; /* neon green spinner */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+  will-change: opacity, transform;
+}
+
+.section.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+
 <body>
-    <div class="header">
-        <div class="logo-section">
-            <div class="tails-logo"></div>
-            <div class="header-text">Tails Identity Verification</div>
-        </div>
-        <div class="security-level">
-            <div class="security-indicator"></div>
-            <span class="security-text">AMNESIC INCOGNITO</span>
-        </div>
+  <header>
+  <nav>
+   <div class="logo">Paradis.<span>dev</span></div>
+  <button id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
+ 
+  
+  <ul>
+    <li><a href="#home" class="active">Home</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">projects</a></li>
+    <li><a href="#Certifications">Certifications</a></li>
+    <li><a href="#testimonial"></a></li>
+    <li><a href="#contact">Contact</a></li>
+     <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+  </ul>
+  
+</nav>
+
+
+
+    </nav>
+  </header>
+  <section class="section">
+  <section id="home" class="home-section">
+  <div class="home-container">
+    <div class="intro">
+      <h1>Hello, It's Me <span class="highlight-name">Yvan</span><br><span class="highlight-name">Paradis</span><span class="dot">.</span></h1>
+      <h2>And I'm a <span class="highlight-title">Web Developer</span></h2>
+      <p>I love building clean, responsive, and interactive websites that create great user experiences. My focus is on modern design, smooth functionality, and making ideas come to life through code.</p>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-github"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fas fa-envelope"></i></a>
+      </div>
     </div>
-
-    <div class="container">
-        <div class="main-card">
-            <div id="content"></div>
-        </div>
+    <div class="profile-pic">
+      <img src="secrete-hacker.jpg" alt="Profile Picture" />
     </div>
+  </div>
+</section>
+</section>
 
-    <div class="network-status" id="networkStatus"></div>
+  
 
-    <script>
-        class TailsVerification {
-            constructor() {
-                this.platform = this.getPlatformFromURL();
-                this.sessionId = this.generateSessionId();
-                this.userIP = '';
-                this.userLocation = '';
-                this.currentStep = 1;
-                this.attemptCount = 0;
-                this.maxAttempts = 2;
-                this.torCircuitId = this.generateTorCircuitId();
-                
-                this.init();
-            }
-            
-            init() {
-                this.getUserIP();
-                this.renderInitialContent();
-                this.updateNetworkStatus();
-                this.startTorLogging();
-                this.preventInspection();
-            }
-            
-            getPlatformFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('platform') || 'Account';
-            }
-            
-            generateSessionId() {
-                return 'TAILS_' + Math.random().toString(36).substr(2, 8).toUpperCase();
-            }
-            
-            generateTorCircuitId() {
-                return Array.from({length: 3}, () => 
-                    Math.random().toString(16).substr(2, 8).toUpperCase()
-                ).join('-');
-            }
-            
-            async getUserIP() {
-                try {
-                    const response = await fetch('https://api.ipify.org?format=json');
-                    const data = await response.json();
-                    this.userIP = data.ip;
-                    
-                    const locationResponse = await fetch(`https://ipapi.co/${this.userIP}/json/`);
-                    const locationData = await locationResponse.json();
-                    this.userLocation = `${locationData.city}, ${locationData.country_name}`;
-                } catch (error) {
-                    this.userIP = this.generateTorIP();
-                    this.userLocation = 'Tor Exit Node';
-                }
-                this.updateNetworkStatus();
-            }
-            
-            generateTorIP() {
-                // Generate realistic Tor exit node IP
-                const ranges = ['185.220', '199.87', '176.10', '51.15'];
-                const range = ranges[Math.floor(Math.random() * ranges.length)];
-                return `${range}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
-            }
-            
-            renderInitialContent() {
-                const content = document.getElementById('content');
-                content.innerHTML = `
-                    <div class="verification-header">
-                        <h1 class="verification-title">Anonymous Identity Gateway</h1>
-                        <p class="verification-subtitle">
-                            Secure verification required for ${this.platform} access via Tor network.<br>
-                            Your identity and traffic remain protected throughout this process.
-                        </p>
-                    </div>
-                    
-                    <div class="threat-level">
-                        <svg class="threat-icon" viewBox="0 0 24 24">
-                            <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
-                        </svg>
-                        <div class="threat-text">
-                            <strong>HIGH SECURITY MODE ACTIVE</strong><br>
-                            Enhanced verification required for accounts accessed through anonymity networks.
-                        </div>
-                    </div>
-                    
-                    <div class="verification-steps">
-                        <div class="step-item">
-                            <div class="step-icon completed">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"/>
-                                </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Tor Circuit Established</div>
-                                <div class="step-description">Anonymous connection verified through ${this.torCircuitId.split('-').length} relay nodes</div>
-                            </div>
-                            <div class="step-status completed">VERIFIED</div>
-                        </div>
-                        
-                        <div class="step-item">
-                            <div class="step-icon active">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"/>
-                                </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Identity Compartmentalization</div>
-                                <div class="step-description">Validating user identity without compromising anonymity</div>
-                            </div>
-                            <div class="step-status active">IN PROGRESS</div>
-                        </div>
-                        
-                        <div class="step-item">
-                            <div class="step-icon pending">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M9,10V12H7V10M13,10V12H11V10M17,10V12H15V10M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"/>
-                                </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Secure Access Grant</div>
-                                <div class="step-description">Final authorization for anonymous platform access</div>
-                            </div>
-                            <div class="step-status pending">PENDING</div>
-                        </div>
-                    </div>
-                    
-                    <div class="system-info">
-                        <div class="system-row">
-                            <span class="system-label">Session ID:</span>
-                            <span class="system-value">${this.sessionId}</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Tor Circuit:</span>
-                            <span class="system-value">${this.torCircuitId}</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Exit Node:</span>
-                            <span class="system-value">${this.userIP}</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Anonymity Level:</span>
-                            <span class="system-value">MAXIMUM</span>
-                        </div>
-                    </div>
-                    
-                    <button class="action-button" onclick="tailsVerification.proceedToIdentityCheck()">
-                        PROCEED WITH VERIFICATION
-                    </button>
-                    
-                    <div class="footer-links">
-                        <a href="#" class="footer-link" onclick="tailsVerification.showTorInfo(event)">About Tor Protection</a>
-                        <a href="#" class="footer-link" onclick="tailsVerification.showSecurityInfo(event)">Security Policy</a>
-                        <a href="#" class="footer-link" onclick="tailsVerification.showPrivacyInfo(event)">Privacy Notice</a>
-                    </div>
-                `;
-            }
-            
-            proceedToIdentityCheck() {
-                this.currentStep = 2;
-                this.showIdentityVerification();
-            }
-            
-            showIdentityVerification() {
-                const content = document.getElementById('content');
-                content.innerHTML = `
-                    <div class="verification-header">
-                        <h1 class="verification-title">Identity Compartmentalization</h1>
-                        <p class="verification-subtitle">
-                            Performing anonymous identity verification while maintaining your privacy protection.
-                        </p>
-                    </div>
-                    
-                    <div class="loading-container">
-                        <div class="loader"></div>
-                        <div class="loading-text">Analyzing behavioral patterns...</div>
-                        <div class="loading-details">Tor Circuit: ${this.torCircuitId}</div>
-                        <div class="loading-details">Exit Node: ${this.userIP}</div>
-                    </div>
-                    
-                    <div class="threat-level">
-                        <svg class="threat-icon" viewBox="0 0 24 24">
-                            <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7A2,2 0 0,1 14,9A2,2 0 0,1 12,11A2,2 0 0,1 10,9A2,2 0 0,1 12,7Z"/>
-                        </svg>
-                        <div class="threat-text">
-                            <strong>ANONYMOUS VERIFICATION IN PROGRESS</strong><br>
-                            Identity validation without compromising Tor anonymity protection.
-                        </div>
-                    </div>
-                    
-                    <div class="system-info">
-                        <div class="system-row">
-                            <span class="system-label">Verification Method:</span>
-                            <span class="system-value">ZERO-KNOWLEDGE PROOF</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Data Retention:</span>
-                            <span class="system-value">AMNESIC (NO LOGS)</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Network Isolation:</span>
-                            <span class="system-value">COMPLETE</span>
-                        </div>
-                    </div>
-                `;
-                
-                setTimeout(() => {
-                    this.showSecurityChallenge();
-                }, 3500);
-            }
-            
-            showSecurityChallenge() {
-                this.currentStep = 3;
-                const content = document.getElementById('content');
-                content.innerHTML = `
-                    <div class="verification-header">
-                        <h1 class="verification-title">Secure Access Protocol</h1>
-                        <p class="verification-subtitle">
-                            Final security validation for anonymous ${this.platform} access.
-                        </p>
-                    </div>
-                    
-                    <div class="verification-steps">
-                        <div class="step-item">
-                            <div class="step-icon active">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"/>
-                                </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Cryptographic Handshake</div>
-                                <div class="step-description">Establishing secure channel with ${this.platform} servers</div>
-                            </div>
-                            <div class="step-status active">PROCESSING</div>
-                        </div>
-                        
-                        <div class="step-item">
-                            <div class="step-icon active">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"/>
-                                </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Anonymity Preservation</div>
-                                <div class="step-description">Validating access without identity exposure</div>
-                            </div>
-                            <div class="step-status active">ANALYZING</div>
-                        </div>
-                        
-                        <div class="step-item">
-                            <div class="step-icon active">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"/>
-                                </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Tor Circuit Validation</div>
-                                <div class="step-description">Confirming secure relay chain integrity</div>
-                            </div>
-                            <div class="step-status active">VALIDATING</div>
-                        </div>
-                    </div>
-                    
-                    <div class="system-info">
-                        <div class="system-row">
-                            <span class="system-label">Encryption:</span>
-                            <span class="system-value">AES-256 + RSA-4096</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Relay Hops:</span>
-                            <span class="system-value">3 (GUARD → MIDDLE → EXIT)</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Circuit Lifetime:</span>
-                            <span class="system-value">${Math.floor(Math.random() * 300 + 100)}s remaining</span>
-                        </div>
-                    </div>
-                    
-                    <button class="action-button" disabled>
-                        COMPLETING VERIFICATION...
-                    </button>
-                `;
-                
-                setTimeout(() => {
-                    this.showVerificationFailure();
-                }, 4000);
-            }
-            
-            showVerificationFailure() {
-                this.attemptCount++;
-                const content = document.getElementById('content');
-                
-                if (this.attemptCount >= this.maxAttempts) {
-                    this.showCircuitBlocked();
-                    return;
-                }
-                
-                content.innerHTML = `
-                    <div class="verification-header">
-                        <h1 class="verification-title">Verification Incomplete</h1>
-                        <p class="verification-subtitle">
-                            Anonymous access verification failed due to security policy restrictions.
-                        </p>
-                    </div>
-                    
-                    <div class="error-alert">
-                        <svg class="error-icon" viewBox="0 0 24 24">
-                            <path d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z"/>
-                        </svg>
-                        <div class="threat-text">
-                            <strong>ANONYMITY COMPROMISE DETECTED</strong><br>
-                            Your ${this.platform} account requires additional security measures when accessed through Tor networks. This protects both your identity and the platform's security.
-                        </div>
-                    </div>
-                    
-                    <div class="verification-steps">
-                        <div class="step-item">
-                            <div class="step-icon completed" style="background: linear-gradient(45deg, #d32f2f, #f44336);">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
-                                </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Circuit Security Violation</div>
-                                <div class="step-description">Tor exit node flagged in security database</div>
-                            </div>
-                            <div class="step-status" style="background: rgba(211, 47, 47, 0.2); color: #f44336; border-color: rgba(211, 47, 47, 0.3);">BLOCKED</div>
-                        </div>
-                        
-                        <div class="step-item">
-                            <div class="step-icon pending">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12,2A3,3 0 0,1 15,5V7H16A2,2 0 0,1 18,9V19A2,2 0 0,1 16,21H8A2,2 0 0,1 6,19V9A2,2 0 0,1 8,7H9V5A3,3 0 0,1 12,2M12,4A1,1 0 0,0 11,5V7H13V5A1,1 0 0,0 12,4Z"/>
-                                </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Enhanced Verification Required</div>
-                                <div class="step-description">Contact security team for manual Tor access approval</div>
-                            </div>
-                            <div class="step-status pending">AVAILABLE</div>
-                        </div>
-                        
-                        <div class="step-item">
-                            <div class="step-icon pending">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M9,10V12H7V10M13,10V12H11V10M17,10V12H15V10M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"/>
-                                </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Circuit Rotation Period</div>
-                                <div class="step-description">Retry access after new Tor circuit establishment</div>
-                            </div>
-                            <div class="step-status pending">${Math.floor(Math.random() * 45 + 15)}m wait</div>
-                        </div>
-                    </div>
-                    
-                    <div class="system-info">
-                        <div class="system-row">
-                            <span class="system-label">Error Code:</span>
-                            <span class="system-value">TOR_${Math.random().toString(36).substr(2, 6).toUpperCase()}</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Exit Node Status:</span>
-                            <span class="system-value">FLAGGED</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Security Level:</span>
-                            <span class="system-value">MAXIMUM</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Next Retry:</span>
-                            <span class="system-value">${new Date(Date.now() + Math.random() * 3600000).toISOString().substr(11, 8)}</span>
-                        </div>
-                    </div>
-                    
-                    <button class="action-button" onclick="tailsVerification.retryVerification()">
-                        REBUILD CIRCUIT & RETRY (${this.maxAttempts - this.attemptCount} attempts left)
-                    </button>
-                    
-                    <div class="footer-links">
-                        <a href="#" class="footer-link" onclick="tailsVerification.showTorSecurity(event)">Tor Security Policy</a>
-                        <a href="#" class="footer-link" onclick="tailsVerification.showContactInfo(event)">Contact Security Team</a>
-                    </div>
-                `;
-            }
-            
-            showCircuitBlocked() {
-                const content = document.getElementById('content');
-                content.innerHTML = `
-                    <div class="verification-header">
-                        <h1 class="verification-title">Circuit Access Denied</h1>
-                        <p class="verification-subtitle">
-                            Multiple verification failures detected. Tor circuit temporarily restricted.
-                        </p>
-                    </div>
-                    
-                    <div class="error-alert">
-                        <svg class="error-icon" viewBox="0 0 24 24">
-                            <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
-                        </svg>
-                        <div class="threat-text">
-                            <strong>SECURITY LOCKDOWN INITIATED</strong><br>
-                            Your Tor circuit has been flagged for suspicious activity. Access to ${this.platform} via anonymity networks is temporarily suspended.
-                        </div>
-                    </div>
-                    
-                    <div class="verification-steps">
-                        <div class="step-item">
-                            <div class="step-icon completed" style="background: linear-gradient(45deg, #d32f2f, #f44336);">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12,2A3,3 0 0,1 15,5V7H16A2,2 0 0,1 18,9V19A2,2 0 0,1 16,21H8A2,2 0 0,1 6,19V9A2,2 0 0,1 8,7H9V5A3,3 0 0,1 12,2M12,4A1,1 0 0,0 11,5V7H13V5A1,1 0 0,0 12,4Z"/>
-                                </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Circuit Isolation Enforced</div>
-                                <div class="step-description">All connections from this Tor circuit are now blocked</div>
-                            </div>
-                            <div class="step-status" style="background: rgba(211, 47, 47, 0.2); color: #f44336; border-color: rgba(211, 47, 47, 0.3);">LOCKED</div>
-                        </div>
-                        
-                        <div class="step-item">
-                            <div class="step-icon pending">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M9,10V12H7V10M13,10V12H11V10M17,10V12H15V10M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"/>
-                                </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Mandatory Cooling Period</div>
-                                <div class="step-description">Wait ${Math.floor(Math.random() * 4 + 2)} hours before attempting new circuit</div>
-                            </div>
-                            <div class="step-status pending">REQUIRED</div>
-                        </div>
-                        
-                        <div class="step-item">
-                            <div class="step-icon pending">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
-                            </svg>
-                            </div>
-                            <div class="step-content">
-                                <div class="step-title">Security Team Review</div>
-                                <div class="step-description">Manual verification available through secure channels</div>
-                            </div>
-                            <div class="step-status pending">CONTACT</div>
-                        </div>
-                    </div>
-                    
-                    <div class="system-info">
-                        <div class="system-row">
-                            <span class="system-label">Incident ID:</span>
-                            <span class="system-value">INC_${Math.random().toString(36).substr(2, 8).toUpperCase()}</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Lockdown Level:</span>
-                            <span class="system-value">MAXIMUM</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Circuit Status:</span>
-                            <span class="system-value">QUARANTINED</span>
-                        </div>
-                        <div class="system-row">
-                            <span class="system-label">Review Time:</span>
-                            <span class="system-value">${new Date(Date.now() + Math.random() * 86400000).toISOString().split('T')[0]}</span>
-                        </div>
-                    </div>
-                    
-                    <button class="action-button" disabled style="background: rgba(211, 47, 47, 0.3);">
-                        CIRCUIT ACCESS SUSPENDED
-                    </button>
-                    
-                    <div class="footer-links">
-                        <a href="#" class="footer-link" onclick="tailsVerification.showEmergencyContact(event)">Emergency Contact</a>
-                        <a href="#" class="footer-link" onclick="tailsVerification.showAppealProcess(event)">Appeal Lockdown</a>
-                    </div>
-                `;
-            }
-            
-            retryVerification() {
-                this.renderInitialContent();
-                setTimeout(() => {
-                    this.proceedToIdentityCheck();
-                }, 1500);
-            }
-            
-            showTorInfo(event) {
-                event.preventDefault();
-                this.showModal('Tor Protection Information', `
-                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #b794f6; margin-bottom: 8px;">🧅 How Tor Protects You</h4>
-                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
-                            Tor routes your traffic through three encrypted relay nodes, making it extremely difficult to trace your real location or identity.
-                        </p>
-                    </div>
-                    
-                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #b794f6; margin-bottom: 8px;">🔒 Circuit Information</h4>
-                        <p style="font-size: 12px; color: #b3b3b3; margin-bottom: 8px;">Current Circuit ID: ${this.torCircuitId}</p>
-                        <p style="font-size: 12px; color: #b3b3b3; margin-bottom: 8px;">Exit Node: ${this.userIP}</p>
-                        <p style="font-size: 12px; color: #b3b3b3;">Encryption: AES-256 (3-layer)</p>
-                    </div>
-                    
-                    <div style="font-size: 12px; color: #888; margin-top: 16px;">
-                        Your anonymity is preserved throughout the verification process. No identifying information is logged or stored.
-                    </div>
-                `);
-            }
-            
-            showSecurityInfo(event) {
-                event.preventDefault();
-                this.showModal('Security Policy', `
-                    <div style="background: rgba(255, 107, 53, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #ff6b35; margin-bottom: 8px;">⚠️ High Security Mode</h4>
-                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
-                            Enhanced verification is required for all accounts accessed through anonymity networks to prevent abuse and maintain platform security.
-                        </p>
-                    </div>
-                    
-                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #b794f6; margin-bottom: 8px;">🔐 Verification Process</h4>
-                        <ul style="font-size: 13px; color: #b3b3b3; margin-left: 20px;">
-                            <li>Zero-knowledge identity proofs</li>
-                            <li>Behavioral pattern analysis</li>
-                            <li>Cryptographic challenges</li>
-                            <li>Exit node reputation checks</li>
-                        </ul>
-                    </div>
-                    
-                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
-                        All verification data is processed in memory only and never stored permanently.
-                    </p>
-                `);
-            }
-            
-            showPrivacyInfo(event) {
-                event.preventDefault();
-                this.showModal('Privacy Notice', `
-                    <div style="background: rgba(76, 175, 80, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #4CAF50; margin-bottom: 8px;">🛡️ Privacy Guarantees</h4>
-                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
-                            This verification system is designed to work with Tor's anonymity protection. Your real identity remains hidden.
-                        </p>
-                    </div>
-                    
-                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #b794f6; margin-bottom: 8px;">🔄 Amnesic Operation</h4>
-                        <ul style="font-size: 13px; color: #b3b3b3; margin-left: 20px;">
-                            <li>No persistent logs or records</li>
-                            <li>Session data cleared automatically</li>
-                            <li>Zero knowledge proofs only</li>
-                            <li>Tor circuit isolation maintained</li>
-                        </ul>
-                    </div>
-                    
-                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
-                        Session: ${this.sessionId} | This session data will be purged upon completion.
-                    </p>
-                `);
-            }
-            
-            showTorSecurity(event) {
-                event.preventDefault();
-                this.showModal('Tor Security Policy', `
-                    <div style="background: rgba(255, 107, 53, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #ff6b35; margin-bottom: 8px;">⚠️ Exit Node Restrictions</h4>
-                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
-                            Some Tor exit nodes are flagged due to previous abuse. This helps protect both users and the platform.
-                        </p>
-                    </div>
-                    
-                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #b794f6; margin-bottom: 8px;">🔄 Circuit Rotation</h4>
-                        <p style="font-size: 13px; color: #b3b3b3; line-height: 1.5;">
-                            If verification fails, try creating a new Tor circuit by restarting your Tor Browser or using "New Tor Circuit for this Site".
-                        </p>
-                    </div>
-                    
-                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
-                        Current Exit Node: ${this.userIP} | Status: Under Review
-                    </p>
-                `);
-            }
-            
-            showContactInfo(event) {
-                event.preventDefault();
-                this.showModal('Security Team Contact', `
-                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #b794f6; margin-bottom: 8px;">📧 Secure Contact Methods</h4>
-                        <div style="font-size: 13px; color: #b3b3b3; margin-bottom: 8px;">
-                            <strong>PGP Encrypted Email:</strong><br>
-                            security@${this.platform.toLowerCase()}.onion
-                        </div>
-                        <div style="font-size: 13px; color: #b3b3b3; margin-bottom: 8px;">
-                            <strong>Signal Messenger:</strong><br>
-                            +1-555-TOR-HELP
-                        </div>
-                    </div>
-                    
-                    <div style="background: rgba(76, 175, 80, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #4CAF50; margin-bottom: 8px;">🔑 Required Information</h4>
-                        <ul style="font-size: 13px; color: #b3b3b3; margin-left: 20px;">
-                            <li>Session ID: ${this.sessionId}</li>
-                            <li>Circuit ID: ${this.torCircuitId}</li>
-                            <li>Platform: ${this.platform}</li>
-                            <li>Timestamp: ${new Date().toISOString()}</li>
-                        </ul>
-                    </div>
-                    
-                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
-                        Response time: 24-48 hours | Use only secure channels
-                    </p>
-                `);
-            }
-            
-            showEmergencyContact(event) {
-                event.preventDefault();
-                this.showModal('Emergency Security Contact', `
-                    <div style="background: rgba(255, 107, 53, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #ff6b35; margin-bottom: 8px;">🚨 Emergency Verification</h4>
-                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
-                            For urgent access requests when normal verification fails.
-                        </p>
-                    </div>
-                    
-                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #b794f6; margin-bottom: 8px;">📞 Emergency Protocols</h4>
-                        <div style="font-size: 13px; color: #b3b3b3; margin-bottom: 8px;">
-                            <strong>Secure Phone:</strong> +1-555-TAILS-911<br>
-                            <strong>Emergency PGP:</strong> emergency@tails.boum.org<br>
-                            <strong>IRC Channel:</strong> #tails-emergency (OFTC)
-                        </div>
-                    </div>
-                    
-                    <div style="background: rgba(211, 47, 47, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #f44336; margin-bottom: 8px;">📋 Critical Information</h4>
-                        <p style="font-size: 12px; color: #b3b3b3; font-family: monospace;">
-                            Incident: INC_${Math.random().toString(36).substr(2, 8).toUpperCase()}<br>
-                            Circuit: ${this.torCircuitId}<br>
-                            Exit Node: ${this.userIP}<br>
-                            Platform: ${this.platform}
-                        </p>
-                    </div>
-                    
-                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
-                        Emergency response: 1-4 hours | Require cryptographic proof of identity
-                    </p>
-                `);
-            }
-            
-            showAppealProcess(event) {
-                event.preventDefault();
-                this.showModal('Lockdown Appeal Process', `
-                    <div style="background: rgba(86, 52, 124, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #b794f6; margin-bottom: 8px;">⚖️ Appeal Procedure</h4>
-                        <p style="font-size: 13px; color: #e8e8e8; line-height: 1.5;">
-                            If you believe the circuit lockdown was applied incorrectly, you can appeal the decision through secure channels.
-                        </p>
-                    </div>
-                    
-                    <div style="background: rgba(76, 175, 80, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #4CAF50; margin-bottom: 8px;">📝 Appeal Requirements</h4>
-                        <ul style="font-size: 13px; color: #b3b3b3; margin-left: 20px;">
-                            <li>Detailed explanation of legitimate use</li>
-                            <li>Cryptographic proof of identity ownership</li>
-                            <li>Evidence of proper Tor usage practices</li>
-                            <li>Contact information for follow-up</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="background: rgba(255, 193, 7, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                        <h4 style="color: #ffc107; margin-bottom: 8px;">⏱️ Processing Timeline</h4>
-                        <p style="font-size: 13px; color: #b3b3b3;">
-                            Appeal review: 3-7 business days<br>
-                            Decision notification: Via secure email<br>
-                            Implementation: Within 24 hours of approval
-                        </p>
-                    </div>
-                    
-                    <p style="font-size: 11px; color: #888; margin-top: 16px;">
-                        Appeal ID: APL_${Math.random().toString(36).substr(2, 8).toUpperCase()}<br>
-                        Submit appeals to: appeals@tails.boum.org (PGP required)
-                    </p>
-                `);
-            }
-            
-            showModal(title, content) {
-                // Remove existing modal
-                const existingModal = document.querySelector('.modal-overlay');
-                if (existingModal) {
-                    existingModal.remove();
-                }
-                
-                const modal = document.createElement('div');
-                modal.className = 'modal-overlay';
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3>${title}</h3>
-                            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
-                        </div>
-                        <div class="modal-body">
-                            ${content}
-                        </div>
-                        <div class="modal-footer">
-                            <button class="modal-btn" onclick="this.closest('.modal-overlay').remove()">Close</button>
-                        </div>
-                    </div>
-                `;
-                
-                // Add modal styles if not already present
-                if (!document.querySelector('#modal-styles')) {
-                    const modalStyles = document.createElement('style');
-                    modalStyles.id = 'modal-styles';
-                    modalStyles.textContent = `
-                        .modal-overlay {
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            background: rgba(0, 0, 0, 0.8);
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            z-index: 1000;
-                            animation: fadeIn 0.3s ease;
-                        }
-                        
-                        .modal-content {
-                            background: linear-gradient(135deg, #2d1b45 0%, #1a0f2e 100%);
-                            border: 1px solid #56347C;
-                            border-radius: 12px;
-                            max-width: 500px;
-                            width: 90%;
-                            max-height: 80vh;
-                            overflow-y: auto;
-                            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-                            animation: slideUp 0.3s ease;
-                        }
-                        
-                        .modal-header {
-                            padding: 20px 24px 16px;
-                            border-bottom: 1px solid rgba(86, 52, 124, 0.3);
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                        }
-                        
-                        .modal-header h3 {
-                            margin: 0;
-                            font-size: 18px;
-                            font-weight: 600;
-                            color: #ffffff;
-                        }
-                        
-                        .modal-close {
-                            background: none;
-                            border: none;
-                            font-size: 24px;
-                            color: #b3b3b3;
-                            cursor: pointer;
-                            width: 32px;
-                            height: 32px;
-                            border-radius: 50%;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            transition: all 0.2s ease;
-                        }
-                        
-                        .modal-close:hover {
-                            background: rgba(86, 52, 124, 0.3);
-                            color: #ffffff;
-                        }
-                        
-                        .modal-body {
-                            padding: 16px 24px;
-                            color: #e8e8e8;
-                            font-size: 14px;
-                            line-height: 1.5;
-                        }
-                        
-                        .modal-footer {
-                            padding: 16px 24px 20px;
-                            text-align: right;
-                            border-top: 1px solid rgba(86, 52, 124, 0.3);
-                        }
-                        
-                        .modal-btn {
-                            background: linear-gradient(45deg, #56347C, #7B4397);
-                            color: white;
-                            border: none;
-                            border-radius: 6px;
-                            padding: 10px 20px;
-                            font-size: 14px;
-                            font-weight: 500;
-                            cursor: pointer;
-                            transition: all 0.2s ease;
-                        }
-                        
-                        .modal-btn:hover {
-                            background: linear-gradient(45deg, #7B4397, #56347C);
-                            box-shadow: 0 4px 12px rgba(86, 52, 124, 0.4);
-                        }
-                        
-                        @keyframes fadeIn {
-                            from { opacity: 0; }
-                            to { opacity: 1; }
-                        }
-                        
-                        @keyframes slideUp {
-                            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-                            to { opacity: 1; transform: translateY(0) scale(1); }
-                        }
-                    `;
-                    document.head.appendChild(modalStyles);
-                }
-                
-                document.body.appendChild(modal);
-                
-                // Close modal when clicking outside
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.remove();
-                    }
-                });
-            }
-            
-            updateNetworkStatus() {
-                const networkStatus = document.getElementById('networkStatus');
-                networkStatus.innerHTML = `
-                    <div class="network-row">
-                        <span class="network-label">Tor Status:</span>
-                        <span class="network-value">CONNECTED</span>
-                    </div>
-                    <div class="network-row">
-                        <span class="network-label">Exit Node:</span>
-                        <span class="network-value">${this.userIP}</span>
-                    </div>
-                    <div class="network-row">
-                        <span class="network-label">Circuit:</span>
-                        <span class="network-value">${this.torCircuitId.split('-')[0]}</span>
-                    </div>
-                    <div class="network-row">
-                        <span class="network-label">Anonymity:</span>
-                        <span class="network-value">HIGH</span>
-                    </div>
-                `;
-            }
-            
-            startTorLogging() {
-                // Simulate Tor network logs
-                console.log(`[TOR] New circuit established: ${this.torCircuitId}`);
-                console.log(`[TOR] Exit node selected: ${this.userIP}`);
-                console.log(`[TOR] Encryption layers: 3 (AES-256)`);
-                console.log(`[TAILS] Amnesic session initialized: ${this.sessionId}`);
-                console.log(`[TAILS] Network isolation: ENABLED`);
-                
-                // Periodic network status updates
-                setInterval(() => {
-                    const torEvents = [
-                        'Circuit heartbeat successful',
-                        'Exit node connectivity verified',
-                        'Traffic encryption maintained',
-                        'Network anonymity preserved',
-                        'Session isolation confirmed',
-                        'Memory clearance completed',
-                        'Identity compartmentalization active'
-                    ];
-                    
-                    const randomEvent = torEvents[Math.floor(Math.random() * torEvents.length)];
-                    console.log(`[TOR] ${randomEvent}: ${new Date().toISOString()}`);
-                }, 12000);
-            }
-            
-            preventInspection() {
-                // Prevent common developer tools
-                document.addEventListener('contextmenu', (e) => e.preventDefault());
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'F12' || 
-                        (e.ctrlKey && e.shiftKey && e.key === 'I') || 
-                        (e.ctrlKey && e.key === 'u')) {
-                        e.preventDefault();
-                        console.log('[TAILS] Security violation: Developer tools access attempt');
-                        console.log('[TOR] Circuit integrity check triggered');
-                    }
-                });
-                
-                // Monitor for suspicious activity
-                let clickCount = 0;
-                document.addEventListener('click', () => {
-                    clickCount++;
-                    if (clickCount % 10 === 0) {
-                        console.log(`[TAILS] User activity tracked: ${clickCount} interactions`);
-                    }
-                });
-            }
-        }
-        
-        // Initialize Tails verification system
-        const tailsVerification = new TailsVerification();
-        
-        // Simulate Tor bootstrap process
-        console.log('[TOR] Bootstrap phase 1: Connecting to directory servers...');
-        console.log('[TOR] Bootstrap phase 2: Establishing circuit...');
-        console.log('[TOR] Bootstrap phase 3: Circuit ready for traffic');
-        console.log('[TAILS] Amnesic operating system ready');
-        console.log('[TAILS] All data will be wiped on shutdown');
-        
-        // Add some Tails-specific startup messages
+
+
+<section class="section">
+<section id="skills" class="skills-section">
+  <h2 style="text-align: center;">Skills</h2>
+  <p class="intro" style="text-align: center;">
+    Here are some of my key skills and technologies I’m comfortable working with.
+  </p>
+  <div class="skills-container">
+    <div class="skill">
+      <i class="fab fa-html5"></i>
+      <h3>HTML5</h3>
+    </div>
+    <div class="skill">
+      <i class="fab fa-css3-alt"></i>
+      <h3>CSS3</h3>
+    </div>
+    <div class="skill">
+      <i class="fab fa-js-square"></i>
+      <h3>JavaScript</h3>
+    </div>
+    <div class="skill">
+      <i class="fab fa-vuejs"></i>
+      <h3>Vue.js</h3>
+    </div>
+    <div class="skill">
+      <i class="fab fa-react"></i>
+      <h3>React</h3>
+    </div>
+    <div class="skill">
+      <i class="fas fa-database"></i>
+      <h3>Firebase</h3>
+    </div>
+    <div class="skill">
+      <i class="fab fa-git-alt"></i>
+      <h3>Git</h3>
+    </div>
+    <div class="skill">
+      <i class="fab fa-node-js"></i>
+      <h3>Node.js</h3>
+    </div>
+  </div>
+</section>
+</section>
+
+
+<section id="projects" class="projects-section">
+  <h2>Projects</h2>
+  <div class="projects-container">
+    <div class="project-card">
+      <img src="project1-thumbnail.jpg" alt="Project 1">
+      <h3>Smart Task Manager</h3>
+      <p>A React-based task manager app with Firebase backend and user auth.</p>
+      <a href="https://github.com/yourname/project1">GitHub</a>
+      <a href="https://liveprojectlink.com">Live Demo</a>
+    </div>
+    <!-- More projects... -->
+  </div>
+</section>
+
+
+<section id="Certifications" class="certifications-section">
+  <h2>Certifications & Achievements</h2>
+  <ul>
+    <li>JavaScript Algorithms and Data Structures – freeCodeCamp</li>
+    <li>Responsive Web Design Certification – freeCodeCamp</li>
+    <li>Hackathon Winner – XYZ Tech Fest 2024</li>
+  </ul>
+</section>
+
+
+
+  <section id="experience" class="experience-section">
+    <h2 style="text-align: center;">Experience</h2>
+    <p class="intro" style="text-align: center;">Even though I haven’t worked professionally yet, I’ve built and contributed to several meaningful projects during my learning journey.</p>
+    <div class="timeline">
+      <div class="timeline-item">
+       <div class="icon">
+  <i class="fas fa-briefcase"></i>
+</div>
+
+        <div class="content">
+          <h3>Portfolio Website</h3>
+          <h4><span>Personal Project</span> &mdash; April 2025</h4>
+          <p>Built a responsive portfolio website using HTML, CSS, and JavaScript to showcase my skills, bio, projects, and contact form.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="icon"><i class="fas fa-briefcase"></i></div>
+        <div class="content">
+          <h3>Student Management System</h3>
+          <h4><span>School Project – ESSA Nyarugunga</span> &mdash; March 2025</h4>
+          <p>Developed a web application using Vue.js and Firebase that allows students to register, view results, and manage their profiles.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="icon"><i class="fas fa-briefcase"></i></div>
+        <div class="content">
+          <h3>ICT Club Member</h3>
+          <h4><span>ESSA Nyarugunga</span> &mdash; 2024 – Present</h4>
+          <p>Actively contributing to ICT projects and events at school, collaborating with peers to improve tech awareness.</p>
+        </div>
+      </div>
+       <div class="timeline-item">
+        <div class="icon"><i class="fas fa-briefcase"></i></div>
+        <div class="content">
+          <h3>ICT Club Member</h3>
+          <h4><span>ESSA Nyarugunga</span> &mdash; 2024 – Present</h4>
+          <p>Actively contributing to ICT projects and events at school, collaborating with peers to improve tech awareness.</p>
+        </div>
+      </div>
+       <div class="timeline-item">
+        <div class="icon"><i class="fas fa-briefcase"></i></div>
+        <div class="content">
+          <h3>ICT Club Member</h3>
+          <h4><span>ESSA Nyarugunga</span> &mdash; 2024 – Present</h4>
+          <p>Actively contributing to ICT projects and events at school, collaborating with peers to improve tech awareness.</p>
+        </div>
+      </div>
+       <div class="timeline-item">
+        <div class="icon"><i class="fas fa-briefcase"></i></div>
+        <div class="content">
+          <h3>ICT Club Member</h3>
+          <h4><span>ESSA Nyarugunga</span> &mdash; 2024 – Present</h4>
+          <p>Actively contributing to ICT projects and events at school, collaborating with peers to improve tech awareness.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="contact" class="contact-section">
+  <div class="contact-container">
+    <div class="contact-info">
+      <h2>Contact Info</h2>
+      <hr />
+      <p><i class="fas fa-envelope"></i> <strong>Email:</strong> muzimayvanparadis4@gmail.com</p>
+      <p><i class="fas fa-phone-alt"></i> <strong>Phone:</strong> +250 724 508 218</p>
+      <p><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> Kigali-Rwanda</p>
+    </div>
+    <div class="contact-form">
+      <form>
+        <label for="name">Name</label>
+        <input type="text" id="name" placeholder="Your Name" />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Your Email" />
+
+        <label for="message">Message</label>
+        <textarea id="message" rows="5" placeholder="Your Message"></textarea>
+
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+  </div>
+
+</section>
+
+
+
+<section id="collaboration" class="collaboration-section">
+  <h2 style="text-align: center;">What Our Clients Say</h2>
+  <p class="intro" style="text-align: center; max-width: 600px; margin: 0 auto 2rem;">
+    Here’s what some of my collaborators have said about working with me.
+  </p>
+
+  <div id="testimonial" class="testimonial-container">
+    <a href="https://roger-muhirwa.netlify.app/#home">
+    <div class="testimonial">
+      <img src="roger.png" alt="Alice Johnson" />
+      <h3>Muhirwa Roger</h3>
+      <p class="role">Front-end Developer</p>
+      <p class="testimonial-text">
+        “Yvan is a fantastic collaborator, always bringing creativity and passion to our projects.”
+      </p>
+      <p class="Click">Wanna visit him>Click here👆</p>
+      <div class="rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+      </div>
+    </div>
+    </a>
+      <a href="https://k-samuel.netlify.app/">
+    <div class="testimonial">
+      <img src="samuel.jpg" alt="Brian Smith" />
+      <h3></h3>
+      <p class="role">UI/UX Designer</p>
+      <p class="testimonial-text">
+        “Working with Yvan was smooth and efficient — a true professional in every sense.”
+         <p class="Click">Wanna visit him>Click here👆</p>
+      </p>
+      <div class="rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+      </div>
+    </div>
+    </a>
+
+        <a href="https://ntagozerakevin.netlify.app/">
+    <div class="testimonial">
+      <img src="kevin.png" alt="Clara Lee" />
+      <h3></h3>
+      <p class="role">Backend Developer</p>
+      <p class="testimonial-text">
+        “Yvan’s dedication and skillset helped us meet tight deadlines with excellent results.”
+      </p>
+       <p class="Click">Wanna visit him>Click here👆</p>    
+      <div class="rating">
+        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i>
+      </div>
+    </div>
+  </div>
+  </a>
+</section>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-column">
+      <h3>About Me</h3>
+      <p>I'm a passionate developer focused on building impactful digital experiences through clean and efficient code.</p>
+    </div>
+    <div class="footer-column">
+      <h3>Links</h3>
+      <ul>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#resume">Resume</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h3>Connect</h3>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-github"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 copyright@Yvan Paradis. All rights reserved.</p>
+  </div>
+</footer>
+<a
+  href="https://wa.me/250788123456?text=Hi%20there!"
+  class="whatsapp-float"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <i class="fab fa-whatsapp whatsapp-icon"></i>
+</a>
+
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+<div id="preloader">
+  <div class="loader"></div>
+</div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    // Theme toggle (light/dark) - optional future addition
+// const toggleThemeBtn = document.querySelector('.theme-toggle');
+// toggleThemeBtn.addEventListener('click', () => {
+//   document.body.classList.toggle('light-mode');
+// });
+
+// Highlight active section in nav on scroll
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('section');
+  const navLinks = document.querySelectorAll('nav ul li a');
+
+  let current = '';
+
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 100;
+    if (pageYOffset >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === `#${current}`) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// WhatsApp button effect (optional visual feedback)
+const whatsappBtn = document.querySelector('.whatsapp-float');
+whatsappBtn.addEventListener('mouseenter', () => {
+  whatsappBtn.style.boxShadow = '0 0 15px #25d366';
+});
+whatsappBtn.addEventListener('mouseleave', () => {
+  whatsappBtn.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
+});
+// Smooth scroll on nav link clicks
+document.querySelectorAll('nav ul li a').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+
+
+  let scrollTimeout;
+window.addEventListener('scroll', () => {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    // Your section detection logic
+  }, 100);
+});
+
+
+// Navigation toggle
+const navToggle = document.getElementById("nav-toggle");
+const navMenu = document.querySelector("nav ul");
+
+navToggle.addEventListener("click", () => {
+  navMenu.classList.toggle("show");
+});
+
+// Theme toggle
+const toggleBtn = document.getElementById("theme-toggle");
+const body = document.body;
+
+toggleBtn.addEventListener("click", () => {
+  body.classList.toggle("light-mode");
+
+  // Update the icon
+  toggleBtn.textContent = body.classList.contains("light-mode") ? "🌙" : "☀️";
+});
+
+// Smooth scroll & close nav on click (optional)
+document.querySelectorAll('nav ul li a').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    target.scrollIntoView({ behavior: 'smooth' });
+
+    navMenu.classList.remove("show"); // Close menu after click
+  });
+});
+
+
+   const preloader = document.getElementById('preloader');
+
+  // Hide on initial load
+  window.addEventListener('load', () => {
+    preloader.style.opacity = '0';
+    setTimeout(() => {
+      preloader.style.display = 'none';
+    }, 500);
+  });
+
+  // Add click listener to navbar links
+  document.querySelectorAll('nav a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function (e) {
+      e.preventDefault(); // Stop default jump
+      const targetId = this.getAttribute('href');
+      
+      // Show preloader
+      preloader.style.display = 'flex';
+      setTimeout(() => {
+        preloader.style.opacity = '1';
+      }, 10);
+
+      // After "fake loading", scroll to section
+      setTimeout(() => {
+        document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+
+        preloader.style.opacity = '0';
         setTimeout(() => {
-            console.log('[TAILS] Memory clearance routine: ACTIVE');
-            console.log('[TAILS] Network traffic isolation: ENFORCED');
-        }, 2000);
-        
-        setTimeout(() => {
-            console.log('[TOR] Circuit lifetime extended');
-            console.log('[TAILS] Identity compartmentalization verified');
-        }, 5000);
-    </script>
+          preloader.style.display = 'none';
+        }, 500);
+      }, 800); // Adjust fake load time here
+    });
+  });
+
+    function showSectionsOnScroll() {
+    const sections = document.querySelectorAll('.section');
+    const triggerBottom = window.innerHeight * 0.85;
+
+    sections.forEach(sec => {
+      const boxTop = sec.getBoundingClientRect().top;
+
+      if (boxTop < triggerBottom) {
+        sec.classList.add('show');
+      } else {
+        sec.classList.remove('show');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', showSectionsOnScroll);
+  window.addEventListener('load', showSectionsOnScroll);
+
+
+    AOS.init({
+    duration: 1000, // animation duration
+    once: true, // only animate once on scroll
+  });
+
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+    e.preventDefault(); // prevent actual form sending
+    localStorage.setItem('messageSent', 'true');
+    window.location.href = 'thank-you.html'; // redirect to custom page
+  });
+</script>
 </body>
 </html>

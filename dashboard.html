@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrankPort Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #e8e9ed;
+            font-size: 16px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(26, 30, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(104, 120, 147, 0.2);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem 2rem;
+            border-bottom: 1px solid rgba(104, 120, 147, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-header h1 {
+            color: #7dd3fc;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 1rem 2rem;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: rgba(125, 211, 252, 0.1);
+            border-left-color: #7dd3fc;
+            color: #7dd3fc;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 280px;
+        }
+
+        .topbar {
+            background: rgba(26, 30, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(104, 120, 147, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #7dd3fc;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(125, 211, 252, 0.1);
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .login-box {
+            background: rgba(26, 30, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 16px;
+            border: 1px solid rgba(104, 120, 147, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            color: #7dd3fc;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: #94a3b8;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(104, 120, 147, 0.3);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #7dd3fc;
+            box-shadow: 0 0 0 3px rgba(125, 211, 252, 0.1);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7dd3fc, #3b82f6);
+            color: white;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(125, 211, 252, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(104, 120, 147, 0.1);
+            border: 1px solid rgba(104, 120, 147, 0.3);
+            color: #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(104, 120, 147, 0.2);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .forgot-password a {
+            color: #7dd3fc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .card {
+            background: rgba(26, 30, 46, 0.6);
+            border: 1px solid rgba(104, 120, 147, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(104, 120, 147, 0.2);
+        }
+
+        .card-header h2 {
+            color: #7dd3fc;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .notification-item {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(104, 120, 147, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover {
+            border-color: rgba(125, 211, 252, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .notification-title {
+            color: #e2e8f0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .notification-date {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .notification-body {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+        }
+
+        .empty-state h3 {
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+            }
+            
+            .main-content.sidebar-open {
+                margin-left: 0;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .login-box {
+                padding: 2rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .notification-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .notification-actions {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>FrankPort Admin</h1>
+                <p>Secure Dashboard Access</p>
+            </div>
+            
+            <div id="loginAlert"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <span>Login</span>
+                </button>
+            </form>
+            
+            <div class="forgot-password">
+                <a href="#" id="forgotPasswordLink">Forgot Password? Use Backup</a>
+            </div>
+            
+            <!-- Backup Password Form (Hidden by default) -->
+            <form id="backupPasswordForm" class="hidden" style="margin-top: 1rem;">
+                <div class="form-group">
+                    <label for="backupPassword">Backup Password</label>
+                    <input type="password" id="backupPassword" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn btn-secondary">
+                    <span>Login with Backup</span>
+                </button>
+                
+                <div style="text-align: center; margin-top: 0.5rem;">
+                    <a href="#" id="backToMainLogin" style="color: #7dd3fc; font-size: 14px;">Back to main login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="container hidden">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>FrankPort</h1>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="#" data-page="broadcasts" class="active">📢 Broadcasts</a></li>
+                <li><a href="#" data-page="settings">⚙️ Settings</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Top Bar -->
+            <div class="topbar">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Broadcasts Page -->
+                <div id="broadcastsPage" class="page-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Create New Broadcast</h2>
+                        </div>
+                        
+                        <div id="broadcastAlert"></div>
+                        
+                        <form id="broadcastForm">
+                            <div class="form-group">
+                                <label for="broadcastTitle">Title</label>
+                                <input type="text" id="broadcastTitle" class="form-control" required placeholder="Enter broadcast title...">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="broadcastBody">Message</label>
+                                <textarea id="broadcastBody" class="form-control" required placeholder="Enter your broadcast message..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-success">
+                                <span>📤 Send Broadcast</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Recent Broadcasts</h2>
+                        </div>
+                        
+                        <div id="notificationsList">
+                            <div class="empty-state">
+                                <h3>No broadcasts yet</h3>
+                                <p>Create your first broadcast above</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div id="settingsPage" class="page-content hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Password Management</h2>
+                        </div>
+                        
+                        <div id="settingsAlert"></div>
+                        
+                        <form id="passwordForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="newMainPassword">New Main Password</label>
+                                    <input type="password" id="newMainPassword" class="form-control" placeholder="Enter new main password">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="newBackupPassword">New Backup Password</label>
+                                    <input type="password" id="newBackupPassword" class="form-control" placeholder="Enter new backup password">
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <span>🔐 Update Passwords</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Dashboard Statistics</h2>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div style="background: rgba(30, 41, 59, 0.4); padding: 1.5rem; border-radius: 8px; text-align: center;">
+                                <h3 style="color: #7dd3fc; margin-bottom: 0.5rem;" id="totalBroadcasts">0</h3>
+                                <p style="color: #94a3b8;">Total Broadcasts</p>
+                            </div>
+                            <div style="background: rgba(30, 41, 59, 0.4); padding: 1.5rem; border-radius: 8px; text-align: center;">
+                                <h3 style="color: #10b981; margin-bottom: 0.5rem;" id="lastLoginTime">N/A</h3>
+                                <p style="color: #94a3b8;">Last Login</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let isAuthenticated = false;
+        let notifications = [];
+        let currentPage = 'broadcasts';
+        
+        // Default passwords (in real app, these would be hashed server-side)
+        let mainPassword = 'admin123';
+        let backupPassword = 'backup456';
+        
+        // Simple hash function for demo (use bcrypt in production)
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString();
+        }
+
+        // DOM Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('loginForm');
+        const backupPasswordForm = document.getElementById('backupPasswordForm');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const backToMainLogin = document.getElementById('backToMainLogin');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const broadcastForm = document.getElementById('broadcastForm');
+        const passwordForm = document.getElementById('passwordForm');
+        const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            updateLastLogin();
+            loadNotifications();
+        });
+
+        // Authentication Functions
+        function checkAuth() {
+            const token = sessionStorage.getItem('frankport_admin_token');
+            if (token === 'authenticated') {
+                isAuthenticated = true;
+                showDashboard();
+            } else {
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            loginScreen.classList.remove('hidden');
+            dashboard.classList.add('hidden');
+        }
+
+        function showDashboard() {
+            loginScreen.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+            loadNotifications();
+            updateStats();
+        }
+
+        function login(password, isBackup = false) {
+            const validPassword = isBackup ? backupPassword : mainPassword;
+            
+            if (password === validPassword) {
+                isAuthenticated = true;
+                sessionStorage.setItem('frankport_admin_token', 'authenticated');
+                sessionStorage.setItem('last_login', new Date().toISOString());
+                showDashboard();
+                showAlert('loginAlert', 'Login successful!', 'success');
+                setTimeout(() => {
+                    document.getElementById('loginAlert').innerHTML = '';
+                }, 2000);
+            } else {
+                showAlert('loginAlert', 'Invalid password. Please try again.', 'error');
+            }
+        }
+
+        function logout() {
+            isAuthenticated = false;
+            sessionStorage.removeItem('frankport_admin_token');
+            showLogin();
+            clearForms();
+        }
+
+        // Event Listeners
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            login(password, false);
+        });
+
+        backupPasswordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('backupPassword').value;
+            login(password, true);
+        });
+
+        forgotPasswordLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            loginForm.classList.add('hidden');
+            backupPasswordForm.classList.remove('hidden');
+        });
+
+        backToMainLogin.addEventListener('click', function(e) {
+            e.preventDefault();
+            backupPasswordForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        });
+
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('sidebar-open');
+        });
+
+        logoutBtn.addEventListener('click', logout);
+
+        // Navigation
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.dataset.page;
+                switchPage(page);
+                
+                // Mobile: close sidebar after navigation
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                    mainContent.classList.remove('sidebar-open');
+                }
+            });
+        });
+
+        function switchPage(page) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            
+            // Show selected page
+            document.getElementById(page + 'Page').classList.remove('hidden');
+            
+            // Update navigation
+            sidebarLinks.forEach(link => link.classList.remove('active'));
+            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+            
+            currentPage = page;
+            
+            if (page === 'settings') {
+                updateStats();
+            }
+        }
+
+        // Broadcast Functions
+        broadcastForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('broadcastTitle').value;
+            const body = document.getElementById('broadcastBody').value;
+            
+            if (!title.trim() || !body.trim()) {
+                showAlert('broadcastAlert', 'Please fill in all fields.', 'error');
+                return;
+            }
+            
+            createBroadcast(title, body);
+        });
+
+        function createBroadcast(title, body) {
+            const broadcast = {
+                id: Date.now(),
+                title: title,
+                body: body,
+                date: new Date().toISOString(),
+                timestamp: new Date().toLocaleString()
+            };
+            
+            notifications.unshift(broadcast);
+            saveNotifications();
+            renderNotifications();
+            
+            // Clear form
+            document.getElementById('broadcastTitle').value = '';
+            document.getElementById('broadcastBody').value = '';
+            
+            showAlert('broadcastAlert', '✅ Broadcast sent successfully!', 'success');
+            
+            // In a real app, you'd send this to your public API
+            console.log('Broadcasting to FrankPort:', broadcast);
+        }
+
+        function deleteBroadcast(id) {
+            if (confirm('Are you sure you want to delete this broadcast?')) {
+                notifications = notifications.filter(n => n.id !== id);
+                saveNotifications();
+                renderNotifications();
+                updateStats();
+            }
+        }
+
+        function loadNotifications() {
+            const saved = localStorage.getItem('frankport_notifications');
+            if (saved) {
+                notifications = JSON.parse(saved);
+            }
+            renderNotifications();
+        }
+
+        function saveNotifications() {
+            localStorage.setItem('frankport_notifications', JSON.stringify(notifications));
+        }
+
+        function renderNotifications() {
+            const container = document.getElementById('notificationsList');
+            
+            if (notifications.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No broadcasts yet</h3>
+                        <p>Create your first broadcast above</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = notifications.map(notification => `
+                <div class="notification-item">
+                    <div class="notification-header">
+                        <h3 class="notification-title">${escapeHtml(notification.title)}</h3>
+                        <span class="notification-date">${notification.timestamp}</span>
+                    </div>
+                    <div class="notification-body">${escapeHtml(notification.body)}</div>
+                    <div class="notification-actions">
+                        <button class="btn btn-danger" onclick="deleteBroadcast(${notification.id})">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Settings Functions
+        passwordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newMain = document.getElementById('newMainPassword').value;
+            const newBackup = document.getElementById('newBackupPassword').value;
+            
+            if (!newMain && !newBackup) {
+                showAlert('settingsAlert', 'Please enter at least one new password.', 'error');
+                return;
+            }
+            
+            if (newMain && newMain.length < 6) {
+                showAlert('settingsAlert', 'Main password must be at least 6 characters.', 'error');
+                return;
+            }
+            
+            if (newBackup && newBackup.length < 6) {
+                showAlert('settingsAlert', 'Backup password must be at least 6 characters.', 'error');
+                return;
+            }
+            
+            if (newMain) mainPassword = newMain;
+            if (newBackup) backupPassword = newBackup;
+            
+            // Clear form
+            document.getElementById('newMainPassword').value = '';
+            document.getElementById('newBackupPassword').value = '';
+            
+            showAlert('settingsAlert', '✅ Passwords updated successfully!', 'success');
+        });
+
+        function updateStats() {
+            document.getElementById('totalBroadcasts').textContent = notifications.length;
+        }
+
+        function updateLastLogin() {
+            const lastLogin = sessionStorage.getItem('last_login');
+            if (lastLogin) {
+                const date = new Date(lastLogin);
+                document.getElementById('lastLoginTime').textContent = date.toLocaleDateString();
+            }
+        }
+
+        // Utility Functions
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function clearForms() {
+            document.getElementById('password').value = '';
+            document.getElementById('backupPassword').value = '';
+            document.getElementById('broadcastTitle').value = '';
+            document.getElementById('broadcastBody').value = '';
+            backupPasswordForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        }
+
+        // Mobile responsiveness
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('open');
+                mainContent.classList.add('sidebar-open');
+            } else {
+                mainContent.classList.remove('sidebar-open');
+            }
+        });
+
+        // Initialize desktop sidebar
+        if (window.innerWidth > 768) {
+            sidebar.classList.add('open');
+            mainContent.classList.add('sidebar-open');
+        }
+    </script>
+</body>
+</html>
