@@ -1726,7 +1726,7 @@
                 cssPath = 'css/styles.css'; // default main CSS
                 break;
             case 'dark-blue':
-                cssPath = 'css/dark-blue.css'; // fully standalone
+                cssPath = 'css/dark-blue-obf.css'; // fully standalone
                 break;
             default:
                 cssPath = 'css/styles.css';
@@ -3119,23 +3119,22 @@ window.addEventListener('resize', function() {
         }
     }
 });
-document.addEventListener("DOMContentLoaded", () => {
-  fetch("version.json")
-    .then(res => {
-      if (!res.ok) throw new Error("version.json not found");
-      return res.json();
-    })
-    .then(v => {
-      const versionText = `v${v.major}.${v.minor}.${v.patch} • build ${v.build} • ${v.commit} • ${new Date(v.releaseDate).toLocaleString()}`;
-      document.getElementById("footer-version").textContent = versionText;
-    })
-    .catch(err => {
-      console.warn("Version load failed:", err);
-      document.getElementById("footer-version").textContent = "version unavailable";
-    });
-});
+// Version config (centralized)
+const appVersion = {
+  major: 3,
+  minor: 2,
+  patch: 7,
+  build: 342,
+  releaseDate: "2025-08-20"
+};
 
-// ===================================
-// Dynamic current year
-  document.getElementById('footer-year').textContent = new Date().getFullYear();
-// ===================================
+// Format nicely
+function formatVersion(v) {
+  const year = new Date(v.releaseDate).getFullYear(); // extract only the year
+  return `v${v.major}.${v.minor}.${v.patch} • build ${v.build} • ${year}`;
+}
+
+// Inject into footer
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("footer-version").textContent = formatVersion(appVersion);
+});
