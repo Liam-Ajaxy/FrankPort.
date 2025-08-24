@@ -1538,7 +1538,7 @@ section {
 }
 
 .footer-column a {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   transition: color var(--transition-fast);
 }
 
@@ -2013,7 +2013,7 @@ section {
   position: static; /* remove absolute */
   font-size: 1.2rem;
   color: var(--text-primary);
-  cursor: pointer;
+  cursor: default;
   background: transparent;
   border: none;
   outline: none;
@@ -3420,14 +3420,6 @@ body.light-mode .footer {
   border-top: 1px solid var(--border-color);
 }
 
-body.light-mode .footer-column a {
-  color: var(--text-secondary);
-}
-
-body.light-mode .footer-column a:hover {
-  color: var(--accent-gold);
-}
-
 body.light-mode .footer-divider {
   background: var(--border-color);
 }
@@ -3468,15 +3460,8 @@ body.light-mode .loading-text {
    TOASTS - LIGHT MODE
    =================================== */
 
-body.light-mode .toast {
-  background: rgb(255, 255, 255); /* default glassy background */
-  color: var(--text-primary); /* default text */
-  box-shadow: 2px 2px 5px rgb(0, 0, 0);
-  border: 2px solid var(--border-color);
-}
-
 body.light-mode .toast-close {
-  color: var(--text-primary);
+  color: #ffffff;
   background: transparent;
 }
 
@@ -4817,7 +4802,7 @@ body.light-mode .theme-toggle::after {
 .footer-column .legal-link {
     background: none;
     border: none;
-    color: var(--accent-gold);
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 16px;
     cursor: pointer;
@@ -4831,20 +4816,13 @@ body.light-mode .theme-toggle::after {
 }
 
 .footer-column .legal-link:hover {
-    color: var(--text-secondary);
-    text-shadow: 0 0 8px var(--shadow-light);
-}
-
-.footer-column .legal-link:focus {
-    outline: 2px solid var(--accent-gold);
-    outline-offset: 2px;
-    border-radius: 2px;
+    color: var(--accent-gold);
 }
 
 .footer-column .theme-button {
     background: none;
     border: none;
-    color: var(--accent-gold);
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 16px;
     cursor: pointer;
@@ -4856,16 +4834,9 @@ body.light-mode .theme-toggle::after {
     margin-bottom: 8px;
     line-height: 1.5;
 }
-body.light-mode .footer-column .theme-button {
-  color: var(--text-secondary);
-}
-body.light-mode .footer-column .theme-button:hover {
-    color: #0D0D0D;
-}
 
 .footer-column .theme-button:hover {
-    color: var(--text-secondary);
-    text-shadow: 0 0 8px var(--shadow-light);
+    color: var(--accent-gold);
 }
 
 /* Dynamic Content Container */
@@ -5169,19 +5140,6 @@ body.light-mode .footer-column .theme-button:hover {
     .contact-info-modal {
         padding: 16px;
     }
-}
-
-/* Light Mode Color Overrides */
-body.light-mode .footer-column .legal-link {
-    color: #6c7293;
-}
-
-body.light-mode .footer-column .legal-link:hover {
-    color: #0D0D0D;;
-}
-
-body.light-mode .footer-column .legal-link:focus {
-    outline: 1px solid #6c7293;
 }
 
 body.light-mode .legal-content-container {

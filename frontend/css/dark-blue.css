@@ -1536,7 +1536,7 @@ body.light-mode .filter-btn:hover {
 }
 
 .footer-column a {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   transition: color var(--transition-fast);
 }
 
@@ -2021,7 +2021,7 @@ body.light-mode .filter-btn:hover {
   position: static; /* remove absolute */
   font-size: 1.2rem;
   color: var(--text-primary);
-  cursor: pointer;
+  cursor: default;
   background: transparent;
   border: none;
   outline: none;
@@ -4812,7 +4812,7 @@ body.light-mode .theme-toggle::after {
 .footer-column .legal-link {
     background: none;
     border: none;
-    color: var(--accent-gold);
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 16px;
     cursor: pointer;
@@ -4826,14 +4826,7 @@ body.light-mode .theme-toggle::after {
 }
 
 .footer-column .legal-link:hover {
-    color: var(--text-secondary);
-    text-shadow: 0 0 8px var(--shadow-light);
-}
-
-.footer-column .legal-link:focus {
-    outline: 2px solid var(--accent-gold);
-    outline-offset: 2px;
-    border-radius: 2px;
+    color: var(--accent-gold);
 }
 
 /* Dynamic Content Container */

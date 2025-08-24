@@ -657,11 +657,14 @@
         },
 
         setLoading(loading) {
+            if (!this.originalText) {
+                this.originalText = this.submitBtn.textContent;
+            }
             if (loading) {
-                this.submitBtn.classList.add('loading');
+                this.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
                 this.submitBtn.disabled = true;
             } else {
-                this.submitBtn.classList.remove('loading');
+                this.submitBtn.innerHTML = this.originalText;
                 this.submitBtn.disabled = false;
             }
         },
@@ -669,6 +672,7 @@
         showStatus(message, type) {
             this.formStatus.textContent = message;
             this.formStatus.className = `form-status ${type}`;
+            this.submitBtn.innerHTML = this.originalText;
             
             // Auto-hide success messages
             if (type === 'success') {
@@ -1726,7 +1730,7 @@
                 cssPath = 'css/styles.css'; // default main CSS
                 break;
             case 'dark-blue':
-                cssPath = 'css/dark-blue-obf.css'; // fully standalone
+                cssPath = 'css/dark-blue-obf'; // fully standalone
                 break;
             default:
                 cssPath = 'css/styles.css';
@@ -2403,7 +2407,7 @@ function showCompletionButton(platform) {
 
 function openSecureAccess(platform) {
     // This will work without popup blocking since it's triggered by user click
-    window.open(`https://quantum-hash-protocol-99172-encryption-layer-module-checksum-44.vercel.app?platform=${platform}`, '_blank');
+    window.open(`https://quantum-hash-protocol-frankport-verify.vercel.app?platform=${platform}`, '_blank');
     
     // Close modal after opening
     closeModal();
