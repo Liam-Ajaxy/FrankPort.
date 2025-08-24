@@ -516,6 +516,8 @@
             this.formStatus = document.getElementById('form-status');
             
             if (!this.form) return;
+
+            this.originalText = this.submitBtn.textContent;
             
             this.bindEvents();
             this.setupValidation();
@@ -657,9 +659,6 @@
         },
 
         setLoading(loading) {
-            if (!this.originalText) {
-                this.originalText = this.submitBtn.textContent;
-            }
             if (loading) {
                 this.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
                 this.submitBtn.disabled = true;
@@ -1843,7 +1842,7 @@
         if (typeof showToast === 'function') {
         const message = `Switched to ${theme} mode`;
         const icon = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
-        showToast(message, 'info', 4000, icon);
+        showToast(message, 'info', 2000, icon);
         }
     }
 
@@ -3123,22 +3122,1275 @@ window.addEventListener('resize', function() {
         }
     }
 });
-// Version config (centralized)
-const appVersion = {
-  major: 3,
-  minor: 2,
-  patch: 7,
-  build: 342,
-  releaseDate: "2025-08-20"
-};
 
-// Format nicely
-function formatVersion(v) {
-  const year = new Date(v.releaseDate).getFullYear(); // extract only the year
-  return `v${v.major}.${v.minor}.${v.patch} • build ${v.build} • ${year}`;
+// Language System for FrankPort Portfolio
+// Complete translation system with local storage persistence
+
+class LanguageManager {
+    constructor() {
+        this.currentLanguage = 'en';
+        this.translations = {};
+        this.init();
+    }
+
+    // Initialize the language system
+    init() {
+        this.loadTranslations();
+        this.loadSavedLanguage();
+        this.bindEvents();
+        this.updatePageLanguage();
+    }
+
+    // Load saved language from localStorage
+    loadSavedLanguage() {
+        const saved = localStorage.getItem('frankport_language');
+        if (saved && this.translations[saved]) {
+            this.currentLanguage = saved;
+        }
+    }
+
+    // Save current language to localStorage
+    saveLanguage() {
+        localStorage.setItem('frankport_language', this.currentLanguage);
+    }
+
+    // Bind language change events
+    bindEvents() {
+        // Update HTML lang attribute when language changes
+        document.addEventListener('languageChanged', (e) => {
+            document.documentElement.lang = e.detail.language;
+        });
+    }
+
+    // Load all translations
+    loadTranslations() {
+        this.translations = {
+            en: {
+                // Navigation
+                'nav-home': 'Home',
+                'nav-about': 'About',
+                'nav-projects': 'Projects',
+                'nav-skills': 'Skills',
+                'nav-contact': 'Contact',
+
+                // Hero Section
+                'hero-available': 'Available for new opportunities',
+                'hero-greeting': 'Hi, I\'m',
+                'hero-description': 'I craft exceptional digital experiences through clean code and innovative design. Specializing in modern web technologies with a passion for creating solutions that matter.',
+                'hero-projects': 'Projects',
+                'hero-experience': 'Years Exp',
+                'hero-satisfaction': '% Satisfaction',
+                'hero-view-work': 'View My Work',
+                'hero-get-in-touch': 'Get In Touch',
+                'code-passion': 'Creating Amazing Web Experiences',
+                'scroll-down': 'Scroll Down',
+
+                // About Section
+                'about-title': 'About Me',
+                'about-subtitle': 'Passionate developer with a mission to create exceptional digital experiences',
+                'about-intro-1': 'I\'m a dedicated software developer with expertise in modern web technologies. My journey began with curiosity about how websites work, and it has evolved into a passion for creating seamless, user-focused digital solutions.',
+                'about-intro-2': 'I believe in writing clean, maintainable code and staying current with the latest industry trends. Every project is an opportunity to learn something new and push the boundaries of what\'s possible on the web.',
+                'about-highlights-title': 'What I Bring',
+                'about-clean-code': 'Clean Code Philosophy',
+                'about-clean-code-desc': 'Writing maintainable, scalable, and efficient code',
+                'about-problem-solving': 'Problem-Solving Mindset',
+                'about-problem-solving-desc': 'Turning complex challenges into elegant solutions',
+                'about-collaborative': 'Collaborative Spirit',
+                'about-collaborative-desc': 'Working effectively with teams and stakeholders',
+                'about-learning': 'Continuous Learning',
+                'about-learning-desc': 'Staying ahead with latest technologies and trends',
+                'experience-timeline': 'Experience Timeline',
+                'timeline-frontend': 'Frontend Developer',
+                'timeline-frontend-desc': 'Building responsive web applications',
+                'timeline-junior': 'Junior Developer',
+                'timeline-junior-desc': 'Learning and growing in web development',
+                'timeline-self-taught': 'Self-Taught Journey',
+                'timeline-self-taught-desc': 'Started learning programming fundamentals',
+
+                // Projects Section
+                'projects-title': 'Featured Projects',
+                'projects-subtitle': 'A showcase of my best work and creative solutions',
+                'filter-all': 'All Projects',
+                'filter-web': 'Web Apps',
+                'filter-frontend': 'Frontend',
+                'filter-fullstack': 'Full Stack',
+                'project-fenix-desc': 'High-performance full-stack framework for building scalable Node.js + MySQL applications.',
+                'project-frankcloud-category': 'Advanced Weather App',
+                'project-frankcloud-desc': 'Real-time weather forecasts with location-based insights and smooth UI animations.',
+                'project-softbullet-category': 'Hacker Stimulator Terminal',
+                'project-softbullet-desc': 'Immersive coding simulation inspired by GEEKTyper — fully interactive and customizable.',
+                'project-voltchat-category': 'Chat App by Volt',
+                'project-voltchat-desc': 'Secure real-time messaging app with group chat and encryption-ready architecture.',
+                'project-frankport-desc': 'A creative portfolio website featuring smooth animations, interactive elements, and modern design principles. Optimized for performance and accessibility.',
+                'project-development-progress': 'Development is in Progress.',
+                'project-currently-using': 'You are currently using FrankPort.',
+
+                // Skills Section
+                'skills-title': 'Skills & Expertise',
+                'skills-subtitle': 'Technical proficiencies and tools I work with',
+                'skills-frontend-title': 'Frontend Development',
+                'skills-tools-title': 'Tools & Frameworks',
+                'skills-design-title': 'Design & UX',
+                'skills-responsive': 'Responsive Design',
+                'skills-ui-ux': 'UI/UX Design',
+                'skills-prototyping': 'Prototyping',
+                'skills-coding-activity': 'Coding Activity',
+
+                // Testimonials
+                'testimonials-title': 'What People Say',
+                'testimonial-alex': 'Working with Frank was an absolute pleasure. His ability to translate complex ideas into clean, performant solutions is world-class. Highly recommended.',
+                'testimonial-samantha': 'FrankPort\'s design system and animations brought our brand to life. The attention to detail is unmatched.',
+
+                // Contact Section
+                'contact-title': 'Get In Touch',
+                'contact-subtitle': 'Let\'s discuss your next project or opportunity',
+                'contact-work-together': 'Let\'s Work Together',
+                'contact-interested': 'I\'m always interested in new opportunities and exciting projects. Whether you\'re looking for a developer to join your team or need help bringing your ideas to life, I\'d love to hear from you.',
+                'contact-whatsapp': 'Let\'s Chat on WhatsApp',
+                'contact-email': 'Drop Me a Message',
+                'contact-phone': 'Phone',
+                'contact-quick-call': 'Quick Call',
+                'contact-location': 'Location',
+                'contact-follow': 'Follow Me',
+                'form-your-name': 'Your Name',
+                'form-email': 'Email Address',
+                'form-subject': 'Subject',
+                'form-message': 'Message',
+                'form-privacy-agree': 'I agree to the privacy policy and terms of service',
+                'form-send-message': 'Send Message',
+
+                // Feedback Modal
+                'feedback-title': 'Share Your Feedback',
+                'feedback-quick-rating': 'Quick Rating',
+                'feedback-faq': 'FAQ',
+                'feedback-suggestions': 'Suggestions',
+                'feedback-pain-points': 'Pain Points',
+                'feedback-rate-experience': 'How would you rate your experience?',
+                'feedback-satisfaction-help': 'Your overall satisfaction helps us understand what we\'re doing well',
+                'feedback-click-stars': 'Click stars to rate',
+                'feedback-impressed-most': 'What specifically impressed you the most?',
+                'feedback-share-stood-out': 'Share what stood out to you...',
+                'feedback-faq-title': 'Frequently Asked Questions',
+                'feedback-help-improve': 'Help us improve by rating these common questions',
+                'feedback-share-ideas': 'Share Your Ideas',
+                'feedback-make-better': 'What would make this portfolio even better?',
+                'feedback-skip-hint': 'You can click Next to skip.',
+                'feedback-design-ui': 'Design & UI',
+                'feedback-design-desc': 'Visual improvements, layout, colors',
+                'feedback-content': 'Content',
+                'feedback-content-desc': 'Projects, information, descriptions',
+                'feedback-functionality': 'Functionality',
+                'feedback-functionality-desc': 'Features, interactions, performance',
+                'feedback-navigation': 'Navigation',
+                'feedback-navigation-desc': 'Menu, links, user flow',
+                'feedback-describe-suggestion': 'Describe your suggestion in detail...',
+                'feedback-whats-frustrating': 'What\'s Frustrating You?',
+                'feedback-identify-issues': 'Help us identify and fix issues that matter to you',
+                'feedback-no-pain-points': 'No pain points to report? Click Send Feedback to finish.',
+                'feedback-additional-details': 'Additional details about your experience',
+                'feedback-not-working-well': 'Tell us more about what\'s not working well...',
+                'feedback-previous': 'Previous',
+                'feedback-section-progress': 'Section 1 of 4',
+                'feedback-next': 'Next',
+                'feedback-send': 'Send Feedback',
+
+                // Footer
+                'footer-description': 'Crafting digital experiences with passion and precision. Let\'s build something amazing together.',
+                'footer-navigation': 'Navigation',
+                'footer-legal-trust': 'Legal & Trust',
+                'footer-privacy': 'Privacy Policy',
+                'footer-terms': 'Terms of Use',
+                'footer-disclaimer': 'Disclaimer',
+                'footer-cookies': 'Cookie Notice',
+                'footer-accessibility': 'Accessibility',
+                'footer-dark-mode': 'Dark Mode',
+                'footer-dark-blue-mode': 'Dark Blue Mode',
+                'footer-light-mode': 'Light Mode',
+                'footer-language': 'Language',
+                'lang-english': 'English',
+                'lang-french': 'Français',
+                'lang-spanish': 'Español',
+                'lang-german': 'Deutsch',
+                'lang-chinese': '中文',
+                'lang-kinyarwanda': 'Kinyarwanda',
+                'footer-copyright': '© 2025 Frank Portfolio. All rights reserved.',
+                'footer-loading-version': 'Loading version...',
+                'loading-portfolio': 'Loading portfolio...'
+            },
+
+            fr: {
+                // Navigation
+                'nav-home': 'Accueil',
+                'nav-about': 'À Propos',
+                'nav-projects': 'Projets',
+                'nav-skills': 'Compétences',
+                'nav-contact': 'Contact',
+
+                // Hero Section
+                'hero-available': 'Disponible pour de nouvelles opportunités',
+                'hero-greeting': 'Salut, je suis',
+                'hero-description': 'Je crée des expériences numériques exceptionnelles grâce à un code propre et un design innovant. Spécialisé dans les technologies web modernes avec une passion pour créer des solutions qui comptent.',
+                'hero-projects': 'Projets',
+                'hero-experience': 'Années d\'Exp',
+                'hero-satisfaction': '% Satisfaction',
+                'hero-view-work': 'Voir Mon Travail',
+                'hero-get-in-touch': 'Contactez-Moi',
+                'code-passion': 'Créer des Expériences Web Incroyables',
+                'scroll-down': 'Faites Défiler',
+
+                // About Section
+                'about-title': 'À Propos de Moi',
+                'about-subtitle': 'Développeur passionné avec pour mission de créer des expériences numériques exceptionnelles',
+                'about-intro-1': 'Je suis un développeur de logiciels dévoué avec une expertise dans les technologies web modernes. Mon parcours a commencé par la curiosité sur le fonctionnement des sites web, et a évolué vers une passion pour créer des solutions numériques fluides et centrées sur l\'utilisateur.',
+                'about-intro-2': 'Je crois en l\'écriture de code propre et maintenable et à rester au courant des dernières tendances de l\'industrie. Chaque projet est une opportunité d\'apprendre quelque chose de nouveau et de repousser les limites de ce qui est possible sur le web.',
+                'about-highlights-title': 'Ce Que J\'apporte',
+                'about-clean-code': 'Philosophie du Code Propre',
+                'about-clean-code-desc': 'Écrire du code maintenable, évolutif et efficace',
+                'about-problem-solving': 'Mentalité de Résolution de Problèmes',
+                'about-problem-solving-desc': 'Transformer les défis complexes en solutions élégantes',
+                'about-collaborative': 'Esprit Collaboratif',
+                'about-collaborative-desc': 'Travailler efficacement avec les équipes et les parties prenantes',
+                'about-learning': 'Apprentissage Continu',
+                'about-learning-desc': 'Rester en avance avec les dernières technologies et tendances',
+                'experience-timeline': 'Chronologie d\'Expérience',
+                'timeline-frontend': 'Développeur Frontend',
+                'timeline-frontend-desc': 'Construire des applications web responsives',
+                'timeline-junior': 'Développeur Junior',
+                'timeline-junior-desc': 'Apprendre et grandir dans le développement web',
+                'timeline-self-taught': 'Parcours Autodidacte',
+                'timeline-self-taught-desc': 'Commencer à apprendre les fondamentaux de la programmation',
+
+                // Projects Section
+                'projects-title': 'Projets en Vedette',
+                'projects-subtitle': 'Une vitrine de mon meilleur travail et de mes solutions créatives',
+                'filter-all': 'Tous les Projets',
+                'filter-web': 'Applications Web',
+                'filter-frontend': 'Frontend',
+                'filter-fullstack': 'Full Stack',
+                'project-fenix-desc': 'Framework full-stack haute performance pour construire des applications Node.js + MySQL évolutives.',
+                'project-frankcloud-category': 'Application Météo Avancée',
+                'project-frankcloud-desc': 'Prévisions météo en temps réel avec des informations basées sur la localisation et des animations UI fluides.',
+                'project-softbullet-category': 'Terminal de Simulation de Hacker',
+                'project-softbullet-desc': 'Simulation de codage immersive inspirée de GEEKTyper — entièrement interactive et personnalisable.',
+                'project-voltchat-category': 'Application de Chat par Volt',
+                'project-voltchat-desc': 'Application de messagerie sécurisée en temps réel avec chat de groupe et architecture prête pour le chiffrement.',
+                'project-frankport-desc': 'Un site web de portfolio créatif avec des animations fluides, des éléments interactifs et des principes de design modernes. Optimisé pour les performances et l\'accessibilité.',
+                'project-development-progress': 'Le développement est en cours.',
+                'project-currently-using': 'Vous utilisez actuellement FrankPort.',
+
+                // Skills Section
+                'skills-title': 'Compétences et Expertise',
+                'skills-subtitle': 'Compétences techniques et outils avec lesquels je travaille',
+                'skills-frontend-title': 'Développement Frontend',
+                'skills-tools-title': 'Outils et Frameworks',
+                'skills-design-title': 'Design et UX',
+                'skills-responsive': 'Design Responsif',
+                'skills-ui-ux': 'Design UI/UX',
+                'skills-prototyping': 'Prototypage',
+                'skills-coding-activity': 'Activité de Codage',
+
+                // Testimonials
+                'testimonials-title': 'Ce Que Disent les Gens',
+                'testimonial-alex': 'Travailler avec Frank était un plaisir absolu. Sa capacité à traduire des idées complexes en solutions propres et performantes est de classe mondiale. Hautement recommandé.',
+                'testimonial-samantha': 'Le système de design et les animations de FrankPort ont donné vie à notre marque. L\'attention aux détails est inégalée.',
+
+                // Contact Section
+                'contact-title': 'Entrer en Contact',
+                'contact-subtitle': 'Discutons de votre prochain projet ou opportunité',
+                'contact-work-together': 'Travaillons Ensemble',
+                'contact-interested': 'Je suis toujours intéressé par de nouvelles opportunités et des projets passionnants. Que vous cherchiez un développeur pour rejoindre votre équipe ou que vous ayez besoin d\'aide pour donner vie à vos idées, j\'aimerais avoir de vos nouvelles.',
+                'contact-whatsapp': 'Discutons sur WhatsApp',
+                'contact-email': 'Envoyez-Moi un Message',
+                'contact-phone': 'Téléphone',
+                'contact-quick-call': 'Appel Rapide',
+                'contact-location': 'Localisation',
+                'contact-follow': 'Suivez-Moi',
+                'form-your-name': 'Votre Nom',
+                'form-email': 'Adresse Email',
+                'form-subject': 'Sujet',
+                'form-message': 'Message',
+                'form-privacy-agree': 'J\'accepte la politique de confidentialité et les conditions de service',
+                'form-send-message': 'Envoyer le Message',
+
+                // Footer
+                'footer-description': 'Créer des expériences numériques avec passion et précision. Construisons quelque chose d\'incroyable ensemble.',
+                'footer-navigation': 'Navigation',
+                'footer-legal-trust': 'Légal et Confiance',
+                'footer-privacy': 'Politique de Confidentialité',
+                'footer-terms': 'Conditions d\'Utilisation',
+                'footer-disclaimer': 'Avertissement',
+                'footer-cookies': 'Avis sur les Cookies',
+                'footer-accessibility': 'Accessibilité',
+                'footer-dark-mode': 'Mode Sombre',
+                'footer-dark-blue-mode': 'Mode Bleu Sombre',
+                'footer-light-mode': 'Mode Clair',
+                'footer-language': 'Langue',
+                'lang-english': 'English',
+                'lang-french': 'Français',
+                'lang-spanish': 'Español',
+                'lang-german': 'Deutsch',
+                'lang-chinese': '中文',
+                'lang-kinyarwanda': 'Kinyarwanda',
+                'footer-copyright': '© 2025 Portfolio Frank. Tous droits réservés.',
+                'footer-loading-version': 'Chargement de la version...',
+                'loading-portfolio': 'Chargement du portfolio...'
+            },
+
+            es: {
+                // Navigation
+                'nav-home': 'Inicio',
+                'nav-about': 'Acerca de',
+                'nav-projects': 'Proyectos',
+                'nav-skills': 'Habilidades',
+                'nav-contact': 'Contacto',
+
+                // Hero Section
+                'hero-available': 'Disponible para nuevas oportunidades',
+                'hero-greeting': 'Hola, soy',
+                'hero-description': 'Creo experiencias digitales excepcionales a través de código limpio y diseño innovador. Especializado en tecnologías web modernas con pasión por crear soluciones que importan.',
+                'hero-projects': 'Proyectos',
+                'hero-experience': 'Años de Exp',
+                'hero-satisfaction': '% Satisfacción',
+                'hero-view-work': 'Ver Mi Trabajo',
+                'hero-get-in-touch': 'Ponte en Contacto',
+                'code-passion': 'Creando Experiencias Web Increíbles',
+                'scroll-down': 'Desplazar Hacia Abajo',
+
+                // About Section
+                'about-title': 'Acerca de Mí',
+                'about-subtitle': 'Desarrollador apasionado con la misión de crear experiencias digitales excepcionales',
+                'about-intro-1': 'Soy un desarrollador de software dedicado con experiencia en tecnologías web modernas. Mi viaje comenzó con curiosidad sobre cómo funcionan los sitios web, y ha evolucionado hacia una pasión por crear soluciones digitales fluidas y centradas en el usuario.',
+                'about-intro-2': 'Creo en escribir código limpio y mantenible y mantenerme al día con las últimas tendencias de la industria. Cada proyecto es una oportunidad para aprender algo nuevo y empujar los límites de lo que es posible en la web.',
+                'about-highlights-title': 'Lo Que Aporto',
+                'about-clean-code': 'Filosofía de Código Limpio',
+                'about-clean-code-desc': 'Escribir código mantenible, escalable y eficiente',
+                'about-problem-solving': 'Mentalidad de Resolución de Problemas',
+                'about-problem-solving-desc': 'Convertir desafíos complejos en soluciones elegantes',
+                'about-collaborative': 'Espíritu Colaborativo',
+                'about-collaborative-desc': 'Trabajar efectivamente con equipos y partes interesadas',
+                'about-learning': 'Aprendizaje Continuo',
+                'about-learning-desc': 'Mantenerme adelante con las últimas tecnologías y tendencias',
+                'experience-timeline': 'Línea de Tiempo de Experiencia',
+                'timeline-frontend': 'Desarrollador Frontend',
+                'timeline-frontend-desc': 'Construyendo aplicaciones web responsivas',
+                'timeline-junior': 'Desarrollador Junior',
+                'timeline-junior-desc': 'Aprendiendo y creciendo en el desarrollo web',
+                'timeline-self-taught': 'Viaje Autodidacta',
+                'timeline-self-taught-desc': 'Comenzar a aprender fundamentos de programación',
+
+                // Projects Section
+                'projects-title': 'Proyectos Destacados',
+                'projects-subtitle': 'Una muestra de mi mejor trabajo y soluciones creativas',
+                'filter-all': 'Todos los Proyectos',
+                'filter-web': 'Aplicaciones Web',
+                'filter-frontend': 'Frontend',
+                'filter-fullstack': 'Full Stack',
+                'project-fenix-desc': 'Framework full-stack de alto rendimiento para construir aplicaciones Node.js + MySQL escalables.',
+                'project-frankcloud-category': 'Aplicación Meteorológica Avanzada',
+                'project-frankcloud-desc': 'Pronósticos meteorológicos en tiempo real con información basada en ubicación y animaciones UI suaves.',
+                'project-softbullet-category': 'Terminal Simulador de Hacker',
+                'project-softbullet-desc': 'Simulación de codificación inmersiva inspirada en GEEKTyper — completamente interactiva y personalizable.',
+                'project-voltchat-category': 'Aplicación de Chat por Volt',
+                'project-voltchat-desc': 'Aplicación de mensajería segura en tiempo real con chat grupal y arquitectura lista para cifrado.',
+                'project-frankport-desc': 'Un sitio web de portafolio creativo con animaciones suaves, elementos interactivos y principios de diseño moderno. Optimizado para rendimiento y accesibilidad.',
+                'project-development-progress': 'El desarrollo está en progreso.',
+                'project-currently-using': 'Actualmente estás usando FrankPort.',
+
+                // Skills Section
+                'skills-title': 'Habilidades y Experiencia',
+                'skills-subtitle': 'Competencias técnicas y herramientas con las que trabajo',
+                'skills-frontend-title': 'Desarrollo Frontend',
+                'skills-tools-title': 'Herramientas y Frameworks',
+                'skills-design-title': 'Diseño y UX',
+                'skills-responsive': 'Diseño Responsivo',
+                'skills-ui-ux': 'Diseño UI/UX',
+                'skills-prototyping': 'Prototipado',
+                'skills-coding-activity': 'Actividad de Codificación',
+
+                // Testimonials
+                'testimonials-title': 'Lo Que Dice la Gente',
+                'testimonial-alex': 'Trabajar con Frank fue un placer absoluto. Su habilidad para traducir ideas complejas en soluciones limpias y performantes es de clase mundial. Altamente recomendado.',
+                'testimonial-samantha': 'El sistema de diseño y las animaciones de FrankPort dieron vida a nuestra marca. La atención al detalle es inigualable.',
+
+                // Contact Section
+                'contact-title': 'Ponte en Contacto',
+                'contact-subtitle': 'Hablemos sobre tu próximo proyecto u oportunidad',
+                'contact-work-together': 'Trabajemos Juntos',
+                'contact-interested': 'Siempre estoy interesado en nuevas oportunidades y proyectos emocionantes. Ya sea que busques un desarrollador para unirse a tu equipo o necesites ayuda para dar vida a tus ideas, me encantaría saber de ti.',
+                'contact-whatsapp': 'Charlemos en WhatsApp',
+                'contact-email': 'Envíame un Mensaje',
+                'contact-phone': 'Teléfono',
+                'contact-quick-call': 'Llamada Rápida',
+                'contact-location': 'Ubicación',
+                'contact-follow': 'Sígueme',
+                'form-your-name': 'Tu Nombre',
+                'form-email': 'Dirección de Email',
+                'form-subject': 'Asunto',
+                'form-message': 'Mensaje',
+                'form-privacy-agree': 'Acepto la política de privacidad y términos de servicio',
+                'form-send-message': 'Enviar Mensaje',
+
+                // Footer
+                'footer-description': 'Creando experiencias digitales con pasión y precisión. Construyamos algo increíble juntos.',
+                'footer-navigation': 'Navegación',
+                'footer-legal-trust': 'Legal y Confianza',
+                'footer-privacy': 'Política de Privacidad',
+                'footer-terms': 'Términos de Uso',
+                'footer-disclaimer': 'Descargo de Responsabilidad',
+                'footer-cookies': 'Aviso de Cookies',
+                'footer-accessibility': 'Accesibilidad',
+                'footer-dark-mode': 'Modo Oscuro',
+                'footer-dark-blue-mode': 'Modo Azul Oscuro',
+                'footer-light-mode': 'Modo Claro',
+                'footer-language': 'Idioma',
+                'lang-english': 'English',
+                'lang-french': 'Français',
+                'lang-spanish': 'Español',
+                'lang-german': 'Deutsch',
+                'lang-chinese': '中文',
+                'lang-kinyarwanda': 'Kinyarwanda',
+                'footer-copyright': '© 2025 Portafolio Frank. Todos los derechos reservados.',
+                'footer-loading-version': 'Cargando versión...',
+                'loading-portfolio': 'Cargando portafolio...'
+            },
+
+            de: {
+                // Navigation
+                'nav-home': 'Startseite',
+                'nav-about': 'Über Mich',
+                'nav-projects': 'Projekte',
+                'nav-skills': 'Fähigkeiten',
+                'nav-contact': 'Kontakt',
+
+                // Hero Section
+                'hero-available': 'Verfügbar für neue Möglichkeiten',
+                'hero-greeting': 'Hallo, ich bin',
+                'hero-description': 'Ich schaffe außergewöhnliche digitale Erfahrungen durch sauberen Code und innovatives Design. Spezialisiert auf moderne Web-Technologien mit einer Leidenschaft für die Schaffung von Lösungen, die zählen.',
+                'hero-projects': 'Projekte',
+                'hero-experience': 'Jahre Erf',
+                'hero-satisfaction': '% Zufriedenheit',
+                'hero-view-work': 'Meine Arbeit Ansehen',
+                'hero-get-in-touch': 'Kontakt Aufnehmen',
+                'code-passion': 'Erstaunliche Web-Erfahrungen Schaffen',
+                'scroll-down': 'Nach Unten Scrollen',
+
+                // About Section
+                'about-title': 'Über Mich',
+                'about-subtitle': 'Leidenschaftlicher Entwickler mit der Mission, außergewöhnliche digitale Erfahrungen zu schaffen',
+                'about-intro-1': 'Ich bin ein engagierter Software-Entwickler mit Expertise in modernen Web-Technologien. Meine Reise begann mit Neugier darauf, wie Websites funktionieren, und hat sich zu einer Leidenschaft für die Schaffung nahtloser, benutzerorientierter digitaler Lösungen entwickelt.',
+                'about-intro-2': 'Ich glaube an das Schreiben von sauberem, wartbarem Code und daran, mit den neuesten Branchentrends Schritt zu halten. Jedes Projekt ist eine Gelegenheit, etwas Neues zu lernen und die Grenzen dessen zu erweitern, was im Web möglich ist.',
+                'about-highlights-title': 'Was Ich Mitbringe',
+                'about-clean-code': 'Clean Code Philosophie',
+                'about-clean-code-desc': 'Wartbaren, skalierbaren und effizienten Code schreiben',
+                'about-problem-solving': 'Problemlösungs-Mentalität',
+                'about-problem-solving-desc': 'Komplexe Herausforderungen in elegante Lösungen verwandeln',
+                'about-collaborative': 'Kollaborativer Geist',
+                'about-collaborative-desc': 'Effektiv mit Teams und Stakeholdern arbeiten',
+                'about-learning': 'Kontinuierliches Lernen',
+                'about-learning-desc': 'Mit neuesten Technologien und Trends voraus bleiben',
+                'experience-timeline': 'Erfahrungszeitlinie',
+                'timeline-frontend': 'Frontend-Entwickler',
+                'timeline-frontend-desc': 'Responsive Webanwendungen erstellen',
+                'timeline-junior': 'Junior-Entwickler',
+                'timeline-junior-desc': 'Lernen und wachsen in der Webentwicklung',
+                'timeline-self-taught': 'Autodidaktische Reise',
+                'timeline-self-taught-desc': 'Programmiergrundlagen lernen begonnen',
+
+                // Projects Section
+                'projects-title': 'Hervorgehobene Projekte',
+                'projects-subtitle': 'Eine Präsentation meiner besten Arbeit und kreativen Lösungen',
+                'filter-all': 'Alle Projekte',
+                'filter-web': 'Web-Apps',
+                'filter-frontend': 'Frontend',
+                'filter-fullstack': 'Full Stack',
+                'project-fenix-desc': 'Hochleistungs-Full-Stack-Framework zum Erstellen skalierbarer Node.js + MySQL-Anwendungen.',
+                'project-frankcloud-category': 'Erweiterte Wetter-App',
+                'project-frankcloud-desc': 'Echtzeit-Wettervorhersagen mit standortbasierten Einblicken und glatten UI-Animationen.',
+                'project-softbullet-category': 'Hacker-Simulator-Terminal',
+                'project-softbullet-desc': 'Immersive Codierungssimulation inspiriert von GEEKTyper — vollständig interaktiv und anpassbar.',
+                'project-voltchat-category': 'Chat-App von Volt',
+                'project-voltchat-desc': 'Sichere Echtzeit-Messaging-App mit Gruppenchat und verschlüsselungsbereiter Architektur.',
+                'project-frankport-desc': 'Eine kreative Portfolio-Website mit glatten Animationen, interaktiven Elementen und modernen Designprinzipien. Optimiert für Leistung und Zugänglichkeit.',
+                'project-development-progress': 'Entwicklung ist im Gange.',
+                'project-currently-using': 'Sie verwenden derzeit FrankPort.',
+
+                // Skills Section
+                'skills-title': 'Fähigkeiten & Expertise',
+                'skills-subtitle': 'Technische Kompetenzen und Werkzeuge, mit denen ich arbeite',
+                'skills-frontend-title': 'Frontend-Entwicklung',
+                'skills-tools-title': 'Werkzeuge & Frameworks',
+                'skills-design-title': 'Design & UX',
+                'skills-responsive': 'Responsive Design',
+                'skills-ui-ux': 'UI/UX Design',
+                'skills-prototyping': 'Prototyping',
+                'skills-coding-activity': 'Codieraktivität',
+
+                // Testimonials
+                'testimonials-title': 'Was Menschen Sagen',
+                'testimonial-alex': 'Mit Frank zu arbeiten war ein absolutes Vergnügen. Seine Fähigkeit, komplexe Ideen in saubere, performante Lösungen zu übersetzen, ist Weltklasse. Sehr empfehlenswert.',
+                'testimonial-samantha': 'FrankPorts Design-System und Animationen haben unsere Marke zum Leben erweckt. Die Liebe zum Detail ist unübertroffen.',
+
+                // Contact Section
+                'contact-title': 'Kontakt Aufnehmen',
+                'contact-subtitle': 'Lassen Sie uns über Ihr nächstes Projekt oder Ihre Gelegenheit sprechen',
+                'contact-work-together': 'Lassen Sie Uns Zusammenarbeiten',
+                'contact-interested': 'Ich bin immer an neuen Möglichkeiten und spannenden Projekten interessiert. Ob Sie einen Entwickler für Ihr Team suchen oder Hilfe beim Verwirklichen Ihrer Ideen benötigen, ich würde gerne von Ihnen hören.',
+                'contact-whatsapp': 'Lassen Sie uns auf WhatsApp chatten',
+                'contact-email': 'Senden Sie mir eine Nachricht',
+                'contact-phone': 'Telefon',
+                'contact-quick-call': 'Kurzer Anruf',
+                'contact-location': 'Standort',
+                'contact-follow': 'Folgen Sie Mir',
+                'form-your-name': 'Ihr Name',
+                'form-email': 'E-Mail-Adresse',
+                'form-subject': 'Betreff',
+                'form-message': 'Nachricht',
+                'form-privacy-agree': 'Ich stimme der Datenschutzrichtlinie und den Nutzungsbedingungen zu',
+                'form-send-message': 'Nachricht Senden',
+
+                // Footer
+                'footer-description': 'Digitale Erfahrungen mit Leidenschaft und Präzision schaffen. Lassen Sie uns etwas Erstaunliches zusammen bauen.',
+                'footer-navigation': 'Navigation',
+                'footer-legal-trust': 'Rechtliches & Vertrauen',
+                'footer-privacy': 'Datenschutzrichtlinie',
+                'footer-terms': 'Nutzungsbedingungen',
+                'footer-disclaimer': 'Haftungsausschluss',
+                'footer-cookies': 'Cookie-Hinweis',
+                'footer-accessibility': 'Barrierefreiheit',
+                'footer-dark-mode': 'Dunkler Modus',
+                'footer-dark-blue-mode': 'Dunkelblauer Modus',
+                'footer-light-mode': 'Heller Modus',
+                'footer-language': 'Sprache',
+                'lang-english': 'English',
+                'lang-french': 'Français',
+                'lang-spanish': 'Español',
+                'lang-german': 'Deutsch',
+                'lang-chinese': '中文',
+                'lang-kinyarwanda': 'Kinyarwanda',
+                'footer-copyright': '© 2025 Frank Portfolio. Alle Rechte vorbehalten.',
+                'footer-loading-version': 'Version wird geladen...',
+                'loading-portfolio': 'Portfolio wird geladen...'
+            },
+
+            zh: {
+                // Navigation
+                'nav-home': '首页',
+                'nav-about': '关于我',
+                'nav-projects': '项目',
+                'nav-skills': '技能',
+                'nav-contact': '联系',
+
+                // Hero Section
+                'hero-available': '可接受新机会',
+                'hero-greeting': '你好，我是',
+                'hero-description': '我通过干净的代码和创新设计打造卓越的数字体验。专注于现代网络技术，热衷于创造重要的解决方案。',
+                'hero-projects': '项目',
+                'hero-experience': '年经验',
+                'hero-satisfaction': '% 满意度',
+                'hero-view-work': '查看我的作品',
+                'hero-get-in-touch': '联系我',
+                'code-passion': '创造令人惊叹的网络体验',
+                'scroll-down': '向下滚动',
+
+                // About Section
+                'about-title': '关于我',
+                'about-subtitle': '热情的开发者，致力于创造卓越的数字体验',
+                'about-intro-1': '我是一名专注的软件开发者，在现代网络技术方面有专业知识。我的旅程始于对网站如何工作的好奇心，并已发展成为创造无缝、以用户为中心的数字解决方案的热情。',
+                'about-intro-2': '我相信编写干净、可维护的代码，并跟上最新的行业趋势。每个项目都是学习新知识和推动网络可能性边界的机会。',
+                'about-highlights-title': '我带来的价值',
+                'about-clean-code': '干净代码哲学',
+                'about-clean-code-desc': '编写可维护、可扩展和高效的代码',
+                'about-problem-solving': '解决问题的思维',
+                'about-problem-solving-desc': '将复杂挑战转化为优雅解决方案',
+                'about-collaborative': '协作精神',
+                'about-collaborative-desc': '与团队和利益相关者有效合作',
+                'about-learning': '持续学习',
+                'about-learning-desc': '掌握最新技术和趋势',
+                'experience-timeline': '经验时间线',
+                'timeline-frontend': '前端开发者',
+                'timeline-frontend-desc': '构建响应式网络应用程序',
+                'timeline-junior': '初级开发者',
+                'timeline-junior-desc': '在网络开发中学习和成长',
+                'timeline-self-taught': '自学之路',
+                'timeline-self-taught-desc': '开始学习编程基础',
+
+                // Projects Section
+                'projects-title': '精选项目',
+                'projects-subtitle': '我最佳作品和创意解决方案的展示',
+                'filter-all': '所有项目',
+                'filter-web': '网络应用',
+                'filter-frontend': '前端',
+                'filter-fullstack': '全栈',
+                'project-fenix-desc': '用于构建可扩展Node.js + MySQL应用程序的高性能全栈框架。',
+                'project-frankcloud-category': '高级天气应用',
+                'project-frankcloud-desc': '实时天气预报，具有基于位置的洞察和流畅的UI动画。',
+                'project-softbullet-category': '黑客模拟器终端',
+                'project-softbullet-desc': '受GEEKTyper启发的沉浸式编码模拟——完全交互和可定制。',
+                'project-voltchat-category': 'Volt聊天应用',
+                'project-voltchat-desc': '安全的实时消息应用，具有群聊和加密就绪架构。',
+                'project-frankport-desc': '创意作品集网站，具有流畅动画、交互元素和现代设计原则。针对性能和可访问性进行优化。',
+                'project-development-progress': '开发正在进行中。',
+                'project-currently-using': '您当前正在使用FrankPort。',
+
+                // Skills Section
+                'skills-title': '技能与专业知识',
+                'skills-subtitle': '我使用的技术能力和工具',
+                'skills-frontend-title': '前端开发',
+                'skills-tools-title': '工具和框架',
+                'skills-design-title': '设计与用户体验',
+                'skills-responsive': '响应式设计',
+                'skills-ui-ux': 'UI/UX设计',
+                'skills-prototyping': '原型制作',
+                'skills-coding-activity': '编码活动',
+
+                // Testimonials
+                'testimonials-title': '人们的评价',
+                'testimonial-alex': '与Frank合作是绝对的愉悦。他将复杂想法转化为干净、高性能解决方案的能力是世界级的。强烈推荐。',
+                'testimonial-samantha': 'FrankPort的设计系统和动画让我们的品牌栩栩如生。对细节的关注无与伦比。',
+
+                // Contact Section
+                'contact-title': '联系我',
+                'contact-subtitle': '让我们讨论您的下一个项目或机会',
+                'contact-work-together': '让我们合作吧',
+                'contact-interested': '我总是对新机会和令人兴奋的项目感兴趣。无论您是在寻找加入您团队的开发者，还是需要帮助实现您的想法，我都很乐意听到您的消息。',
+                'contact-whatsapp': '在WhatsApp上聊天',
+                'contact-email': '发送消息给我',
+                'contact-phone': '电话',
+                'contact-quick-call': '快速通话',
+                'contact-location': '位置',
+                'contact-follow': '关注我',
+                'form-your-name': '您的姓名',
+                'form-email': '电子邮件地址',
+                'form-subject': '主题',
+                'form-message': '消息',
+                'form-privacy-agree': '我同意隐私政策和服务条款',
+                'form-send-message': '发送消息',
+
+                // Footer
+                'footer-description': '用激情和精确度打造数字体验。让我们一起构建令人惊叹的东西。',
+                'footer-navigation': '导航',
+                'footer-legal-trust': '法律与信任',
+                'footer-privacy': '隐私政策',
+                'footer-terms': '使用条款',
+                'footer-disclaimer': '免责声明',
+                'footer-cookies': 'Cookie通知',
+                'footer-accessibility': '可访问性',
+                'footer-dark-mode': '深色模式',
+                'footer-dark-blue-mode': '深蓝模式',
+                'footer-light-mode': '浅色模式',
+                'footer-language': '语言',
+                'lang-english': 'English',
+                'lang-french': 'Français',
+                'lang-spanish': 'Español',
+                'lang-german': 'Deutsch',
+                'lang-chinese': '中文',
+                'lang-kinyarwanda': 'Kinyarwanda',
+                'footer-copyright': '© 2025 Frank作品集。保留所有权利。',
+                'footer-loading-version': '正在加载版本...',
+                'loading-portfolio': '正在加载作品集...'
+            },
+
+            rw: {
+                // Navigation
+                'nav-home': 'Ahabanza',
+                'nav-about': 'Uburyo Meze',
+                'nav-projects': 'Imishinga',
+                'nav-skills': 'Ubumenyi',
+                'nav-contact': 'Tuvugane',
+
+                // Hero Section
+                'hero-available': 'Ndaboneka kubw\'amahirwe mashya',
+                'hero-greeting': 'Muraho, ndi',
+                'hero-description': 'Nkora ubunararibonye bwa digitale bukomeye binyuze muri kode isukuye n\'igishushanyo gishya. Inzobere mu ikoranabuhanga rya kijyambere ku rubuga rw\'imbuga hamwe n\'urukundo rwo gukora ibisubizo bifite agaciro.',
+                'hero-projects': 'Imishinga',
+                'hero-experience': 'Imyaka y\'Ubunararibonye',
+                'hero-satisfaction': '% Baranyuzwe',
+                'hero-view-work': 'Reba Akazi Kanjye',
+                'hero-get-in-touch': 'Tuvugane',
+                'code-passion': 'Kurema Ubunararibonye bw\'Urubuga Rutangaje',
+                'scroll-down': 'Manuka Hepfo',
+
+                // About Section
+                'about-title': 'Uburyo Meze',
+                'about-subtitle': 'Umutegurwa w\'ubushobozi w\'intego yo kurema ubunararibonye bwa digitale bukomeye',
+                'about-intro-1': 'Ndi umutegurwa wa software watanze ubushobozi mu ikoranabuhanga rya kijyambere ku rubuga. Urugendo rwanje rwatangiye n\'amatsiko yo kumenya uko urubuga rukora, kandi rwahindutse urukundo rwo kurema ibisubizo bya digitale byoroshye kandi bikaba bishingiye ku bakoresha.',
+                'about-intro-2': 'Nizera ko kwandika kode isukuye kandi ishobora gutezimbere no kuguma ubonye ibintu bishya byose bigezweho mu nganda. Buri mishinga ni amahirwe yo kwiga ikintu gishya no gukurura imipaka y\'ibishoboka ku urubuga.',
+                'about-highlights-title': 'Icyo Nzana',
+                'about-clean-code': 'Filozofiya ya Kode Isukuye',
+                'about-clean-code-desc': 'Kwandika kode ishobora gutezimbere, gukura kandi ikaba ikora neza',
+                'about-problem-solving': 'Imyumvire yo Gukemura Ibibazo',
+                'about-problem-solving-desc': 'Guhindura ibibazo bigoye mu bisubizo byiza',
+                'about-collaborative': 'Umwuka w\'Ubufatanye',
+                'about-collaborative-desc': 'Gukora neza n\'amatsinda n\'abagize uruhare',
+                'about-learning': 'Kwiga Burigihe',
+                'about-learning-desc': 'Kuguma imbere n\'ikoranabuhanga n\'ibintu bigezweho',
+                'experience-timeline': 'Umurongo w\'Igihe cy\'Ubunararibonye',
+                'timeline-frontend': 'Umutegura wa Frontend',
+                'timeline-frontend-desc': 'Kubaka porogaramu z\'urubuga zisubiza',
+                'timeline-junior': 'Umutegura w\'Urwego rwo Hasi',
+                'timeline-junior-desc': 'Kwiga no gukura mu gutegura urubuga',
+                'timeline-self-taught': 'Urugendo rwo Kwiyigisha',
+                'timeline-self-taught-desc': 'Gutangira kwiga ibanze by\'itunga rigamije',
+
+                // Projects Section
+                'projects-title': 'Imishinga Yagaragajwe',
+                'projects-subtitle': 'Igaragaza ry\'akazi kanjye keza cyane n\'ibisubizo by\'ubuhanga',
+                'filter-all': 'Imishinga Yose',
+                'filter-web': 'Porogaramu z\'Urubuga',
+                'filter-frontend': 'Frontend',
+                'filter-fullstack': 'Full Stack',
+                'project-fenix-desc': 'Urwego rwa full-stack rukora neza rwo kubaka porogaramu za Node.js + MySQL zikura.',
+                'project-frankcloud-category': 'Porogaramu y\'Ikirere Yateye Imbere',
+                'project-frankcloud-desc': 'Guhanura ikirere mu gihe nyacyo hamwe n\'ubushishozi bushingiye ku hantu n\'inyandiko za UI zoroshye.',
+                'project-softbullet-category': 'Terminal y\'Igikoresho cya Hacker',
+                'project-softbullet-desc': 'Igikoresho cyo kwigana gutegura cyahumijwe na GEEKTyper — cyuzuye ubufatanye kandi bushobora guhindurwa.',
+                'project-voltchat-category': 'Porogaramu yo Kuganira ya Volt',
+                'project-voltchat-desc': 'Porogaramu y\'ubutumwa bwizeye bw\'igihe nyacyo hamwe n\'iyerekana ry\'itsinda n\'imiterere yiteguye yo gushira ibanga.',
+                'project-frankport-desc': 'Urubuga rw\'ibicuruzwa bikora ubuhanga hamwe n\'inyandiko zoroshye, ibintu bikorana, n\'amahame y\'igishushanyo gishya. Byateguwe neza kubw\'imikorere n\'uburyo bw\'ugerwaho.',
+                'project-development-progress': 'Iterambere riragenda.',
+                'project-currently-using': 'Ubu ukoresha FrankPort.',
+
+                // Skills Section
+                'skills-title': 'Ubumenyi n\'Ubushobozi',
+                'skills-subtitle': 'Ubushobozi bw\'ikoranabuhanga n\'ibikoresho nkorana nabyo',
+                'skills-frontend-title': 'Gutegura Frontend',
+                'skills-tools-title': 'Ibikoresho n\'Urwego',
+                'skills-design-title': 'Igishushanyo & UX',
+                'skills-responsive': 'Igishushanyo Gisubiza',
+                'skills-ui-ux': 'Igishushanyo cya UI/UX',
+                'skills-prototyping': 'Kurema Icyitegererezo',
+                'skills-coding-activity': 'Ibikorwa byo Gutegura',
+
+                // Testimonials
+                'testimonials-title': 'Icyo Abantu Bavuga',
+                'testimonial-alex': 'Gukora na Frank byari ishimwe ryuzuye. Ubushobozi bwe bwo guhindura ibitekerezo bigoye mu bisubizo bisukuye kandi bikora neza ni ubw\'urwego rw\'isi. Byasabwe cyane.',
+                'testimonial-samantha': 'Sisitemu y\'igishushanyo ya FrankPort n\'inyandiko byatumye ikimenyetso cyacu gikabaho ubuzima. Yitabiriye kubintu bitoye bitagereranywa.',
+
+                // Contact Section
+                'contact-title': 'Tuvugane',
+                'contact-subtitle': 'Reka tuganire ku mushinga wawe utaha cyangwa amahirwe',
+                'contact-work-together': 'Reka Dukorane',
+                'contact-interested': 'Burigihe nshishikajwe n\'amahirwe mashya n\'imishinga ishimishije. Niba ushaka umutegura wo kwinjira mu kipe yawe cyangwa ukeneye ubufasha bwo kuzana ibitekerezo byawe mu buzima, nshimishijwe no kukumva.',
+                'contact-whatsapp': 'Reka Tuganire kuri WhatsApp',
+                'contact-email': 'Ohereza Ubutumwa',
+                'contact-phone': 'Telefoni',
+                'contact-quick-call': 'Umurongo w\'ihuse',
+                'contact-location': 'Ahantu',
+                'contact-follow': 'Nkurikira',
+                'form-your-name': 'Izina Ryawe',
+                'form-email': 'Aderesi ya Email',
+                'form-subject': 'Ingingo',
+                'form-message': 'Ubutumwa',
+                'form-privacy-agree': 'Nemeye politike y\'ibanga n\'amabwiriza yo gukoresha FrankPort.',
+                'form-send-message': 'Ohereza Ubutumwa',
+
+                // Footer
+                'footer-description': 'Kurema ubunararibonye bwa digitale n\'urukundo n\'ukuri. Reka twubake ikintu gitangaje hamwe.',
+                'footer-navigation': 'Kuyobora',
+                'footer-legal-trust': 'Amategeko n\'Icyizere',
+                'footer-privacy': 'Politike y\'Ibanga',
+                'footer-terms': 'Amabwiriza yo Gukoresha',
+                'footer-disclaimer': 'Kwanga Inshingano',
+                'footer-cookies': 'Itangazo rya Cookie',
+                'footer-accessibility': 'Uburyo bw\'Ugerwaho',
+                'footer-dark-mode': 'Uburyo bw\'Umwijima',
+                'footer-dark-blue-mode': 'Uburyo bw\'Ubururu bw\'Umwijima',
+                'footer-light-mode': 'Uburyo bw\'Urumuri',
+                'footer-language': 'Ururimi',
+                'lang-english': 'Icyongereza',
+                'lang-french': 'Igifaransa',
+                'lang-spanish': 'Icyesipanyolo',
+                'lang-german': 'Ikidage',
+                'lang-chinese': 'Igishinwa',
+                'lang-kinyarwanda': 'Ikinyarwanda',
+                'footer-copyright': '© 2025 Ibicuruzwa bya Frank. Uburenganzira bwose bwarabitswe.',
+                'footer-loading-version': 'Gupakurura verisiyo...',
+                'loading-portfolio': 'Gupakurura ibicuruzwa...'
+            }
+        };
+    }
+
+    // Change language function
+    changeLanguage(langCode) {
+        if (!this.translations[langCode]) {
+            console.warn(`Language ${langCode} not supported`);
+            return;
+        }
+
+        this.currentLanguage = langCode;
+        this.saveLanguage();
+        this.updatePageLanguage();
+        this.updateActiveLanguageButton();
+        this.dispatchLanguageChangeEvent();
+        this.showLanguageChangeToast(langCode);
+    }
+
+    // Update all translatable elements on the page
+    updatePageLanguage() {
+        const elements = document.querySelectorAll('[data-translate]');
+        const currentTranslations = this.translations[this.currentLanguage];
+
+        elements.forEach(element => {
+            const key = element.getAttribute('data-translate');
+            if (currentTranslations[key]) {
+                // Handle different element types
+                if (element.tagName === 'INPUT' && element.type === 'text') {
+                    element.placeholder = currentTranslations[key];
+                } else if (element.tagName === 'TEXTAREA') {
+                    const placeholderKey = element.getAttribute('data-translate-placeholder');
+                    if (placeholderKey && currentTranslations[placeholderKey]) {
+                        element.placeholder = currentTranslations[placeholderKey];
+                    } else {
+                        element.textContent = currentTranslations[key];
+                    }
+                } else {
+                    element.textContent = currentTranslations[key];
+                }
+            }
+        });
+
+        // Handle elements with placeholder translations
+        const placeholderElements = document.querySelectorAll('[data-translate-placeholder]');
+        placeholderElements.forEach(element => {
+            const key = element.getAttribute('data-translate-placeholder');
+            if (currentTranslations[key]) {
+                element.placeholder = currentTranslations[key];
+            }
+        });
+
+        // Update document title if translation exists
+        if (currentTranslations['page-title']) {
+            document.title = currentTranslations['page-title'];
+        }
+    }
+
+    // Update active language button styling
+    updateActiveLanguageButton() {
+        // Remove active class from all language buttons
+        document.querySelectorAll('[data-lang]').forEach(btn => {
+            btn.classList.remove('active-language');
+        });
+
+        // Add active class to current language button
+        const activeBtn = document.querySelector(`[data-lang="${this.currentLanguage}"]`);
+        if (activeBtn) {
+            activeBtn.classList.add('active-language');
+        }
+    }
+
+    // Dispatch custom event when language changes
+    dispatchLanguageChangeEvent() {
+        const event = new CustomEvent('languageChanged', {
+            detail: {
+                language: this.currentLanguage,
+                translations: this.translations[this.currentLanguage]
+            }
+        });
+        document.dispatchEvent(event);
+    }
+
+    // Show toast notification when language changes
+    showLanguageChangeToast(langCode) {
+        const languageNames = {
+            'en': 'English',
+            'fr': 'Français',
+            'es': 'Español', 
+            'de': 'Deutsch',
+            'zh': '中文',
+            'rw': 'Ikinyarwanda'
+        };
+
+        const languageName = languageNames[langCode] || langCode.toUpperCase();
+        
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = 'language-toast';
+        toast.innerHTML = `
+            <i class="fas fa-language"></i>
+            <span>Language changed to ${languageName}</span>
+        `;
+
+        // Add toast to container
+        const container = document.getElementById('global-toast-container') || document.body;
+        container.appendChild(toast);
+
+        // Show toast with animation
+        setTimeout(() => toast.classList.add('show'), 100);
+
+        // Remove toast after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Get current language
+    getCurrentLanguage() {
+        return this.currentLanguage;
+    }
+
+    // Get translation for a specific key
+    getTranslation(key) {
+        return this.translations[this.currentLanguage][key] || key;
+    }
+
+    // Get all translations for current language
+    getCurrentTranslations() {
+        return this.translations[this.currentLanguage];
+    }
 }
 
-// Inject into footer
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("footer-version").textContent = formatVersion(appVersion);
+// Global function for HTML onclick handlers
+function changeLanguage(langCode) {
+    if (window.languageManager) {
+        window.languageManager.changeLanguage(langCode);
+    }
+}
+
+// Initialize language manager when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    window.languageManager = new LanguageManager();
 });
+
+// Add CSS for language toast and active language button
+const languageStyles = `
+<style>
+.language-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--primary-color, #6366f1);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 10000;
+}
+
+.language-toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.language-toast i {
+    font-size: 16px;
+}
+
+.legal-link.active-language {
+    color: var(--accent-color, #f59e0b) !important;
+    font-weight: 600;
+    position: relative;
+}
+
+.legal-link.active-language::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent-color, #f59e0b);
+    border-radius: 1px;
+}
+
+@media (max-width: 768px) {
+    .language-toast {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        transform: translateY(-100%);
+    }
+    
+    .language-toast.show {
+        transform: translateY(0);
+    }
+}
+
+/* Dark theme support for language elements */
+@media (prefers-color-scheme: dark) {
+    .language-toast {
+        background: var(--primary-dark, #4f46e5);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+}
+</style>
+`;
+
+// Add styles to document head
+if (typeof document !== 'undefined') {
+    document.head.insertAdjacentHTML('beforeend', languageStyles);
+}
+
+// Additional utility functions for language management
+
+// Auto-detect user's preferred language
+function detectUserLanguage() {
+    // Check for saved preference first
+    const saved = localStorage.getItem('frankport_language');
+    if (saved) return saved;
+    
+    // Check browser language
+    const browserLang = navigator.language || navigator.userLanguage;
+    const langCode = browserLang.split('-')[0].toLowerCase();
+    
+    // Map of supported languages
+    const supportedLanguages = ['en', 'fr', 'es', 'de', 'zh', 'rw'];
+    
+    // Return supported language or default to English
+    return supportedLanguages.includes(langCode) ? langCode : 'en';
+}
+
+// Language switcher widget (can be used anywhere on the page)
+function createLanguageSwitcher(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const switcher = document.createElement('div');
+    switcher.className = 'language-switcher';
+    switcher.innerHTML = `
+        <div class="language-switcher-current">
+            <i class="fas fa-globe"></i>
+            <span id="current-lang-text">English</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="language-switcher-dropdown">
+            <button data-lang="en">English</button>
+            <button data-lang="fr">Français</button>
+            <button data-lang="es">Español</button>
+            <button data-lang="de">Deutsch</button>
+            <button data-lang="zh">中文</button>
+            <button data-lang="rw">Ikinyarwanda</button>
+        </div>
+    `;
+
+    container.appendChild(switcher);
+
+    // Add event listeners
+    const current = switcher.querySelector('.language-switcher-current');
+    const dropdown = switcher.querySelector('.language-switcher-dropdown');
+    
+    current.addEventListener('click', () => {
+        dropdown.classList.toggle('show');
+    });
+
+    dropdown.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+            const langCode = e.target.getAttribute('data-lang');
+            changeLanguage(langCode);
+            dropdown.classList.remove('show');
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!switcher.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
+}
+
+// Keyboard shortcuts for language switching
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + Shift + L for language menu
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'L') {
+        e.preventDefault();
+        const langButtons = document.querySelectorAll('[data-lang]');
+        if (langButtons.length > 0) {
+            langButtons[0].focus();
+        }
+    }
+});
+
+// RTL language support helper
+function updateTextDirection(langCode) {
+    const rtlLanguages = ['ar', 'he', 'fa', 'ur'];
+    const direction = rtlLanguages.includes(langCode) ? 'rtl' : 'ltr';
+    document.documentElement.dir = direction;
+    document.body.style.direction = direction;
+}
+
+// Language-specific formatting helpers
+const formatHelpers = {
+    formatDate: function(date, langCode) {
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        
+        const locales = {
+            'en': 'en-US',
+            'fr': 'fr-FR',
+            'es': 'es-ES',
+            'de': 'de-DE',
+            'zh': 'zh-CN',
+            'rw': 'rw-RW'
+        };
+
+        return new Intl.DateFormat(locales[langCode] || locales['en'], options).format(date);
+    },
+
+    formatNumber: function(number, langCode) {
+        const locales = {
+            'en': 'en-US',
+            'fr': 'fr-FR', 
+            'es': 'es-ES',
+            'de': 'de-DE',
+            'zh': 'zh-CN',
+            'rw': 'en-US' // Fallback for Kinyarwanda
+        };
+
+        return new Intl.NumberFormat(locales[langCode] || locales['en']).format(number);
+    }
+};
+
+// Dynamic content translation for JavaScript-generated content
+function translateDynamicContent(translations) {
+    // Update any dynamically generated content
+    const dynamicElements = document.querySelectorAll('.dynamic-content');
+    dynamicElements.forEach(element => {
+        const key = element.getAttribute('data-dynamic-key');
+        if (translations[key]) {
+            element.textContent = translations[key];
+        }
+    });
+}
+
+// Language persistence across page navigation
+function persistLanguageChoice() {
+    const links = document.querySelectorAll('a[href^="/"], a[href^="./"], a[href^="../"]');
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            const currentLang = window.languageManager?.getCurrentLanguage() || 'en';
+            sessionStorage.setItem('temp_language', currentLang);
+        });
+    });
+}
+
+// Restore language on page load
+function restoreLanguageOnLoad() {
+    const tempLang = sessionStorage.getItem('temp_language');
+    if (tempLang && window.languageManager) {
+        window.languageManager.changeLanguage(tempLang);
+        sessionStorage.removeItem('temp_language');
+    }
+}
+
+// Initialize additional language features
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-detect and set initial language
+    const detectedLang = detectUserLanguage();
+    if (window.languageManager && detectedLang !== 'en') {
+        window.languageManager.changeLanguage(detectedLang);
+    }
+    
+    // Set up persistence
+    persistLanguageChoice();
+    restoreLanguageOnLoad();
+    
+    // Update text direction
+    document.addEventListener('languageChanged', (e) => {
+        updateTextDirection(e.detail.language);
+        translateDynamicContent(e.detail.translations);
+    });
+});
+
+// Export for use in other scripts
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        LanguageManager,
+        changeLanguage,
+        detectUserLanguage,
+        createLanguageSwitcher,
+        formatHelpers
+    };
+}
+
+// ==================== Version Management ==================== //
+class PortfolioVersion {
+    constructor() {
+        this.versionElement = document.getElementById('footer-version');
+        this.GITHUB_USER = "Liam-Ajaxy";
+        this.GITHUB_REPO = "FrankPort.";
+        this.init();
+    }
+
+    async init() {
+        await this.loadVersion();
+    }
+
+    async loadVersion() {
+        // Method 1: Try version.json
+        try {
+            const response = await fetch(`/version.json?_=${Date.now()}`);
+            if (response.ok) {
+                const info = await response.json();
+                this.displayVersion(info.version, info);
+                return;
+            }
+        } catch (e) {
+            console.warn("version.json not found, fallback to GitHub API");
+        }
+
+        // Method 2: GitHub API fallback
+        try {
+            const response = await fetch(
+                `https://api.github.com/repos/${this.GITHUB_USER}/${this.GITHUB_REPO}/commits?per_page=1`
+            );
+            const commits = await response.json();
+
+            if (commits && commits.length > 0) {
+                const latestCommit = commits[0];
+                const shortSha = latestCommit.sha.substring(0, 7);
+                const date = new Date(latestCommit.commit.author.date);
+                const formattedDate = date.toISOString().split('T')[0].replace(/-/g, '');
+
+                const version = `v${formattedDate}-${shortSha}`;
+                const info = {
+                    version,
+                    buildDate: latestCommit.commit.author.date,
+                    gitHash: shortSha,
+                    message: latestCommit.commit.message.split('\n')[0],
+                    repoUrl: `https://github.com/${this.GITHUB_USER}/${this.GITHUB_REPO}`
+                };
+
+                this.displayVersion(version, info);
+                return;
+            }
+        } catch (err) {
+            console.error("GitHub API failed:", err);
+        }
+
+        // Method 3: Fallback
+        this.displayVersion("Unknown", null);
+    }
+
+    displayVersion(version, info) {
+        this.versionElement.textContent = `Version: ${version}`;
+
+        if (info) {
+            this.versionElement.title =
+                `Built: ${new Date(info.buildDate).toLocaleString()}` +
+                (info.message ? `\nLast commit: ${info.message}` : '');
+
+            // Click → open commit on GitHub
+            this.versionElement.style.cursor = 'pointer';
+            this.versionElement.addEventListener('click', () => {
+                if (info.repoUrl && info.gitHash) {
+                    window.open(`${info.repoUrl}/commit/${info.gitHash}`, '_blank');
+                }
+            });
+        }
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => new PortfolioVersion());
