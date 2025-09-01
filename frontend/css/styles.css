@@ -1687,6 +1687,9 @@ section {
   
   .nav-menu.active {
     display: flex;
+    background: var(--primary-navy);
+    border-bottom: 1px solid var(--border-color);
+    animation: 500ms slideInRight ease-in-out;
   }
   
   .nav-toggle {
@@ -1985,9 +1988,9 @@ section {
     gap: 0.5rem;
   }
   .toast {
-    min-width: 290px;
-    max-width: 320px;
-    font-size: 0.85rem;
+    min-width: 380px;
+    max-width: 400px;
+    font-size: 1rem;
     padding: 0.6rem 0.8rem;
   }
   .toast-icon {
@@ -2003,9 +2006,9 @@ section {
     bottom: 0.75rem;
   }
   .toast {
-    min-width: 280px;
-    max-width: 320px;
-    font-size: 0.8rem;
+    min-width: 360px;
+    max-width: 380px;
+    font-size: 1rem;
   }
 }
 
