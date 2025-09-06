@@ -517,7 +517,7 @@
             
             if (!this.form) return;
 
-            this.originalText = this.submitBtn.textContent;
+            this.originalText = this.submitBtn.innerHTML;
             
             this.bindEvents();
             this.setupValidation();
