@@ -5280,3 +5280,10 @@ body.light-mode .modal-body::-webkit-scrollbar-thumb:hover {
 #footer-version:hover {
   opacity: 1;
 }
+
+.lang-menu {
+  background: var(--primary-navy);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 16px var(--shadow-dark);
+}

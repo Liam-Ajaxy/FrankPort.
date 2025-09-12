@@ -4394,3 +4394,23 @@ class PortfolioVersion {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => new PortfolioVersion());
+
+
+// ==================== Language Menu Toggle ==================== //
+const langToggle = document.getElementById("lang-toggle");
+const langMenu = document.getElementById("lang-menu");
+
+langToggle.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const isOpen = langMenu.style.display === "flex";
+  langMenu.style.display = isOpen ? "none" : "flex";
+  langToggle.setAttribute("aria-expanded", !isOpen);
+});
+
+// Close on outside click
+document.addEventListener("click", (e) => {
+  if (!langMenu.contains(e.target) && !langToggle.contains(e.target)) {
+    langMenu.style.display = "none";
+    langToggle.setAttribute("aria-expanded", "false");
+  }
+});

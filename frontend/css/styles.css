@@ -1307,7 +1307,7 @@ section {
 }
 
 .contact-form-container {
-  background: #0D0D0D;
+  background: #080808;
   border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 3rem;
@@ -5279,4 +5279,127 @@ body.light-mode .modal-body::-webkit-scrollbar-thumb:hover {
 }
 #footer-version:hover {
   opacity: 1;
+}
+
+
+/* Language Dropdown */
+.lang-dropdown { position: relative; }
+
+.lang-toggle {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.lang-menu {
+  position: absolute;
+  top: 100%;
+  right: -60px;
+  background: #000000;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  display: none;
+  flex-direction: column;
+  min-width: 160px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  z-index: 9999;
+}
+
+/* Custom tooltip text */
+.lang-toggle::before {
+  content: "Languages";
+  position: absolute;
+  bottom: -30px;   /* distance below the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 9999;
+}
+
+/* Show tooltip on hover or keyboard focus */
+.lang-toggle:hover::before,
+.lang-toggle:focus::before {
+  opacity: 1;
+}
+
+.lang-menu li button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  padding: 0.6rem 1rem;
+  font-size: 14px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.lang-menu li button:hover {
+  background: var(--accent-gold);
+  color: #000;
+}
+
+.flag { font-size: 16px; }
+
+/* Mobile version inside burger */
+@media (max-width: 768px) {
+  .lang-dropdown { width: 100%; }
+
+ .lang-toggle {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.6rem 0rem;
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+
+  .lang-toggle svg { display: none; }
+
+  /* REMOVE tooltip completely on mobile */
+  .lang-toggle::before {
+    content: none !important;
+  }
+
+   .lang-toggle::after {
+    content: " Languages";
+    font-size: 18px;
+    color: var(--text-secondary);
+    display: inline-block;
+    line-height: 1;
+    font-family: var(--font-primary);
+  }
+
+  .lang-menu {
+    position: static;
+    box-shadow: none;
+    border: none;
+    border-top: 1px solid var(--border-color);
+    border-radius: 0;
+    display: none;
+  }
+}
+
+body.light-mode .lang-menu {
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }

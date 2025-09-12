@@ -101,6 +101,25 @@
                 <li class="nav-item">
                     <a href="#contact" class="nav-link" data-section="contact" data-translate="nav-contact">Contact</a>
                 </li>
+                <li class="nav-item lang-dropdown">
+                <button class="lang-toggle" id="lang-toggle" aria-expanded="false">
+                    <!-- Globe Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+
+                </button>
+                <ul class="lang-menu" id="lang-menu">
+                    <li><button onclick="changeLanguage('en')"><span class="flag">🇬🇧</span> English</button></li>
+                    <li><button onclick="changeLanguage('fr')"><span class="flag">🇫🇷</span> Français</button></li>
+                    <li><button onclick="changeLanguage('es')"><span class="flag">🇪🇸</span> Español</button></li>
+                    <li><button onclick="changeLanguage('de')"><span class="flag">🇩🇪</span> Deutsch</button></li>
+                    <li><button onclick="changeLanguage('zh')"><span class="flag">🇨🇳</span> 中文</button></li>
+                    <li><button onclick="changeLanguage('rw')"><span class="flag">🇷🇼</span> Kinyarwanda</button></li>
+                </ul>
+                </li>
+
             </ul>
             <div class="nav-toggle" id="nav-toggle">
                 <span class="bar"></span>
