@@ -2897,7 +2897,7 @@ const legalData = {
             ],
             contact: {
                 title: 'Contact Us',
-                content: 'Questions about the Terms of Use should be sent to: legal@example.com'
+                content: 'Questions about the Terms of Use should be sent to: scasoftcom@gmail.com'
             }
         }
     },

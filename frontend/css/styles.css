@@ -5299,7 +5299,7 @@ body.light-mode .modal-body::-webkit-scrollbar-thumb:hover {
   position: absolute;
   top: 100%;
   right: -60px;
-  background: #000000;
+  background: var(--primary-navy);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   list-style: none;
