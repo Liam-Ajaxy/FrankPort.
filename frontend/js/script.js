@@ -2575,6 +2575,7 @@ const additionalCSS = `
 
 .success-icon {
     animation: successBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    background: rgba(46, 204, 113, 0.3);
 }
 
 @keyframes successBounce {
