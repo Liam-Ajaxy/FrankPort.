@@ -2793,7 +2793,7 @@ document.head.appendChild(style);
 
 
 
-// Legal Content Data
+// Legal Content Data - UNCHANGED
 const legalData = {
     privacy: {
         title: 'Privacy Policy',
@@ -2989,7 +2989,105 @@ const legalData = {
     }
 };
 
-// Generate HTML content dynamically
+// NEW: Loading state management
+let isLoading = false;
+
+// NEW: Random duration generator (3-5 seconds)
+function getRandomLoadingDuration() {
+    return Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000;
+}
+
+// NEW: Show loading bar
+function showLoadingBar() {
+    const loadingBar = document.getElementById('legalLoadingBar');
+    if (loadingBar) {
+        loadingBar.style.display = 'block';
+        // Reset progress
+        const progress = loadingBar.querySelector('.legal-loading-progress');
+        if (progress) {
+            progress.style.width = '0%';
+        }
+    }
+}
+
+// NEW: Hide loading bar
+function hideLoadingBar() {
+    const loadingBar = document.getElementById('legalLoadingBar');
+    if (loadingBar) {
+        loadingBar.style.display = 'none';
+    }
+}
+
+// NEW: Animate progress bar with professional easing (fast start, slow end)
+function animateProgressBar(duration) {
+    const progress = document.querySelector('.legal-loading-progress');
+    if (!progress) return;
+
+    let startTime = null;
+    
+    // Easing function: ease-out cubic for natural deceleration
+    function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+    }
+    
+    function animate(currentTime) {
+        if (!startTime) startTime = currentTime;
+        const elapsed = currentTime - startTime;
+        const rawProgress = Math.min(elapsed / duration, 1);
+        
+        // Apply easing - starts fast, slows down significantly at the end
+        const easedProgress = easeOutCubic(rawProgress);
+        const progressPercent = easedProgress * 100;
+        
+        progress.style.width = progressPercent + '%';
+        
+        if (rawProgress < 1) {
+            requestAnimationFrame(animate);
+        }
+    }
+    
+    requestAnimationFrame(animate);
+}
+
+// NEW: Disable/enable legal links during loading
+function setLegalLinksState(disabled) {
+    const links = document.querySelectorAll('[onclick*="showLegalContent"], [onclick*="startLegalLoading"]');
+    links.forEach(link => {
+        if (disabled) {
+            link.style.opacity = '0.5';
+            link.style.pointerEvents = 'none';
+        } else {
+            link.style.opacity = '';
+            link.style.pointerEvents = '';
+        }
+    });
+}
+
+// NEW: Start loading sequence (replaces direct showLegalContent calls)
+function startLegalLoading(type) {
+    // Prevent multiple simultaneous loads
+    if (isLoading) return;
+    
+    isLoading = true;
+    const duration = getRandomLoadingDuration();
+    
+    // Show loading bar and start animation
+    showLoadingBar();
+    animateProgressBar(duration);
+    
+    // Disable other legal links
+    setLegalLinksState(true);
+    
+    // After loading completes, show the modal
+    setTimeout(() => {
+        hideLoadingBar();
+        showLegalContent(type); // Call original function
+        isLoading = false;
+        setLegalLinksState(false);
+    }, duration);
+}
+
+// Generate HTML content dynamically - UNCHANGED
 function generateContent(data) {
     let html = `
         <div class="modal-header">
@@ -3056,7 +3154,7 @@ function generateContent(data) {
     return html;
 }
 
-// Show legal content
+// Show legal content - UNCHANGED (but now called after loading)
 function showLegalContent(type) {
     const container = document.querySelector('.legal-content-container');
     const modal = document.querySelector('.legal-modal');
@@ -3079,7 +3177,7 @@ function showLegalContent(type) {
     document.body.style.overflow = 'hidden';
 }
 
-// Close legal content
+// Close legal content - UNCHANGED
 function closeLegalContent(event) {
     if (event && event.target !== event.currentTarget) return;
     
@@ -3094,9 +3192,16 @@ function closeLegalContent(event) {
         modal.classList.remove('fullscreen');
         modal.innerHTML = '';
     }, 300);
+    
+    // NEW: Reset loading state if modal closed during loading
+    if (isLoading) {
+        isLoading = false;
+        hideLoadingBar();
+        setLegalLinksState(false);
+    }
 }
 
-// Handle escape key
+// Handle escape key - UNCHANGED with loading cleanup
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeLegalContent();

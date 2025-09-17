@@ -70,9 +70,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css-obf">
+    <link rel="stylesheet" href="css/styles.css">
     <!-- HTML: swappable stylesheet -->
-    <link id="theme-stylesheet" rel="stylesheet" href="css/styles.css">
+    <link id="theme-stylesheet" rel="stylesheet" href="css-obf">
 </head>
 <body>
     <!-- Custom Cursor -->
@@ -180,16 +180,16 @@
                     </a>
                 </div>
                 <div class="hero-social">
-                    <button onclick="requestSecureAccess('GitHub')" class="social-link">
+                    <button onclick="requestSecureAccess('GitHub')" class="social-link" aria-label="GitHub">
                         <i class="fab fa-github"></i>
                     </button>
-                    <button onclick="requestSecureAccess('LinkedIn')" class="social-link">
+                    <button onclick="requestSecureAccess('LinkedIn')" class="social-link" aria-label="LinkedIn">
                         <i class="fab fa-linkedin"></i>
                     </button>
-                    <button onclick="requestSecureAccess('GitLab')" class="social-link">
+                    <button onclick="requestSecureAccess('GitLab')" class="social-link" aria-label="GitLab">
                         <i class="fab fa-gitlab"></i>
                     </button>
-                    <button onclick="requestSecureAccess('Telegram')" class="social-link">
+                    <button onclick="requestSecureAccess('Telegram')" class="social-link" aria-label="Telegram">
                         <i class="fab fa-telegram"></i>
                     </button>
                 </div>
@@ -835,19 +835,19 @@
                     <div class="contact-social">
                         <h4 data-translate="contact-follow">Follow Me</h4>
                         <div class="social-links">
-                            <button onclick="requestSecureAccess('GitHub')" class="social-link">
+                            <button onclick="requestSecureAccess('GitHub')" class="social-link" aria-label="GitHub">
                                 <i class="fab fa-github"></i>
                             </button>
-                            <button onclick="requestSecureAccess('LinkedIn')" class="social-link">
+                            <button onclick="requestSecureAccess('LinkedIn')" class="social-link" aria-label="LinkedIn">
                                 <i class="fab fa-linkedin"></i>
                             </button>
-                            <button onclick="requestSecureAccess('Twitter')" class="social-link">
+                            <button onclick="requestSecureAccess('Twitter')" class="social-link" aria-label="Twitter">
                                 <i class="fab fa-twitter"></i>
                             </button>
-                            <button onclick="requestSecureAccess('Instagram')" class="social-link">
+                            <button onclick="requestSecureAccess('Instagram')" class="social-link"  aria-label="Instagram">
                                 <i class="fab fa-instagram"></i>
                             </button>
-                            <button onclick="requestSecureAccess('TikTok')" class="social-link">
+                            <button onclick="requestSecureAccess('TikTok')" class="social-link" aria-label="TikTok">
                                 <i class="fab fa-tiktok"></i>
                             </button>
                         </div>
@@ -1093,10 +1093,10 @@
                     <div class="footer-column">
                         <h4 data-translate="footer-legal-trust">Legal & Trust</h4>
                         <ul>
-                            <li><button class="legal-link" onclick="showLegalContent('privacy')" aria-label="Privacy Policy" data-translate="footer-privacy">Privacy Policy</button></li>
-                            <li><button class="legal-link" onclick="showLegalContent('terms')" aria-label="Terms of Use" data-translate="footer-terms">Terms of Use</button></li>
-                            <li><button class="legal-link" onclick="showLegalContent('disclaimer')" aria-label="Disclaimer" data-translate="footer-disclaimer">Disclaimer</button></li>
-                            <li><button class="legal-link" onclick="showLegalContent('cookies')" aria-label="Cookie Notice" data-translate="footer-cookies">Cookie Notice</button></li>
+                            <li><button class="legal-link" onclick="startLegalLoading('privacy')" aria-label="Privacy Policy" data-translate="footer-privacy">Privacy Policy</button></li>
+                            <li><button class="legal-link" onclick="startLegalLoading('terms')" aria-label="Terms of Use" data-translate="footer-terms">Terms of Use</button></li>
+                            <li><button class="legal-link" onclick="startLegalLoading('disclaimer')" aria-label="Disclaimer" data-translate="footer-disclaimer">Disclaimer</button></li>
+                            <li><button class="legal-link" onclick="startLegalLoading('cookies')" aria-label="Cookie Notice" data-translate="footer-cookies">Cookie Notice</button></li>
                         </ul>
                     </div>
                 <div class="footer-column">
@@ -1161,6 +1161,10 @@
             </div>
             <p class="loading-text" id="loading-text" data-translate="loading-portfolio">Loading portfolio...</p>
         </div>
+    </div>
+
+    <div id="legalLoadingBar" style="display: none;">
+        <div class="legal-loading-progress"></div>
     </div>
 
     <!-- Scroll to Top Button -->

@@ -5403,3 +5403,67 @@ body.light-mode .lang-menu {
   border: 1px solid #dadce0;
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
+
+/* NEW: Loading Bar CSS - Add this to your existing CSS file */
+#legalLoadingBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+    display: none;
+}
+
+.legal-loading-progress {
+    height: 100%;
+    background: var(--accent-gold);
+    width: 0%;
+    transition: width 0.1s ease-out;
+    border-radius: 0 2px 2px 0;
+}
+
+
+/* Social Media Tooltips */
+.social-link {
+    position: relative;
+}
+
+.social-link::after {
+    content: attr(aria-label);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.social-link::before {
+    content: '';
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover::after,
+.social-link:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
