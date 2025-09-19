@@ -4867,6 +4867,12 @@ document.addEventListener('keydown', function(e) {
 let adminToken = null;
 let notificationCheckInterval = null;
 
+// Detect environment: localhost = dev, otherwise = prod
+const API_BASE = window.location.hostname === "localhost"
+  ? "http://localhost:5000"
+  : "https://fp-backend-phi.vercel.app";
+
+
 // Enhanced loadNotifications function with backend integration
 function loadNotifications() {
     const content = document.getElementById('notificationContent');
@@ -4881,7 +4887,7 @@ function loadNotifications() {
     `;
     
     // Fetch notifications from backend
-    fetch('/api/notifications')
+    fetch(`${API_BASE}/api/notifications`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -4952,7 +4958,7 @@ function showNotificationError(message) {
 
 // Mark notification as read
 function markAsRead(messageId) {
-    fetch(`/api/notifications/${messageId}/read`, {
+    fetch(`${API_BASE}/api/notifications/${messageId}/read`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -4977,7 +4983,7 @@ function adminLogin(event) {
     event.preventDefault();
     const password = document.getElementById('adminPassword').value;
     
-    fetch('/api/admin/login', {
+    fetch(`${API_BASE}/api/admin/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -5006,7 +5012,7 @@ function adminBackupLogin(event) {
     event.preventDefault();
     const backupKey = document.getElementById('backupKey').value;
     
-    fetch('/api/admin/login', {
+    fetch(`${API_BASE}/api/admin/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -5053,7 +5059,7 @@ function postMessage(event) {
     submitBtn.textContent = 'Posting...';
     submitBtn.disabled = true;
     
-    fetch('/api/admin/message', {
+    fetch(`${API_BASE}/api/admin/message`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -5101,7 +5107,7 @@ function loadAdminMessages() {
         </div>
     `;
     
-    fetch(`/api/admin/messages?token=${encodeURIComponent(adminToken)}`)
+    fetch(`${API_BASE}/api/admin/messages?token=${encodeURIComponent(adminToken)}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -5180,7 +5186,7 @@ function deleteMessage(messageId) {
         return;
     }
     
-    fetch(`/api/admin/message/${messageId}`, {
+    fetch(`${API_BASE}/api/admin/message/${messageId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
@@ -5220,7 +5226,7 @@ function startNotificationChecking() {
 
 // Check for new notifications
 function checkNotifications() {
-    fetch('/api/notifications')
+    fetch(`${API_BASE}/api/notifications`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
