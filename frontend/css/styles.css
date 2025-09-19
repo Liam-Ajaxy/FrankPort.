@@ -18,6 +18,8 @@
   --gradient-primary: #0D0D0D;
   --gradient-accent: linear-gradient(135deg, #ffa200 0%, #f39c12 100%);
   --gradient-hover: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  --admin-bg: #191919;
+  --admin-light-bg: #1c1c1c;
   
   /* Typography */
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -2477,23 +2479,6 @@ section {
   overflow-x: hidden;
 }
 
-/* Remove scrollbar from content */
-.feedback-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.feedback-content::-webkit-scrollbar-track {
-  background: var(--primary-navy);
-}
-
-.feedback-content::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 3px;
-}
-
-.feedback-content::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-gold);
-}
 
 /* ===================================
    FEEDBACK SECTIONS
@@ -3599,25 +3584,6 @@ body.light-mode .feedback-actions {
   border-top: 1px solid var(--border-color);
 }
 
-/* ===================================
-   SCROLLBAR - LIGHT MODE
-   =================================== */
-
-body.light-mode ::-webkit-scrollbar-track {
-  background: var(--secondary-charcoal);
-}
-
-body.light-mode ::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-}
-
-body.light-mode ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-gold);
-}
-
-body.light-mode .feedback-content::-webkit-scrollbar-track {
-  background: #ffffff;
-}
 
 /* ===================================
    FILTER BUTTONS - LIGHT MODE
@@ -5100,25 +5066,6 @@ body.light-mode .theme-toggle::after {
     color: var(--text-secondary);
 }
 
-/* Custom Scrollbar */
-.modal-body::-webkit-scrollbar {
-    width: 6px;
-}
-
-.modal-body::-webkit-scrollbar-track {
-    background: var(--primary-navy);
-    border-radius: 3px;
-}
-
-.modal-body::-webkit-scrollbar-thumb {
-    background: var(--accent-gold);
-    border-radius: 3px;
-    opacity: 0.7;
-}
-
-.modal-body::-webkit-scrollbar-thumb:hover {
-    background: #f39c12;
-}
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
@@ -5256,17 +5203,6 @@ body.light-mode .contact-info-modal p {
     color: #5f6368;
 }
 
-body.light-mode .modal-body::-webkit-scrollbar-track {
-    background: #ffffff;
-}
-
-body.light-mode .modal-body::-webkit-scrollbar-thumb {
-    background: #6c7293;
-}
-
-body.light-mode .modal-body::-webkit-scrollbar-thumb:hover {
-    background: #1557b0;
-}
 
 #footer-version {
   text-align: center;
@@ -5430,7 +5366,9 @@ body.light-mode .lang-menu {
     position: relative;
 }
 
-.social-link::after {
+.social-link::after, 
+.feedback-float-btn::after,
+.admin-menu-toggle::after {
     content: attr(aria-label);
     position: absolute;
     bottom: 110%;
@@ -5438,7 +5376,7 @@ body.light-mode .lang-menu {
     transform: translateX(-50%);
     background: #222;
     color: white;
-    padding: 8px 12px;
+    padding: 4px 8px;
     border-radius: 6px;
     font-size: 12px;
     white-space: nowrap;
@@ -5449,7 +5387,9 @@ body.light-mode .lang-menu {
     z-index: 1000;
 }
 
-.social-link::before {
+.social-link::before, 
+.feedback-float-btn::before,
+.admin-menu-toggle::before {
     content: '';
     position: absolute;
     bottom: 110%;
@@ -5463,7 +5403,780 @@ body.light-mode .lang-menu {
 }
 
 .social-link:hover::after,
-.social-link:hover::before {
+.social-link:hover::before,
+.feedback-float-btn:hover::after,
+.feedback-float-btn:hover::before,
+.admin-menu-toggle:hover::after,
+.admin-menu-toggle:hover::before {
     opacity: 1;
     visibility: visible;
+}
+
+/* Admin Menu Container */
+.admin-menu-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1000;
+}
+
+/* Three-Dot Toggle Button */
+.admin-menu-toggle {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: var(--admin-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+body.light-mode .admin-menu-toggle {
+    background: var(--text-primary);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.admin-menu-toggle:hover {
+    background: var(--admin-light-bg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+    border-radius: 50%;
+}
+body.light-mode .admin-menu-toggle:hover {
+    background: var(--text-primary);
+}
+
+/* Three Dots Animation */
+.three-dots {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.three-dots span {
+    width: 4px;
+    height: 4px;
+    background: #cecece;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.admin-menu-toggle:hover .three-dots span {
+    background: #ffffff;
+}
+
+/* Dropdown Menu */
+.admin-menu-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    min-width: 200px;
+    background: var(--admin-bg);
+    border-radius: 8px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+body.light-mode .admin-menu-dropdown {
+    background: #ffffff;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+}
+
+.admin-menu-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Menu Items */
+.admin-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    position: relative;
+}
+
+.admin-menu-item:hover {
+    background: var(--admin-light-bg);
+}
+body.light-mode .admin-menu-item:hover {
+    background: #f1f1f1;
+}
+
+.admin-menu-item i {
+    width: 20px;
+    margin-right: 12px;
+    color: #ffffff;
+}
+body.light-mode .admin-menu-item i {
+    color: #1b1b1b;
+}
+
+.admin-menu-item span {
+    font-size: 14px;
+    color: #ffffff;
+}
+body.light-mode .admin-menu-item span {
+    color: #1b1b1b;
+}
+
+/* Notification Badge */
+.notification-badge {
+    position: absolute;
+    right: 16px;
+    background: #dc3545;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+body.light-mode .notification-badge {
+    background: #b00020;
+    color: white !important;
+}
+
+/* Notification Panel */
+.notification-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 300px;
+    max-width: 80vw;
+    height: 100vh;
+    background: var(--admin-bg);
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+    transition: right 0.3s ease;
+    z-index: 1001;
+    overflow-y: auto;
+}
+body.light-mode .notification-panel {
+    background: #f8f9fa;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+}
+
+.notification-panel.active {
+    right: 0;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--admin-bg);
+}
+body.light-mode .notification-header {
+    background: #f8f9fa;
+}
+
+.notification-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.close-notification {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.close-notification:hover {
+    color: var(--text-primary);
+    background: var(--admin-light-bg);
+}
+
+.notification-content {
+    padding: 20px;
+}
+
+.no-notifications {
+    text-align: center;
+    color: #666;
+    margin-top: 50px;
+}
+
+.no-notifications i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 1002;
+}
+
+.toast {
+    background: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.error {
+    background: #dc3545;
+}
+
+/* Admin Dashboard */
+.admin-dashboard-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1003;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-dashboard-modal {
+    background: #0d0d0d00;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+body.light-mode .admin-dashboard-modal {
+    background: #f8f9fa00;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.admin-dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--admin-bg);
+    border-radius: 2px;
+}
+body.light-mode .admin-dashboard-header {
+    background: #ecf6ff;
+}
+
+.admin-dashboard-header h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.admin-dashboard-header .close-admin {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #666;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+body.light-mode .admin-dashboard-header .close-admin {
+    color: #666;
+    background: none;
+}
+
+.admin-dashboard-header .close-admin:hover {
+    color: var(--text-primary);
+    background: var(--admin-light-bg);
+}
+body.light-mode .admin-dashboard-header .close-admin:hover {
+    color: #1a1d29;
+    background: #f1f1f1;
+}
+
+/* Login Forms */
+.admin-login, .admin-backup-login {
+    padding: 30px;
+    max-width: 300px;
+    width: 100%;
+    border-radius: 10px;
+    background: var(--admin-bg);
+}
+body.light-mode .admin-login, body.light-mode .admin-backup-login {
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.login-field {
+    margin-bottom: 20px;
+}
+
+.login-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.login-field input {
+    width: 100%;
+    padding: 2px 5px;
+    background: var(--admin-bg);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+body.light-mode .login-field input {
+    background: #ffffff;
+    border: 2px solid #dadce0;
+    color: #1b1b1b;
+}
+
+.login-field input:focus {
+    outline: none;
+    border-color: var(--text-muted);
+}
+body.light-mode .login-field input:focus {
+    border-color: #5f6368;
+}
+
+.admin-login button, .admin-backup-login button {
+    width: 100%;
+    padding: 2px;
+    background: var(--accent-gold);
+    color: var(--primary-navy);
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+body.light-mode .admin-login button, body.light-mode .admin-backup-login button {
+    background: var(--text-primary);
+    color: #ffffff;
+}
+
+.admin-login button:hover, .admin-backup-login button:hover {
+    background: #c67d07;
+}
+body.light-mode .admin-login button:hover, body.light-mode .admin-backup-login button:hover {
+    background: #1f2c38;
+}
+
+.forgot-password, .back-to-password {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.forgot-password .forgot-password-btn, .back-to-password .forgot-password-btn {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    background: none;
+    font-weight: 500;
+}
+body.light-mode .forgot-password .forgot-password-btn, body.light-mode .back-to-password .forgot-password-btn {
+    color: #1a73e8;
+    background: none;
+}
+
+.forgot-password .forgot-password-btn:hover, .back-to-password .forgot-password-btn:hover {
+    text-decoration: underline;
+    background: none;
+}
+body.light-mode .forgot-password .forgot-password-btn:hover, body.light-mode .back-to-password .forgot-password-btn:hover {
+    text-decoration: underline;
+    background: none;
+}
+
+/* Admin Content */
+.admin-content {
+    padding: 24px;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    min-width: 400px;
+    background: var(--admin-bg);
+}
+body.light-mode .admin-content {
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabs */
+.admin-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 24px;
+}
+
+.tab-button {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-primary);
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-button.active {
+    color: #007bff;
+    border-bottom-color: #007bff;
+}
+
+.tab-button:hover {
+    color: #007bff;
+}
+
+.tab-content {
+    display: none;
+    height: 100%;
+    width: 100%;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Form Fields */
+.form-field {
+    margin-bottom: 20px;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.form-field input, .form-field textarea {
+    width: 100%;
+    padding: 12px;
+    background: var(--admin-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+body.light-mode .form-field input, body.light-mode .form-field textarea {
+    background: #ffffff;
+    border: 2px solid #dadce0;
+}
+
+.form-field input {color: var(--accent-gold);} .form-field textarea {color: var(--text-secondary);}
+
+.form-field input:focus, .form-field textarea:focus {
+    outline: none;
+    border-color: var(--text-secondary);
+}
+.action-tab-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+}
+
+.admin-content button[type="submit"] {
+    background: #28a745;
+    color: var(--text-primary);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+body.light-mode .admin-content button[type="submit"] {
+    background: #218838;
+    color: #ffffff;
+}
+
+.admin-content button[type="submit"]:hover {
+    background: #218838;
+}
+body.light-mode .admin-content button[type="submit"]:hover {
+    background: #1e7e34;
+}
+.admin-content button[type="button"] {
+  background: var(--admin-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: 12px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+body.light-mode .admin-content button[type="button"] {
+  background: #e0e0e0;
+  color: var(--text-primary);
+}
+
+.admin-content button[type="button"]:hover {
+  background: var(--admin-light-bg);
+}
+body.light-mode .admin-content button[type="button"]:hover {
+  background: #c0c0c0;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .notification-panel {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .admin-dashboard-modal {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .admin-menu-container {
+        right: 15px;
+        top: 70px;
+    }
+    
+    .admin-menu-toggle {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+
+/* ====== Notification and admin design =========== */
+.notification-item {
+    background: var(--admin-light-bg);
+    border-left: 4px solid transparent;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 0 6px 6px 0;
+    transition: all 0.3s ease;
+}
+body.light-mode .notification-item {
+    background: #ffffff;
+    border: 1px solid #dadce0;
+}
+
+.notification-item.unread {
+    border-left-color: #007bff;
+    background: rgba(0, 123, 255, 0.041);
+}
+
+.notification-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.notification-date {
+    font-size: 12px;
+    color: #666;
+}
+
+.new-badge {
+    background: #dc3545;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: bold;
+}
+body.light-mode .new-badge {
+    background: #c82333;
+    color: white;
+}
+
+.notification-title {
+    margin: 0 0 8px 0;
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+.notification-text {
+    margin: 0 0 12px 0;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.mark-read-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+body.light-mode .mark-read-btn {
+    background: #1a73e8;
+    color: white;
+}
+
+.mark-read-btn:hover {
+    background: #0056b3;
+}
+
+.admin-message-item {
+    background: var(--admin-bg);
+    border: 1px solid var(--border-color);
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+}
+body.light-mode .admin-message-item {
+    background: #ffffff;
+    border: 1px solid #dadce0;
+}
+
+.admin-message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.admin-message-header h4 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.admin-message-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.delete-btn:hover {
+    background: #c82333;
+}
+
+.admin-message-content {
+    margin: 8px 0;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+body.light-mode .admin-message-content {
+    color: #5f6368;
+}
+
+.admin-message-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #666;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+body.light-mode .admin-message-meta {
+    border-top: 1px solid #dadce0;
+}
+
+.read-status.read {
+    color: #28a745;
+}
+
+.read-status.unread {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* ==========================
+   🌍 Global Scrollbar Styling (Thin)
+   ========================== */
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 6px;   /* thinner vertical scrollbar */
+  height: 6px;  /* thinner horizontal scrollbar */
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #2d3142;             /* dark mode thumb */
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #3a3f56;             /* lighter shade on hover */
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;  /* system "thin" = ~6px */
+  scrollbar-color: #2d3142 rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================
+   🌞 Light Mode Variant
+   ========================== */
+body.light-mode *::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+body.light-mode *::-webkit-scrollbar-thumb {
+  background: #bbb;    /* neutral gray thumb */
+}
+
+body.light-mode *::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+body.light-mode * {
+  scrollbar-color: #bbb #f1f1f1;
 }

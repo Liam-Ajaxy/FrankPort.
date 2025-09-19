@@ -1,0 +1,263 @@
+<svg viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Advanced gradients for 3D glass effect -->
+    <linearGradient id="building1Face" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="20%" style="stop-color:#1e40af;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="80%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#93c5fd;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="building1Side" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e40af;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="building2Face" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#065f46;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#047857;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="building2Side" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#047857;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#064e3b;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="glowEffect" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.8" />
+      <stop offset="30%" style="stop-color:#3b82f6;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:0.1" />
+    </radialGradient>
+    
+    <linearGradient id="bridgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1e40af;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#047857;stop-opacity:0.9" />
+    </linearGradient>
+    
+    <!-- Advanced text gradients -->
+    <linearGradient id="textPrimary" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#1e40af;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="textShadow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0.1" />
+    </linearGradient>
+    
+    <!-- Glass reflection effect -->
+    <linearGradient id="glassReflection" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.4" />
+      <stop offset="50%" style="stop-color:#ffffff;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.0" />
+    </linearGradient>
+    
+    <!-- Filter effects -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+    
+    <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feOffset dx="0" dy="2"/>
+      <feGaussianBlur stdDeviation="2" result="offset-blur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.2"/>
+      <feComposite in2="offset-blur" operator="in"/>
+    </filter>
+  </defs>
+  
+  <!-- Background with subtle gradient -->
+  <rect width="500" height="250" fill="url(#glowEffect)"/>
+  
+  <!-- LEFT BUILDING - Advanced 3D Design -->
+  <g transform="translate(20, 0)" filter="url(#shadow)">
+    <!-- Building base/foundation -->
+    <rect x="0" y="130" width="35" height="15" fill="#0f172a" opacity="0.8"/>
+    
+    <!-- Main tower structure -->
+    <rect x="2" y="45" width="31" height="85" fill="url(#building1Face)" stroke="#1e40af" stroke-width="0.8"/>
+    
+    <!-- 3D side panel -->
+    <polygon points="33,45 40,38 40,123 33,130" fill="url(#building1Side)"/>
+    
+    <!-- Top architectural detail -->
+    <polygon points="2,45 33,45 40,38 9,38" fill="url(#building1Face)" opacity="0.9"/>
+    
+    <!-- Advanced glass panels with reflection -->
+    <g opacity="0.9">
+      <!-- Floor 1 -->
+      <rect x="4" y="48" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="11" y="48" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="18" y="48" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="25" y="48" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      
+      <!-- Floor 2 -->
+      <rect x="4" y="60" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="11" y="60" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="18" y="60" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="25" y="60" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      
+      <!-- Floor 3 -->
+      <rect x="4" y="72" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="11" y="72" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="18" y="72" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="25" y="72" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      
+      <!-- Floor 4 -->
+      <rect x="4" y="84" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="11" y="84" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="18" y="84" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="25" y="84" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      
+      <!-- Floor 5 -->
+      <rect x="4" y="96" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="11" y="96" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="18" y="96" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="25" y="96" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      
+      <!-- Floor 6 -->
+      <rect x="4" y="108" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="11" y="108" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="18" y="108" width="6" height="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="25" y="108" width="6" height="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      
+      <!-- Floor 7 -->
+      <rect x="4" y="120" width="6" height="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="11" y="120" width="6" height="8" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="18" y="120" width="6" height="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.3"/>
+      <rect x="25" y="120" width="6" height="8" fill="#bfdbfe" stroke="#3b82f6" stroke-width="0.3"/>
+    </g>
+    
+    <!-- Glass reflection overlay -->
+    <rect x="2" y="45" width="31" height="85" fill="url(#glassReflection)" opacity="0.6"/>
+    
+    <!-- LED accent lighting -->
+    <rect x="1" y="44" width="33" height="2" fill="#60a5fa" filter="url(#glow)" opacity="0.8"/>
+    <rect x="1" y="131" width="33" height="1" fill="#3b82f6" filter="url(#glow)" opacity="0.6"/>
+  </g>
+  
+  <!-- RIGHT BUILDING - Advanced 3D Design -->
+  <g transform="translate(85, 0)" filter="url(#shadow)">
+    <!-- Building base/foundation -->
+    <rect x="0" y="135" width="35" height="15" fill="#064e3b" opacity="0.8"/>
+    
+    <!-- Main tower structure -->
+    <rect x="2" y="35" width="31" height="100" fill="url(#building2Face)" stroke="#047857" stroke-width="0.8"/>
+    
+    <!-- 3D side panel -->
+    <polygon points="33,35 40,28 40,128 33,135" fill="url(#building2Side)"/>
+    
+    <!-- Top architectural detail -->
+    <polygon points="2,35 33,35 40,28 9,28" fill="url(#building2Face)" opacity="0.9"/>
+    
+    <!-- Advanced glass panels -->
+    <g opacity="0.9">
+      <!-- Floor 1 -->
+      <rect x="4" y="38" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="11" y="38" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="18" y="38" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="25" y="38" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      
+      <!-- Floor 2 -->
+      <rect x="4" y="50" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="11" y="50" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="18" y="50" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="25" y="50" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      
+      <!-- Floor 3 -->
+      <rect x="4" y="62" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="11" y="62" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="18" y="62" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="25" y="62" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      
+      <!-- Floor 4 -->
+      <rect x="4" y="74" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="11" y="74" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="18" y="74" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="25" y="74" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      
+      <!-- Floor 5 -->
+      <rect x="4" y="86" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="11" y="86" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="18" y="86" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="25" y="86" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      
+      <!-- Floor 6 -->
+      <rect x="4" y="98" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="11" y="98" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="18" y="98" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="25" y="98" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      
+      <!-- Floor 7 -->
+      <rect x="4" y="110" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="11" y="110" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="18" y="110" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="25" y="110" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      
+      <!-- Floor 8 -->
+      <rect x="4" y="122" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="11" y="122" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="18" y="122" width="6" height="10" fill="#6ee7b7" stroke="#10b981" stroke-width="0.3"/>
+      <rect x="25" y="122" width="6" height="10" fill="#a7f3d0" stroke="#10b981" stroke-width="0.3"/>
+    </g>
+    
+    <!-- Glass reflection overlay -->
+    <rect x="2" y="35" width="31" height="100" fill="url(#glassReflection)" opacity="0.6"/>
+    
+    <!-- LED accent lighting -->
+    <rect x="1" y="34" width="33" height="2" fill="#10b981" filter="url(#glow)" opacity="0.8"/>
+    <rect x="1" y="136" width="33" height="1" fill="#059669" filter="url(#glow)" opacity="0.6"/>
+  </g>
+  
+  <!-- ADVANCED CONNECTING BRIDGE -->
+  <g filter="url(#shadow)">
+    <!-- Main bridge structure -->
+    <polygon points="55,65 85,55 125,65 125,85 85,95 55,85" fill="url(#bridgeGradient)" stroke="#7c3aed" stroke-width="1" opacity="0.9"/>
+    
+    <!-- Bridge details -->
+    <rect x="60" y="70" width="60" height="8" fill="url(#glassReflection)" opacity="0.7"/>
+    <rect x="58" y="68" width="2" height="12" fill="#7c3aed" opacity="0.8"/>
+    <rect x="75" y="68" width="2" height="12" fill="#7c3aed" opacity="0.8"/>
+    <rect x="92" y="68" width="2" height="12" fill="#7c3aed" opacity="0.8"/>
+    <rect x="109" y="68" width="2" height="12" fill="#7c3aed" opacity="0.8"/>
+    <rect x="122" y="68" width="2" height="12" fill="#7c3aed" opacity="0.8"/>
+    
+    <!-- Bridge glow effect -->
+    <polygon points="55,65 85,55 125,65 125,85 85,95 55,85" fill="none" stroke="#a855f7" stroke-width="2" filter="url(#glow)" opacity="0.6"/>
+  </g>
+  
+  <!-- ADVANCED TYPOGRAPHY -->
+  <g transform="translate(160, 110)" filter="url(#shadow)">
+    <!-- Shadow layer -->
+    <g transform="translate(2, 2)" opacity="0.3">
+      <text x="0" y="35" font-family="Arial Black, sans-serif" font-size="36" font-weight="900" fill="url(#textShadow)">MEGABASE</text>
+    </g>
+    
+    <!-- Main text -->
+    <text x="0" y="35" font-family="Arial Black, sans-serif" font-size="36" font-weight="900" fill="url(#textPrimary)" stroke="#0f172a" stroke-width="0.5" filter="url(#glow)">MEGABASE</text>
+    
+    <!-- Highlight overlay -->
+    <text x="0" y="35" font-family="Arial Black, sans-serif" font-size="36" font-weight="900" fill="url(#glassReflection)" opacity="0.4">MEGABASE</text>
+  </g>
+  
+  <!-- Advanced lighting effects -->
+  <circle cx="60" cy="40" r="30" fill="url(#glowEffect)" opacity="0.3" filter="url(#glow)"/>
+  <circle cx="120" cy="30" r="35" fill="url(#glowEffect)" opacity="0.3" filter="url(#glow)"/>
+  
+  <!-- Subtle ground reflection -->
+  <ellipse cx="60" cy="155" rx="25" ry="4" fill="#000000" opacity="0.2"/>
+  <ellipse cx="120" cy="160" rx="25" ry="4" fill="#000000" opacity="0.2"/>
+</svg>

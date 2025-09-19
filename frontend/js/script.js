@@ -4520,3 +4520,727 @@ document.addEventListener("click", (e) => {
     langToggle.setAttribute("aria-expanded", "false");
   }
 });
+
+
+// ==================== Admin Menu System ==================== //
+// Admin Menu System - Phase 1
+let isAdminLoggedIn = false;
+let notificationCount = 0;
+
+// Toggle Admin Menu
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('adminMenuToggle');
+    const menuDropdown = document.getElementById('adminMenuDropdown');
+    
+    if (menuToggle && menuDropdown) {
+        menuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            menuDropdown.classList.toggle('active');
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!menuToggle.contains(e.target) && !menuDropdown.contains(e.target)) {
+                menuDropdown.classList.remove('active');
+            }
+        });
+    }
+    // ==================== Hide/Show Admin Menu Toggle on Scroll ==================== //
+    let lastScrollY = window.scrollY;
+    const adminToggleBtn = document.getElementById('adminMenuToggle');
+
+    if (adminToggleBtn) {
+        // optional: smooth fade
+        adminToggleBtn.style.transition = 'opacity 0.3s ease';
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+
+            if (currentScrollY > lastScrollY) {
+                // scrolling down → hide
+                adminToggleBtn.style.opacity = '0';
+                adminToggleBtn.style.pointerEvents = 'none';
+            } else {
+                // scrolling up → show
+                adminToggleBtn.style.opacity = '1';
+                adminToggleBtn.style.pointerEvents = 'auto';
+            }
+
+            lastScrollY = currentScrollY;
+        });
+    }
+});
+
+// Copy Portfolio Link Function
+async function copyPortfolioLink() {
+    const url = window.location.href;
+    
+    try {
+        // Modern Clipboard API
+        await navigator.clipboard.writeText(url);
+        showToast('Portfolio link copied to clipboard!', 'success');
+    } catch (err) {
+        // Fallback method for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            showToast('Portfolio link copied to clipboard!', 'success');
+        } catch (fallbackErr) {
+            showToast('Failed to copy link. Please copy manually: ' + url, 'error');
+        }
+        
+        document.body.removeChild(textArea);
+    }
+    
+    // Close the menu
+    document.getElementById('adminMenuDropdown').classList.remove('active');
+}
+
+// Show Toast Notification
+function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) return;
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    
+    toastContainer.appendChild(toast);
+    
+    // Trigger animation
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    // Remove toast after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Toggle Notifications Panel
+function toggleNotifications() {
+    const panel = document.getElementById('notificationPanel');
+    if (!panel) return;
+    
+    panel.classList.toggle('active');
+    
+    // Close admin menu
+    document.getElementById('adminMenuDropdown').classList.remove('active');
+    
+    // Load notifications if panel is opening
+    if (panel.classList.contains('active')) {
+        loadNotifications();
+    }
+}
+
+// Close Notifications Panel
+function closeNotifications() {
+    const panel = document.getElementById('notificationPanel');
+    if (panel) {
+        panel.classList.remove('active');
+    }
+}
+// ==================== Outside Click Close ==================== //
+document.addEventListener('click', function(e) {
+    const panel = document.getElementById('notificationPanel');
+    if (!panel || !panel.classList.contains('active')) return;
+
+    const toggleItem = document.querySelector(
+        '#adminMenuDropdown .admin-menu-item:nth-child(2)' // Notifications item
+    );
+
+    // Check if click happened inside panel or on the toggle item
+    const clickedInsidePanel = panel.contains(e.target);
+    const clickedToggle = toggleItem && toggleItem.contains(e.target);
+
+    if (!clickedInsidePanel && !clickedToggle) {
+        panel.classList.remove('active');
+    }
+});
+
+// Load Notifications (placeholder - will connect to backend later)
+function loadNotifications() {
+    const content = document.getElementById('notificationContent');
+    if (!content) return;
+    
+    // For now, show placeholder
+    content.innerHTML = `
+        <div class="no-notifications">
+            <i class="fas fa-bell-slash"></i>
+            <p>No notifications yet</p>
+            <small>Messages from admin will appear here</small>
+        </div>
+    `;
+}
+
+// Open Admin Dashboard
+function openAdminDashboard() {
+    const dashboard = document.getElementById('adminDashboard');
+    if (dashboard) {
+        dashboard.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Close admin menu
+    document.getElementById('adminMenuDropdown').classList.remove('active');
+
+    // Decide what to show
+    if (isAdminLoggedIn) {
+        showAdminContent();   // directly show post/manage
+    } else {
+        showPasswordLogin();  // default login card
+    }
+}
+
+// Close Admin Dashboard
+function closeAdminDashboard() {
+    const dashboard = document.getElementById('adminDashboard');
+    if (dashboard) {
+        dashboard.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    // Reset to login form
+    showPasswordLogin();
+    
+    // Clear forms
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('backupKey').value = '';
+}
+
+// Show Password Login
+function showPasswordLogin() {
+    const passwordLogin = document.getElementById('adminLogin');
+    const backupLogin = document.getElementById('adminBackupLogin');
+    
+    if (passwordLogin && backupLogin) {
+        passwordLogin.style.display = 'block';
+        backupLogin.style.display = 'none';
+    }
+}
+
+// Show Backup Login
+function showBackupLogin() {
+    const passwordLogin = document.getElementById('adminLogin');
+    const backupLogin = document.getElementById('adminBackupLogin');
+    
+    if (passwordLogin && backupLogin) {
+        passwordLogin.style.display = 'none';
+        backupLogin.style.display = 'block';
+    }
+}
+
+// Admin Login (placeholder - will connect to backend)
+function adminLogin(event) {
+    event.preventDefault();
+    const password = document.getElementById('adminPassword').value;
+    
+    // Placeholder validation - will be replaced with backend call
+    if (password === 'demo123') { // Temporary for testing
+        isAdminLoggedIn = true;
+        showAdminContent();
+        showToast('Welcome back, Admin Frank!', 'success');
+    } else {
+        showToast('Invalid password', 'error');
+    }
+}
+
+// Admin Backup Login (placeholder)
+function adminBackupLogin(event) {
+    event.preventDefault();
+    const backupKey = document.getElementById('backupKey').value;
+    
+    // Placeholder validation
+    if (backupKey === 'BACKUP2025') { // Temporary for testing
+        isAdminLoggedIn = true;
+        showAdminContent();
+        showToast('Access recovered successfully!', 'success');
+    } else {
+        showToast('Invalid backup key', 'error');
+    }
+}
+
+// Show Admin Content
+function showAdminContent() {
+    const loginForm = document.getElementById('adminLogin');
+    const backupForm = document.getElementById('adminBackupLogin');
+    const adminContent = document.getElementById('adminContent');
+    
+    if (loginForm) loginForm.style.display = 'none';
+    if (backupForm) backupForm.style.display = 'none';
+    if (adminContent) adminContent.style.display = 'block';
+    
+    // Load existing messages
+    loadAdminMessages();
+}
+
+// Show Tab
+function showTab(tabName) {
+    // Hide all tabs
+    const tabs = document.querySelectorAll('.tab-content');
+    const buttons = document.querySelectorAll('.tab-button');
+    
+    tabs.forEach(tab => tab.classList.remove('active'));
+    buttons.forEach(btn => btn.classList.remove('active'));
+    
+    // Show selected tab
+    const selectedTab = document.getElementById(tabName + 'Tab');
+    const selectedButton = event.target;
+    
+    if (selectedTab) selectedTab.classList.add('active');
+    if (selectedButton) selectedButton.classList.add('active');
+}
+
+// Post Message (placeholder)
+function postMessage(event) {
+    event.preventDefault();
+    
+    const title = document.getElementById('messageTitle').value;
+    const content = document.getElementById('messageContent').value;
+    
+    if (title && content) {
+        // This will be replaced with backend call
+        showToast('Message posted successfully!', 'success');
+        
+        // Clear form
+        document.getElementById('messageTitle').value = '';
+        document.getElementById('messageContent').value = '';
+        
+        // Update notification count (placeholder)
+        updateNotificationBadge(++notificationCount);
+    }
+}
+
+// Load Admin Messages (placeholder)
+function loadAdminMessages() {
+    const messageList = document.getElementById('messageList');
+    if (!messageList) return;
+    
+    // Placeholder content
+    messageList.innerHTML = `
+        <div style="text-align: center; color: #666; margin-top: 40px;">
+            <i class="fas fa-envelope-open" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
+            <p>No messages posted yet</p>
+            <small>Posted messages will appear here for management</small>
+        </div>
+    `;
+}
+
+// Update Notification Badge
+function updateNotificationBadge(count) {
+    const badge = document.getElementById('notificationBadge');
+    if (!badge) return;
+    
+    if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = 'inline-block';
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+// Close modals with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeNotifications();
+        closeAdminDashboard();
+        document.getElementById('adminMenuDropdown').classList.remove('active');
+    }
+});
+
+
+// ==================== Backend Integration (Placeholder) ==================== //
+// Global variables for backend integration
+let adminToken = null;
+let notificationCheckInterval = null;
+
+// Enhanced loadNotifications function with backend integration
+function loadNotifications() {
+    const content = document.getElementById('notificationContent');
+    if (!content) return;
+    
+    // Show loading state
+    content.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: #666;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 16px;"></i>
+            <p>Loading notifications...</p>
+        </div>
+    `;
+    
+    // Fetch notifications from backend
+    fetch('/api/notifications')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayNotifications(data.messages);
+                updateNotificationBadge(data.count);
+            } else {
+                showNotificationError('Failed to load notifications');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading notifications:', error);
+            showNotificationError('Connection error');
+        });
+}
+
+// Display notifications in the panel
+function displayNotifications(messages) {
+    const content = document.getElementById('notificationContent');
+    if (!content) return;
+    
+    if (messages.length === 0) {
+        content.innerHTML = `
+            <div class="no-notifications">
+                <i class="fas fa-bell-slash"></i>
+                <p>No notifications yet</p>
+                <small>Messages from admin will appear here</small>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    messages.forEach(message => {
+        const date = new Date(message.timestamp).toLocaleDateString();
+        const time = new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        html += `
+            <div class="notification-item ${message.read ? '' : 'unread'}" data-id="${message.id}">
+                <div class="notification-meta">
+                    <span class="notification-date">${date} at ${time}</span>
+                    ${!message.read ? '<span class="new-badge">NEW</span>' : ''}
+                </div>
+                <h4 class="notification-title">${escapeHtml(message.title)}</h4>
+                <p class="notification-text">${escapeHtml(message.content)}</p>
+                ${!message.read ? `<button class="mark-read-btn" onclick="markAsRead(${message.id})">Mark as Read</button>` : ''}
+            </div>
+        `;
+    });
+    
+    content.innerHTML = html;
+}
+
+// Show notification error
+function showNotificationError(message) {
+    const content = document.getElementById('notificationContent');
+    if (!content) return;
+    
+    content.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: #dc3545;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 16px;"></i>
+            <p>${message}</p>
+            <button onclick="loadNotifications()" style="margin-top: 16px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Try Again
+            </button>
+        </div>
+    `;
+}
+
+// Mark notification as read
+function markAsRead(messageId) {
+    fetch(`/api/notifications/${messageId}/read`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadNotifications(); // Refresh the list
+        } else {
+            showToast('Failed to mark as read', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error marking as read:', error);
+        showToast('Connection error', 'error');
+    });
+}
+
+// Enhanced admin login with backend
+function adminLogin(event) {
+    event.preventDefault();
+    const password = document.getElementById('adminPassword').value;
+    
+    fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            adminToken = data.token;
+            isAdminLoggedIn = true;
+            showAdminContent();
+            showToast('Welcome back, Admin Frank!', 'success');
+        } else {
+            showToast(data.message || 'Invalid password', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Login error:', error);
+        showToast('Connection error', 'error');
+    });
+}
+
+// Enhanced backup login with backend
+function adminBackupLogin(event) {
+    event.preventDefault();
+    const backupKey = document.getElementById('backupKey').value;
+    
+    fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ backupKey })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            adminToken = data.token;
+            isAdminLoggedIn = true;
+            showAdminContent();
+            showToast('Access recovered successfully!', 'success');
+        } else {
+            showToast(data.message || 'Invalid backup key', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Backup login error:', error);
+        showToast('Connection error', 'error');
+    });
+}
+
+// Enhanced post message with backend
+function postMessage(event) {
+    event.preventDefault();
+    
+    if (!adminToken) {
+        showToast('Please log in first', 'error');
+        return;
+    }
+    
+    const title = document.getElementById('messageTitle').value;
+    const content = document.getElementById('messageContent').value;
+    
+    if (!title || !content) {
+        showToast('Please fill in all fields', 'error');
+        return;
+    }
+    
+    // Disable form during submission
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Posting...';
+    submitBtn.disabled = true;
+    
+    fetch('/api/admin/message', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title, content, token: adminToken })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Message posted successfully!', 'success');
+            
+            // Clear form
+            document.getElementById('messageTitle').value = '';
+            document.getElementById('messageContent').value = '';
+            
+            // Refresh admin messages
+            loadAdminMessages();
+            
+            // Update global notification count
+            checkNotifications();
+        } else {
+            showToast(data.message || 'Failed to post message', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Post message error:', error);
+        showToast('Connection error', 'error');
+    })
+    .finally(() => {
+        // Re-enable form
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    });
+}
+
+// Enhanced load admin messages with backend
+function loadAdminMessages() {
+    const messageList = document.getElementById('messageList');
+    if (!messageList || !adminToken) return;
+    
+    messageList.innerHTML = `
+        <div style="text-align: center; color: #666; margin-top: 20px;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 16px;"></i>
+            <p>Loading messages...</p>
+        </div>
+    `;
+    
+    fetch(`/api/admin/messages?token=${encodeURIComponent(adminToken)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayAdminMessages(data.messages);
+            } else {
+                messageList.innerHTML = `
+                    <div style="text-align: center; color: #dc3545; margin-top: 40px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 16px;"></i>
+                        <p>Failed to load messages</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading admin messages:', error);
+            messageList.innerHTML = `
+                <div style="text-align: center; color: #dc3545; margin-top: 40px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 16px;"></i>
+                    <p>Connection error</p>
+                </div>
+            `;
+        });
+}
+
+// Display admin messages
+function displayAdminMessages(messages) {
+    const messageList = document.getElementById('messageList');
+    if (!messageList) return;
+    
+    if (messages.length === 0) {
+        messageList.innerHTML = `
+            <div style="text-align: center; color: #666; margin-top: 40px;">
+                <i class="fas fa-envelope-open" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
+                <p>No messages posted yet</p>
+                <small>Posted messages will appear here for management</small>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    messages.forEach(message => {
+        const date = new Date(message.timestamp).toLocaleDateString();
+        const time = new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        html += `
+            <div class="admin-message-item">
+                <div class="admin-message-header">
+                    <h4>${escapeHtml(message.title)}</h4>
+                    <div class="admin-message-actions">
+                        <button class="delete-btn" onclick="deleteMessage(${message.id})" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <p class="admin-message-content">${escapeHtml(message.content)}</p>
+                <div class="admin-message-meta">
+                    <span>Posted: ${date} at ${time}</span>
+                    <span class="read-status ${message.read ? 'read' : 'unread'}">
+                        ${message.read ? 'Read' : 'Unread'}
+                    </span>
+                </div>
+            </div>
+        `;
+    });
+    
+    messageList.innerHTML = html;
+}
+
+// Delete message
+function deleteMessage(messageId) {
+    if (!confirm('Are you sure you want to delete this message?')) return;
+    
+    if (!adminToken) {
+        showToast('Please log in first', 'error');
+        return;
+    }
+    
+    fetch(`/api/admin/message/${messageId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token: adminToken })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Message deleted successfully', 'success');
+            loadAdminMessages();
+            checkNotifications(); // Update notification count
+        } else {
+            showToast(data.message || 'Failed to delete message', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Delete error:', error);
+        showToast('Connection error', 'error');
+    });
+}
+
+// Periodic notification checking
+function startNotificationChecking() {
+    // Check immediately
+    checkNotifications();
+    
+    // Then check every 30 seconds
+    if (notificationCheckInterval) {
+        clearInterval(notificationCheckInterval);
+    }
+    
+    notificationCheckInterval = setInterval(() => {
+        checkNotifications();
+    }, 30000);
+}
+
+// Check for new notifications
+function checkNotifications() {
+    fetch('/api/notifications')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateNotificationBadge(data.count);
+            }
+        })
+        .catch(error => {
+            console.error('Error checking notifications:', error);
+        });
+}
+
+// HTML escape utility
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Start notification checking when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Start checking for notifications periodically
+    startNotificationChecking();
+});

@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -10,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Contact endpoint
 app.post('/api/contact', async (req, res) => {
@@ -344,6 +347,255 @@ app.post('/api/feedback', async (req, res) => {
     }
 });
 
+
+// Create data directory if it doesn't exist
+const dataDir = path.join(__dirname, 'data');
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir);
+}
+
+const notificationsFile = path.join(dataDir, 'notifications.json');
+
+// Initialize notifications file if it doesn't exist
+function initNotificationsFile() {
+    if (!fs.existsSync(notificationsFile)) {
+        const initialData = {
+            messages: [],
+            lastMessageId: 0
+        };
+        fs.writeFileSync(notificationsFile, JSON.stringify(initialData, null, 2));
+    }
+}
+
+// Read notifications from file
+function readNotifications() {
+    try {
+        if (!fs.existsSync(notificationsFile)) {
+            initNotificationsFile();
+        }
+        const data = fs.readFileSync(notificationsFile, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading notifications:', error);
+        return { messages: [], lastMessageId: 0 };
+    }
+}
+
+// Write notifications to file
+function writeNotifications(data) {
+    try {
+        fs.writeFileSync(notificationsFile, JSON.stringify(data, null, 2));
+        return true;
+    } catch (error) {
+        console.error('Error writing notifications:', error);
+        return false;
+    }
+}
+
+// Initialize on startup
+initNotificationsFile();
+
+// ==================== API ENDPOINTS ==================== //
+
+// Get all notifications
+app.get('/api/notifications', (req, res) => {
+    try {
+        const data = readNotifications();
+        res.json({
+            success: true,
+            messages: data.messages,
+            count: data.messages.filter(msg => !msg.read).length
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve notifications'
+        });
+    }
+});
+
+// Mark notification as read
+app.post('/api/notifications/:id/read', (req, res) => {
+    try {
+        const messageId = parseInt(req.params.id);
+        const data = readNotifications();
+        
+        const message = data.messages.find(msg => msg.id === messageId);
+        if (message) {
+            message.read = true;
+            if (writeNotifications(data)) {
+                res.json({ success: true, message: 'Notification marked as read' });
+            } else {
+                res.status(500).json({ success: false, message: 'Failed to update notification' });
+            }
+        } else {
+            res.status(404).json({ success: false, message: 'Notification not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Admin authentication
+app.post('/api/admin/login', (req, res) => {
+    try {
+        const { password, backupKey } = req.body;
+        
+        const adminPassword = process.env.ADMIN_PASSWORD || 'demo123';
+        const adminBackupKey = process.env.ADMIN_BACKUP_KEY || 'BACKUP2025';
+        
+        if (password && password === adminPassword) {
+            res.json({
+                success: true,
+                message: 'Authentication successful',
+                token: 'admin_authenticated_' + Date.now() // Simple session token
+            });
+        } else if (backupKey && backupKey === adminBackupKey) {
+            res.json({
+                success: true,
+                message: 'Backup authentication successful',
+                token: 'admin_authenticated_' + Date.now()
+            });
+        } else {
+            res.status(401).json({
+                success: false,
+                message: 'Invalid credentials'
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+    }
+});
+
+// Post new message (admin only)
+app.post('/api/admin/message', (req, res) => {
+    try {
+        const { title, content, token } = req.body;
+        
+        // Simple token validation (you can enhance this)
+        if (!token || !token.startsWith('admin_authenticated_')) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            });
+        }
+        
+        if (!title || !content) {
+            return res.status(400).json({
+                success: false,
+                message: 'Title and content are required'
+            });
+        }
+        
+        const data = readNotifications();
+        const newMessage = {
+            id: ++data.lastMessageId,
+            title: title.trim(),
+            content: content.trim(),
+            timestamp: new Date().toISOString(),
+            read: false,
+            createdAt: Date.now()
+        };
+        
+        data.messages.unshift(newMessage); // Add to beginning of array
+        
+        if (writeNotifications(data)) {
+            res.json({
+                success: true,
+                message: 'Message posted successfully',
+                data: newMessage
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                message: 'Failed to save message'
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+    }
+});
+
+// Get messages for admin management
+app.get('/api/admin/messages', (req, res) => {
+    try {
+        const { token } = req.query;
+        
+        if (!token || !token.startsWith('admin_authenticated_')) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            });
+        }
+        
+        const data = readNotifications();
+        res.json({
+            success: true,
+            messages: data.messages
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve messages'
+        });
+    }
+});
+
+// Delete message (admin only)
+app.delete('/api/admin/message/:id', (req, res) => {
+    try {
+        const { token } = req.body;
+        const messageId = parseInt(req.params.id);
+        
+        if (!token || !token.startsWith('admin_authenticated_')) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            });
+        }
+        
+        const data = readNotifications();
+        const messageIndex = data.messages.findIndex(msg => msg.id === messageId);
+        
+        if (messageIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: 'Message not found'
+            });
+        }
+        
+        data.messages.splice(messageIndex, 1);
+        
+        if (writeNotifications(data)) {
+            res.json({
+                success: true,
+                message: 'Message deleted successfully'
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                message: 'Failed to delete message'
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+    }
+});
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ error: 'API endpoint not found' });
+    }
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
 
 
 app.listen(PORT, () => {

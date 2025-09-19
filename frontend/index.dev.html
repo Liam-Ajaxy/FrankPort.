@@ -50,7 +50,7 @@
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Frank Nab",
-        "url": "https://yourdomain.com",
+        "url": "https://frankport.vercel.app",
         "sameAs": [
             "https://github.com/yourusername",
             "https://linkedin.com/in/yourusername",
@@ -61,7 +61,7 @@
             "@type": "Organization",
             "name": "Independent"
         },
-        "image": "https://yourdomain.com/assets/frankport-profile.jpg",
+        "image": "https://frankport.vercel.app/assets/frankport-profile.jpg",
         "description": "Frank Nab is a full stack web developer specializing in HTML, CSS, JavaScript, Node.js, Express, and MySQL."
     }
     </script>
@@ -72,7 +72,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css-obf">
     <!-- HTML: swappable stylesheet -->
-    <link id="theme-stylesheet" rel="stylesheet" href="css/styles.css">
+    <link id="theme-stylesheet" rel="stylesheet" href="css/dark-blue.css">
 </head>
 <body>
     <!-- Custom Cursor -->
@@ -140,6 +140,133 @@
                 <div class="floating-element" data-speed="0.6"></div>
             </div>
         </div>
+
+        
+        <!-- Three-Dot Admin Menu -->
+        <div class="admin-menu-container">
+            <button class="admin-menu-toggle" id="adminMenuToggle" aria-label="Menu">
+                <div class="three-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+            
+            <div class="admin-menu-dropdown" id="adminMenuDropdown">
+                <div class="admin-menu-item" onclick="copyPortfolioLink()">
+                    <i class="fas fa-link"></i>
+                    <span>Copy Portfolio Link</span>
+                </div>
+                
+                <div class="admin-menu-item" onclick="toggleNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </div>
+                
+                <div class="admin-menu-item" onclick="openAdminDashboard()">
+                    <i class="fas fa-cog"></i>
+                    <span>Admin Dashboard</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Panel -->
+        <div class="notification-panel" id="notificationPanel">
+            <div class="notification-header">
+                <h3>Notifications</h3>
+                <button class="close-notification" onclick="closeNotifications()">&times;</button>
+            </div>
+            <div class="notification-content" id="notificationContent">
+                <div class="no-notifications">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>No notifications yet</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast-container" id="toastContainer"></div>
+
+        <!-- Admin Dashboard Modal -->
+        <div class="admin-dashboard-overlay" id="adminDashboard" style="display: none;">
+            <div class="admin-dashboard-modal">
+                
+                <!-- Login Form (shown by default) -->
+                <div class="admin-login" id="adminLogin">
+                    <div class="admin-dashboard-header">
+                        <h2>Admin Dashboard</h2>
+                        <button class="close-admin" onclick="closeAdminDashboard()">&times;</button>
+                    </div>
+                    <form onsubmit="adminLogin(event)">
+                        <div class="login-field">
+                            <label for="adminPassword">Password:</label>
+                            <input type="password" id="adminPassword" required>
+                        </div>
+                        <button type="submit">Login</button>
+                        <p class="forgot-password">
+                            <button onclick="showBackupLogin()" class="forgot-password-btn">Forgot password? Use backup key</button>
+                        </p>
+                    </form>
+                </div>
+                
+                <!-- Backup Key Form (hidden by default) -->
+                <div class="admin-backup-login" id="adminBackupLogin" style="display: none;">
+                    <div class="admin-dashboard-header">
+                        <h2>Admin Dashboard</h2>
+                        <button class="close-admin" onclick="closeAdminDashboard()">&times;</button>
+                    </div>
+                    <form onsubmit="adminBackupLogin(event)">
+                        <div class="login-field">
+                            <label for="backupKey">Backup Key:</label>
+                            <input type="text" id="backupKey" required>
+                        </div>
+                        <button type="submit">Recover Access</button>
+                        <p class="back-to-password">
+                            <button onclick="showPasswordLogin()" class="forgot-password-btn">Back to password login</button>
+                        </p>
+                    </form>
+                </div>
+                
+                <!-- Dashboard Content (hidden until logged in) -->
+                <div class="admin-content" id="adminContent" style="display: none;">
+                    <div class="admin-dashboard-header">
+                        <h2>Admin Dashboard</h2>
+                        <button class="close-admin" onclick="closeAdminDashboard()">&times;</button>
+                    </div>
+                    <div class="admin-tabs">
+                        <button class="tab-button active" onclick="showTab('post')">Post Message</button>
+                        <button class="tab-button" onclick="showTab('manage')">Manage Messages</button>
+                    </div>
+                    
+                    <!-- Post Message Tab -->
+                    <div class="tab-content active" id="postTab">
+                        <form onsubmit="postMessage(event)">
+                            <div class="form-field">
+                                <label for="messageTitle">Message Title:</label>
+                                <input type="text" id="messageTitle" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="messageContent">Content:</label>
+                                <textarea id="messageContent" rows="4" required></textarea>
+                            </div>
+                            <div class="action-tab-buttons">
+                                <button type="button" onclick="closeAdminDashboard()">Close</button>
+                                <button type="submit">Post Message</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Manage Messages Tab -->
+                    <div class="tab-content" id="manageTab">
+                        <div class="message-list" id="messageList">
+                            <p>Loading messages...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="hero-container">
             <div class="hero-content">
                 <div class="hero-badge">
@@ -899,7 +1026,7 @@
     <div id="modal-container"></div>
 
 <!-- Floating Feedback Button -->
-<button class="feedback-float-btn pulse" id="feedbackBtn"  title="Share your feedback">
+<button class="feedback-float-btn pulse" id="feedbackBtn"  aria-label="Feedback">
     <i class="fas fa-comment-dots"></i>
 </button>
 
