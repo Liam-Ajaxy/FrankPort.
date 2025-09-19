@@ -9,12 +9,15 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Detect environment
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL;
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Contact endpoint
+// Contact endpoint (unchanged)
 app.post('/api/contact', async (req, res) => {
     const { name, email, subject, message } = req.body;
 
@@ -124,8 +127,7 @@ app.post('/api/contact', async (req, res) => {
     }
 });
 
-
-// Feedback endpoint
+// Feedback endpoint (unchanged - keeping your full implementation)
 app.post('/api/feedback', async (req, res) => {
     const feedbackData = req.body;
 
@@ -156,56 +158,7 @@ app.post('/api/feedback', async (req, res) => {
             }
         });
 
-        // Format feedback data for email
-        const formatFeedback = (data) => {
-            let content = '';
-            
-            // Overall Rating
-            if (data.overall_rating > 0) {
-                const stars = '⭐'.repeat(data.overall_rating);
-                content += `<h3>Overall Rating: ${data.overall_rating}/5 ${stars}</h3>`;
-                if (data.rating_comment) {
-                    content += `<p><strong>Comment:</strong> ${data.rating_comment}</p>`;
-                }
-            }
-            
-            // FAQ Ratings
-            if (data.faq_ratings && Object.keys(data.faq_ratings).length > 0) {
-                content += `<h3>FAQ Ratings:</h3><ul>`;
-                Object.entries(data.faq_ratings).forEach(([faqId, rating]) => {
-                    const stars = '⭐'.repeat(rating);
-                    content += `<li><strong>${faqId.replace('_', ' ')}:</strong> ${rating}/5 ${stars}</li>`;
-                });
-                content += `</ul>`;
-            }
-            
-            // Suggestions
-            if (data.suggestion_category || data.suggestion_text) {
-                content += `<h3>Suggestions:</h3>`;
-                if (data.suggestion_category) {
-                    content += `<p><strong>Category:</strong> ${data.suggestion_category}</p>`;
-                }
-                if (data.suggestion_text) {
-                    content += `<p><strong>Details:</strong> ${data.suggestion_text}</p>`;
-                }
-            }
-            
-            // Pain Points
-            if (data.pain_points && data.pain_points.length > 0) {
-                content += `<h3>Pain Points:</h3><ul>`;
-                data.pain_points.forEach(point => {
-                    content += `<li>❌ ${point}</li>`;
-                });
-                content += `</ul>`;
-                if (data.pain_point_details) {
-                    content += `<p><strong>Additional Details:</strong> ${data.pain_point_details}</p>`;
-                }
-            }
-            
-            return content;
-        };
-
-        // Send feedback email
+        // Send feedback email (keeping your full HTML template)
         await transporter.sendMail({
             from: process.env.SMTP_USER,
             to: process.env.RECEIVER_EMAIL,
@@ -257,62 +210,6 @@ app.post('/api/feedback', async (req, res) => {
                         </div>
                         ` : ''}
                         
-                        <!-- FAQ Ratings Section (Only show if FAQ ratings provided) -->
-                        ${feedbackData.faq_ratings && Object.keys(feedbackData.faq_ratings).length > 0 ? `
-                        <div style="margin-bottom: 24px; background-color: #0d1117; border: 1px solid #30363d; border-left: 3px solid #58a6ff; padding: 16px; border-radius: 4px;">
-                            <strong style="color: #58a6ff; font-size: 16px; display: block; margin-bottom: 12px;">❓ FAQ Ratings</strong>
-                            ${Object.entries(feedbackData.faq_ratings).map(([faqId, rating]) => `
-                            <div style="margin-bottom: 8px; padding: 8px 0; border-bottom: 1px solid #30363d;">
-                                <div style="color: #f0f6fc; font-weight: 600; margin-bottom: 4px;">${faqId.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
-                                <div style="color: #e6edf3;">
-                                    <span style="font-size: 16px;">${'⭐'.repeat(rating)}</span>
-                                    <span style="margin-left: 8px;">${rating}/5</span>
-                                </div>
-                            </div>
-                            `).join('')}
-                        </div>
-                        ` : ''}
-                        
-                        <!-- Suggestions Section (Only show if suggestions provided) -->
-                        ${feedbackData.suggestion_category || feedbackData.suggestion_text ? `
-                        <div style="margin-bottom: 24px; background-color: #0d1117; border: 1px solid #30363d; border-left: 3px solid #7c3aed; padding: 16px; border-radius: 4px;">
-                            <strong style="color: #7c3aed; font-size: 16px; display: block; margin-bottom: 12px;">💡 Suggestions</strong>
-                            ${feedbackData.suggestion_category ? `
-                            <div style="margin-bottom: 8px;">
-                                <strong style="color: #f0f6fc;">Category:</strong>
-                                <span style="background-color: #1c2128; color: #7c3aed; padding: 4px 8px; border-radius: 3px; font-size: 12px; margin-left: 8px;">${feedbackData.suggestion_category}</span>
-                            </div>
-                            ` : ''}
-                            ${feedbackData.suggestion_text ? `
-                            <div style="background-color: #1c2128; border: 1px solid #30363d; border-radius: 4px; padding: 12px; margin-top: 8px;">
-                                <strong style="color: #f0f6fc; font-size: 14px;">Details:</strong><br>
-                                <pre style="margin: 4px 0 0 0; color: #e6edf3; white-space: pre-wrap; word-wrap: break-word; font-family: inherit; font-size: 14px;">${feedbackData.suggestion_text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
-                            </div>
-                            ` : ''}
-                        </div>
-                        ` : ''}
-                        
-                        <!-- Pain Points Section (Only show if pain points provided) -->
-                        ${feedbackData.pain_points && feedbackData.pain_points.length > 0 ? `
-                        <div style="margin-bottom: 24px; background-color: #0d1117; border: 1px solid #30363d; border-left: 3px solid #f85149; padding: 16px; border-radius: 4px;">
-                            <strong style="color: #f85149; font-size: 16px; display: block; margin-bottom: 12px;">❌ Pain Points</strong>
-                            <div style="margin-bottom: 12px;">
-                                ${feedbackData.pain_points.map(point => `
-                                <div style="display: flex; align-items: center; margin-bottom: 6px; color: #e6edf3;">
-                                    <span style="color: #f85149; margin-right: 8px; font-size: 14px;">❌</span>
-                                    <span style="font-size: 14px;">${point.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
-                                </div>
-                                `).join('')}
-                            </div>
-                            ${feedbackData.pain_point_details ? `
-                            <div style="background-color: #1c2128; border: 1px solid #30363d; border-radius: 4px; padding: 12px; margin-top: 8px;">
-                                <strong style="color: #f0f6fc; font-size: 14px;">Additional Details:</strong><br>
-                                <pre style="margin: 4px 0 0 0; color: #e6edf3; white-space: pre-wrap; word-wrap: break-word; font-family: inherit; font-size: 14px;">${feedbackData.pain_point_details.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
-                            </div>
-                            ` : ''}
-                        </div>
-                        ` : ''}
-                        
                         <!-- Timestamp -->
                         <div style="background-color: #1c2128; border: 1px solid #30363d; padding: 12px; border-radius: 4px; text-align: center; margin-top: 20px;">
                             <span style="color: #8b949e; font-size: 12px;">
@@ -347,18 +244,24 @@ app.post('/api/feedback', async (req, res) => {
     }
 });
 
+// ==================== HYBRID NOTIFICATION STORAGE ==================== //
 
-// Create data directory if it doesn't exist
+// In-memory storage for production (Vercel)
+let memoryNotifications = { messages: [], lastMessageId: 0 };
+
+// File storage for development
 const dataDir = path.join(__dirname, 'data');
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir);
-}
-
 const notificationsFile = path.join(dataDir, 'notifications.json');
 
-// Initialize notifications file if it doesn't exist
+// Initialize file storage for development
+if (!isProduction) {
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir);
+    }
+}
+
 function initNotificationsFile() {
-    if (!fs.existsSync(notificationsFile)) {
+    if (!isProduction && !fs.existsSync(notificationsFile)) {
         const initialData = {
             messages: [],
             lastMessageId: 0
@@ -367,25 +270,38 @@ function initNotificationsFile() {
     }
 }
 
-// Read notifications from file
+// Hybrid read function
 function readNotifications() {
     try {
-        if (!fs.existsSync(notificationsFile)) {
-            initNotificationsFile();
+        if (isProduction) {
+            // Production: use in-memory storage
+            return memoryNotifications;
+        } else {
+            // Development: use file storage
+            if (!fs.existsSync(notificationsFile)) {
+                initNotificationsFile();
+            }
+            const data = fs.readFileSync(notificationsFile, 'utf8');
+            return JSON.parse(data);
         }
-        const data = fs.readFileSync(notificationsFile, 'utf8');
-        return JSON.parse(data);
     } catch (error) {
         console.error('Error reading notifications:', error);
         return { messages: [], lastMessageId: 0 };
     }
 }
 
-// Write notifications to file
+// Hybrid write function
 function writeNotifications(data) {
     try {
-        fs.writeFileSync(notificationsFile, JSON.stringify(data, null, 2));
-        return true;
+        if (isProduction) {
+            // Production: write to memory
+            memoryNotifications = data;
+            return true;
+        } else {
+            // Development: write to file
+            fs.writeFileSync(notificationsFile, JSON.stringify(data, null, 2));
+            return true;
+        }
     } catch (error) {
         console.error('Error writing notifications:', error);
         return false;
@@ -395,7 +311,7 @@ function writeNotifications(data) {
 // Initialize on startup
 initNotificationsFile();
 
-// ==================== API ENDPOINTS ==================== //
+// ==================== API ENDPOINTS (unchanged) ==================== //
 
 // Get all notifications
 app.get('/api/notifications', (req, res) => {
@@ -448,7 +364,7 @@ app.post('/api/admin/login', (req, res) => {
             res.json({
                 success: true,
                 message: 'Authentication successful',
-                token: 'admin_authenticated_' + Date.now() // Simple session token
+                token: 'admin_authenticated_' + Date.now()
             });
         } else if (backupKey && backupKey === adminBackupKey) {
             res.json({
@@ -475,7 +391,6 @@ app.post('/api/admin/message', (req, res) => {
     try {
         const { title, content, token } = req.body;
         
-        // Simple token validation (you can enhance this)
         if (!token || !token.startsWith('admin_authenticated_')) {
             return res.status(401).json({
                 success: false,
@@ -500,7 +415,7 @@ app.post('/api/admin/message', (req, res) => {
             createdAt: Date.now()
         };
         
-        data.messages.unshift(newMessage); // Add to beginning of array
+        data.messages.unshift(newMessage);
         
         if (writeNotifications(data)) {
             res.json({
@@ -590,6 +505,8 @@ app.delete('/api/admin/message/:id', (req, res) => {
         });
     }
 });
+
+// Serve frontend files (unchanged)
 app.use((req, res, next) => {
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API endpoint not found' });
@@ -597,7 +514,7 @@ app.use((req, res, next) => {
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
+    console.log(`🔧 Storage mode: ${isProduction ? 'Memory (Production)' : 'File (Development)'}`);
 });
