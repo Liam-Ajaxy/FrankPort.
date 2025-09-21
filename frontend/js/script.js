@@ -5255,3 +5255,210 @@ document.addEventListener('DOMContentLoaded', function() {
     // Start checking for notifications periodically
     startNotificationChecking();
 });
+
+// ==================== Notification Highlight Card ==================== //
+// Advanced Feature Highlight System
+const FeatureHighlight = {
+    isActive: false,
+    autoHideTimer: null,
+    
+    // Initialize the system
+    init() {
+        this.bindEvents();
+        this.checkAutoShow();
+    },
+    
+    // Show the highlight
+    show() {
+        if (this.isActive) return;
+        
+        const system = document.getElementById('featureHighlightSystem');
+        const tooltip = document.getElementById('featureTooltip');
+        
+        if (!system || !tooltip) {
+            console.error('Feature highlight elements not found');
+            return;
+        }
+        
+        // Find the target element with multiple fallback selectors
+        const target = this.findTarget();
+        if (!target) {
+            console.error('Target element not found');
+            return;
+        }
+        
+        // Ensure admin menu is visible
+        this.ensureMenuVisible(() => {
+            this.positionTooltip(target);
+            this.activate();
+        });
+    },
+    
+    // Find the target element with multiple strategies
+    findTarget() {
+        const selectors = [
+            '#notificationsMenuItem',
+            '.admin-menu-item:nth-child(2)',
+            '[onclick*="toggleNotifications"]',
+            '.admin-menu-item:has(.fa-bell)',
+            '.admin-menu-item .fa-bell'
+        ];
+        
+        for (let selector of selectors) {
+            try {
+                const element = document.querySelector(selector);
+                if (element) {
+                    // If we found the icon, get its parent menu item
+                    return element.closest('.admin-menu-item') || element;
+                }
+            } catch (e) {
+                // CSS :has() might not be supported, continue
+                continue;
+            }
+        }
+        
+        return null;
+    },
+    
+    // Ensure admin menu is visible
+    ensureMenuVisible(callback) {
+        const menu = document.getElementById('adminMenuDropdown');
+        if (!menu) {
+            callback();
+            return;
+        }
+        
+        if (!menu.classList.contains('active')) {
+            menu.classList.add('active');
+            // Wait for menu animation
+            setTimeout(callback, 150);
+        } else {
+            callback();
+        }
+    },
+    
+    // Position tooltip relative to target
+    positionTooltip(target) {
+        const tooltip = document.getElementById('featureTooltip');
+        const rect = target.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        
+        let left = rect.left - 260; // 240px width + 20px spacing
+        let top = rect.top + (rect.height / 2) - 45; // Center vertically
+        
+        // Ensure tooltip stays in viewport
+        if (left < 20) {
+            left = rect.right + 20;
+            // Flip arrow direction
+            tooltip.style.transform = 'scaleX(-1)';
+            tooltip.querySelector('.tooltip-content').style.transform = 'scaleX(-1)';
+        } else {
+            tooltip.style.transform = 'scaleX(1)';
+            tooltip.querySelector('.tooltip-content').style.transform = 'scaleX(1)';
+        }
+        
+        if (top < 20) top = 20;
+        if (top + 100 > window.innerHeight) top = window.innerHeight - 120;
+        
+        tooltip.style.left = left + 'px';
+        tooltip.style.top = top + 'px';
+    },
+    
+    // Activate the highlight
+    activate() {
+        const system = document.getElementById('featureHighlightSystem');
+        system.classList.add('active');
+        // document.body.style.overflow = 'hidden';
+        this.isActive = true;
+        
+        // Auto-hide after 10 seconds
+        this.autoHideTimer = setTimeout(() => {
+            this.dismiss(true);
+        }, 10000);
+        
+        // Focus management for accessibility
+        document.getElementById('featureTooltip').focus();
+    },
+    
+    // Dismiss the highlight
+    dismiss(auto = false) {
+        if (!this.isActive) return;
+        
+        const system = document.getElementById('featureHighlightSystem');
+        system.classList.remove('active');
+        // document.body.style.overflow = '';
+        this.isActive = false;
+        
+        if (this.autoHideTimer) {
+            clearTimeout(this.autoHideTimer);
+            this.autoHideTimer = null;
+        }
+        
+        // Hide admin menu after a delay
+        setTimeout(() => {
+            const menu = document.getElementById('adminMenuDropdown');
+            if (menu) menu.classList.remove('active');
+        }, 500);
+        
+        // Remember user interaction
+        if (!auto) {
+            localStorage.setItem('feature-highlight-seen', Date.now());
+        }
+    },
+    
+    // Bind event listeners
+    bindEvents() {
+        // // Close on backdrop click
+        // document.addEventListener('click', (e) => {
+        //     if (e.target.classList.contains('highlight-backdrop')) {
+        //         this.dismiss();
+        //     }
+        // });
+
+        document.getElementById('adminMenuDropdown').addEventListener('click', (e) => {
+            if (this.isActive && !e.target.closest('#featureTooltip')) {
+                this.dismiss();
+            }
+        });
+        
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isActive) {
+                this.dismiss();
+            }
+        });
+        
+        // Reposition on resize
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            if (!this.isActive) return;
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                const target = this.findTarget();
+                if (target) this.positionTooltip(target);
+            }, 100);
+        });
+    },
+    
+    // Check if should auto-show
+    checkAutoShow() {
+        const lastSeen = localStorage.getItem('feature-highlight-seen');
+        const daysSinceLastSeen = lastSeen ? 
+            (Date.now() - parseInt(lastSeen)) / (1000 * 60 * 60 * 24) : 999;
+        
+        // Show if never seen or seen more than 7 days ago
+        if (daysSinceLastSeen > 7) {
+            setTimeout(() => this.show(), 3000);
+        }
+    }
+};
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    FeatureHighlight.init();
+});
+
+// Manual trigger function
+function showFeatureHighlight() {
+    FeatureHighlight.show();
+}
