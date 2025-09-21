@@ -4861,17 +4861,15 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-
-// ==================== Backend Integration (Placeholder) ==================== //
+// ==================== Backend Integration - Updated for Single API ==================== //
 // Global variables for backend integration
 let adminToken = null;
 let notificationCheckInterval = null;
 
-// Detect environment: localhost = dev, otherwise = prod
+// Detect environment: localhost = dev, otherwise = prod (UNCHANGED)
 const API_BASE = window.location.hostname === "localhost"
   ? "http://localhost:5000"
   : "https://fp-backend-phi.vercel.app";
-
 
 // Enhanced loadNotifications function with backend integration
 function loadNotifications() {
@@ -4886,8 +4884,8 @@ function loadNotifications() {
         </div>
     `;
     
-    // Fetch notifications from backend
-    fetch(`${API_BASE}/api/notifications`)
+    // UPDATED: Use single API endpoint
+    fetch(`${API_BASE}/api/admin?action=notifications`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -4903,7 +4901,7 @@ function loadNotifications() {
         });
 }
 
-// Display notifications in the panel
+// Display notifications in the panel (UNCHANGED)
 function displayNotifications(messages) {
     const content = document.getElementById('notificationContent');
     if (!content) return;
@@ -4940,7 +4938,7 @@ function displayNotifications(messages) {
     content.innerHTML = html;
 }
 
-// Show notification error
+// Show notification error (UNCHANGED)
 function showNotificationError(message) {
     const content = document.getElementById('notificationContent');
     if (!content) return;
@@ -4958,7 +4956,8 @@ function showNotificationError(message) {
 
 // Mark notification as read
 function markAsRead(messageId) {
-    fetch(`${API_BASE}/api/notifications/${messageId}/read`, {
+    // UPDATED: Use single API endpoint with query parameters
+    fetch(`${API_BASE}/api/admin?action=notifications&id=${messageId}&operation=read`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -4983,7 +4982,8 @@ function adminLogin(event) {
     event.preventDefault();
     const password = document.getElementById('adminPassword').value;
     
-    fetch(`${API_BASE}/api/admin/login`, {
+    // UPDATED: Use single API endpoint
+    fetch(`${API_BASE}/api/admin?action=login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -5012,7 +5012,8 @@ function adminBackupLogin(event) {
     event.preventDefault();
     const backupKey = document.getElementById('backupKey').value;
     
-    fetch(`${API_BASE}/api/admin/login`, {
+    // UPDATED: Use single API endpoint
+    fetch(`${API_BASE}/api/admin?action=login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -5059,7 +5060,8 @@ function postMessage(event) {
     submitBtn.textContent = 'Posting...';
     submitBtn.disabled = true;
     
-    fetch(`${API_BASE}/api/admin/message`, {
+    // UPDATED: Use single API endpoint
+    fetch(`${API_BASE}/api/admin?action=message`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -5107,7 +5109,8 @@ function loadAdminMessages() {
         </div>
     `;
     
-    fetch(`${API_BASE}/api/admin/messages?token=${encodeURIComponent(adminToken)}`)
+    // UPDATED: Use single API endpoint
+    fetch(`${API_BASE}/api/admin?action=messages&token=${encodeURIComponent(adminToken)}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -5132,7 +5135,7 @@ function loadAdminMessages() {
         });
 }
 
-// Display admin messages
+// Display admin messages (UNCHANGED)
 function displayAdminMessages(messages) {
     const messageList = document.getElementById('messageList');
     if (!messageList) return;
@@ -5186,7 +5189,8 @@ function deleteMessage(messageId) {
         return;
     }
     
-    fetch(`${API_BASE}/api/admin/message/${messageId}`, {
+    // UPDATED: Use single API endpoint
+    fetch(`${API_BASE}/api/admin?action=message&id=${messageId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
@@ -5226,7 +5230,8 @@ function startNotificationChecking() {
 
 // Check for new notifications
 function checkNotifications() {
-    fetch(`${API_BASE}/api/notifications`)
+    // UPDATED: Use single API endpoint
+    fetch(`${API_BASE}/api/admin?action=notifications`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -5238,14 +5243,14 @@ function checkNotifications() {
         });
 }
 
-// HTML escape utility
+// HTML escape utility (UNCHANGED)
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-// Start notification checking when page loads
+// Start notification checking when page loads (UNCHANGED)
 document.addEventListener('DOMContentLoaded', function() {
     // Start checking for notifications periodically
     startNotificationChecking();
