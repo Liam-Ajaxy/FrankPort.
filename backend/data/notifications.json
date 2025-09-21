@@ -1,29 +1,13 @@
 {
   "messages": [
     {
-      "id": 5,
+      "id": 6,
       "title": "Notification Test",
-      "content": "Yo YO it is working well right now!",
-      "timestamp": "2025-09-19T17:00:39.614Z",
+      "content": "This is notification test on local host!",
+      "timestamp": "2025-09-21T14:19:51.997Z",
       "read": false,
-      "createdAt": 1758301239614
-    },
-    {
-      "id": 4,
-      "title": "Notification Test",
-      "content": "Yo Bro come on man",
-      "timestamp": "2025-09-19T17:00:06.887Z",
-      "read": true,
-      "createdAt": 1758301206887
-    },
-    {
-      "id": 3,
-      "title": "This is a test",
-      "content": "This is a testing message from Admin",
-      "timestamp": "2025-09-19T16:49:02.595Z",
-      "read": true,
-      "createdAt": 1758300542595
+      "createdAt": 1758464391997
     }
   ],
-  "lastMessageId": 5
+  "lastMessageId": 6
 }

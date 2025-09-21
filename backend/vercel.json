@@ -1,23 +1,14 @@
+
 {
   "version": 2,
   "builds": [
     { "src": "api/contact.js", "use": "@vercel/node" },
     { "src": "api/feedback.js", "use": "@vercel/node" },
-    { "src": "api/notifications.js", "use": "@vercel/node" },
-    { "src": "api/notifications/[id]/read.js", "use": "@vercel/node" },
-    { "src": "api/admin/login.js", "use": "@vercel/node" },
-    { "src": "api/admin/message.js", "use": "@vercel/node" },
-    { "src": "api/admin/messages.js", "use": "@vercel/node" },
-    { "src": "api/admin/message/[id].js", "use": "@vercel/node" }
+    { "src": "api/admin.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/api/contact", "dest": "/api/contact.js" },
     { "src": "/api/feedback", "dest": "/api/feedback.js" },
-    { "src": "/api/notifications", "dest": "/api/notifications.js" },
-    { "src": "/api/notifications/([^/]+)/read", "dest": "/api/notifications/[id]/read.js" },
-    { "src": "/api/admin/login", "dest": "/api/admin/login.js" },
-    { "src": "/api/admin/message$", "dest": "/api/admin/message.js" },
-    { "src": "/api/admin/messages", "dest": "/api/admin/messages.js" },
-    { "src": "/api/admin/message/([^/]+)", "dest": "/api/admin/message/[id].js" }
+    { "src": "/api/admin", "dest": "/api/admin.js" }
   ]
 }
