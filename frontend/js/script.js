@@ -5415,6 +5415,7 @@ const FeatureHighlight = {
         //     }
         // });
 
+        // Close on clicking outside tooltip but inside admin menu
         document.getElementById('adminMenuDropdown').addEventListener('click', (e) => {
             if (this.isActive && !e.target.closest('#featureTooltip')) {
                 this.dismiss();
@@ -5448,7 +5449,7 @@ const FeatureHighlight = {
         
         // Show if never seen or seen more than 7 days ago
         if (daysSinceLastSeen > 7) {
-            setTimeout(() => this.show(), 3000);
+            setTimeout(() => this.show(), 6000);
         }
     }
 };
@@ -5462,3 +5463,763 @@ document.addEventListener('DOMContentLoaded', () => {
 function showFeatureHighlight() {
     FeatureHighlight.show();
 }
+
+// Enhanced FeatureHighlight methods for modal functionality
+Object.assign(FeatureHighlight, {
+    // Open Learn More Modal
+    openLearnMoreModal() {
+        const modal = document.getElementById('learnMoreModal');
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus management
+            setTimeout(() => {
+                const firstButton = modal.querySelector('.modal-close');
+                if (firstButton) firstButton.focus();
+            }, 300);
+        }
+    },
+    
+    // Close Learn More Modal
+    closeLearnMoreModal() {
+        const modal = document.getElementById('learnMoreModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Return focus to tooltip
+            setTimeout(() => {
+                const tooltip = document.getElementById('featureTooltip');
+                if (tooltip && this.isActive) tooltip.focus();
+            }, 100);
+        }
+    },
+    
+    // Start Interactive Tour
+    startTour() {
+        this.closeLearnMoreModal();
+        this.dismiss();
+        
+        // Simulate tour functionality
+        setTimeout(() => {
+            showToast('🎉 Interactive tour coming soon! For now, explore the menu naturally.', 'success');
+        }, 500);
+    }
+});
+
+// Demo feature functions
+function demoFeature(feature) {
+    const messages = {
+        copy: 'Link copied! 📋',
+        notifications: 'Opening notifications... 🔔',
+        admin: 'Launching admin dashboard... ⚙️'
+    };
+    
+    showToast(messages[feature] || 'Feature demo activated!', 'success');
+    
+    // Trigger actual functionality
+    setTimeout(() => {
+        switch(feature) {
+            case 'copy':
+                copyPortfolioLink();
+                break;
+            case 'notifications':
+                toggleNotifications();
+                FeatureHighlight.closeLearnMoreModal();
+                FeatureHighlight.dismiss();
+                break;
+            case 'admin':
+                openAdminDashboard();
+                FeatureHighlight.closeLearnMoreModal();
+                FeatureHighlight.dismiss();
+                break;
+        }
+    }, 300);
+}
+
+// Enhanced keyboard navigation
+document.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('learnMoreModal');
+    if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+        FeatureHighlight.closeLearnMoreModal();
+    }
+});
+
+// Modal click outside to close
+document.addEventListener('click', (e) => {
+    const modal = document.getElementById('learnMoreModal');
+    if (modal && modal.classList.contains('active') && e.target === modal) {
+        FeatureHighlight.closeLearnMoreModal();
+    }
+});
+
+// ==================== Interactive Tour System ==================== //
+// Interactive Tour System
+const InteractiveTour = {
+    isActive: false,
+    currentStep: 0,
+    steps: [
+        {
+            target: '#adminMenuToggle',
+            title: 'Admin Menu Toggle',
+            content: 'This is your admin menu button. Click it to access all admin features.',
+            action: 'highlight',
+            position: 'bottom'
+        },
+        {
+            target: '.admin-menu-item:first-child',
+            title: 'Copy Portfolio Link',
+            content: 'Click here to instantly copy your portfolio URL to clipboard. Perfect for sharing with clients!',
+            action: 'demo',
+            position: 'left',
+            demoFunction: 'copyPortfolioLink'
+        },
+        {
+            target: '.admin-menu-item:nth-child(2)',
+            title: 'Smart Notifications',
+            content: 'Your notification center! Stay updated with messages, comments, and admin announcements.',
+            action: 'demo',
+            position: 'left',
+            demoFunction: 'toggleNotifications'
+        },
+        {
+            target: '.admin-menu-item:nth-child(3)',
+            title: 'Admin Dashboard',
+            content: 'Your control center for posting messages, managing communications, and accessing analytics.',
+            action: 'demo',
+            position: 'left',
+            demoFunction: 'openAdminDashboard'
+        },
+        {
+            target: 'body',
+            title: 'Tour Complete!',
+            content: 'You\'re all set! The menu will auto-hide when scrolling and you can always press Escape to close panels quickly.',
+            action: 'completion',
+            position: 'center'
+        }
+    ],
+    
+    // Initialize tour system
+    init() {
+        this.createTourElements();
+        this.bindEvents();
+    },
+    
+    // Create tour overlay and tooltip elements
+    createTourElements() {
+        // Tour overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'tourOverlay';
+        overlay.className = 'tour-overlay';
+        document.body.appendChild(overlay);
+        
+        // Tour tooltip
+        const tooltip = document.createElement('div');
+        tooltip.id = 'tourTooltip';
+        tooltip.className = 'tour-tooltip';
+        tooltip.innerHTML = `
+            <div class="tour-tooltip-content">
+                <div class="tour-step-counter">
+                    <span class="current-step">1</span> of <span class="total-steps">${this.steps.length}</span>
+                </div>
+                <h3 class="tour-title"></h3>
+                <p class="tour-content"></p>
+                <div class="tour-actions">
+                    <button class="tour-btn tour-skip" onclick="InteractiveTour.skip()">Skip Tour</button>
+                    <div class="tour-navigation">
+                        <button class="tour-btn tour-prev" onclick="InteractiveTour.previousStep()">Previous</button>
+                        <button class="tour-btn tour-next" onclick="InteractiveTour.nextStep()">Next</button>
+                        <button class="tour-btn tour-try" onclick="InteractiveTour.tryFeature()" style="display: none;">Try It</button>
+                        <button class="tour-btn tour-finish" onclick="InteractiveTour.finish()" style="display: none;">Finish</button>
+                    </div>
+                </div>
+            </div>
+            <div class="tour-arrow"></div>
+        `;
+        document.body.appendChild(tooltip);
+        
+        // Add tour styles
+        this.addTourStyles();
+    },
+    
+    // Add tour CSS styles
+    addTourStyles() {
+        const style = document.createElement('style');
+        style.textContent = `
+            .tour-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.25);
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+                pointer-events: none;
+            }
+            
+            .tour-overlay.active {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+            
+            .tour-spotlight {
+                position: fixed;
+                border: 3px solid var(--accent-gold, #ffa200);
+                border-radius: 8px;
+                z-index: 1001;
+                cursor: default;
+                transition: all 0.4s ease;
+                background: transparent;
+            }
+            
+            .tour-spotlight::before {
+                content: '';
+                position: absolute;
+                top: -6px;
+                left: -6px;
+                right: -6px;
+                bottom: -6px;
+                border: 1px solid var(--accent-gold, #ffa200);
+                border-radius: 12px;
+                opacity: 0.5;
+                animation: tourPulse 2s ease-in-out infinite;
+            }
+            
+            .tour-tooltip {
+                position: fixed;
+                width: 320px;
+                background: var(--primary-navy, #0D0D0D);
+                border: 2px solid var(--accent-gold, #ffa200);
+                border-radius: 8px;
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                transform: scale(0.8);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                font-family: var(--font-primary, 'Inter', sans-serif);
+                cursor: default;
+            }
+            
+            .tour-tooltip.active {
+                opacity: 1;
+                visibility: visible;
+                transform: scale(1);
+            }
+            
+            .tour-tooltip-content {
+                padding: 24px;
+            }
+            
+            .tour-step-counter {
+                font-size: 12px;
+                color: var(--text-muted, #6c7293);
+                margin-bottom: 8px;
+                text-align: center;
+            }
+            
+            .current-step {
+                color: var(--accent-gold, #ffa200);
+                font-weight: 600;
+            }
+            
+            .tour-title {
+                margin: 0 0 12px 0;
+                font-size: 18px;
+                font-weight: 600;
+                color: var(--text-primary, #ffffff);
+            }
+            
+            .tour-content {
+                margin: 0 0 20px 0;
+                font-size: 14px;
+                line-height: 1.5;
+                color: var(--text-secondary, #b8bcc8);
+            }
+            
+            .tour-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .tour-navigation {
+                display: flex;
+                gap: 8px;
+                justify-content: flex-end;
+            }
+            
+            .tour-btn {
+                padding: 8px 16px;
+                border: 1px solid var(--border-color, #2d3142);
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-family: var(--font-primary, 'Inter', sans-serif);
+            }
+            
+            .tour-skip {
+                background: transparent;
+                color: var(--text-muted, #6c7293);
+                align-self: flex-start;
+            }
+            
+            .tour-skip:hover {
+                color: var(--text-secondary, #b8bcc8);
+                border-color: var(--text-muted, #6c7293);
+            }
+            
+            .tour-prev {
+                background: transparent;
+                color: var(--text-secondary, #b8bcc8);
+            }
+            
+            .tour-prev:hover {
+                border-color: var(--accent-gold, #ffa200);
+                color: var(--accent-gold, #ffa200);
+            }
+            
+            .tour-prev:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            
+            .tour-next, .tour-try, .tour-finish {
+                background: var(--accent-gold, #ffa200);
+                color: var(--primary-navy, #0D0D0D);
+                border-color: var(--accent-gold, #ffa200);
+            }
+            
+            .tour-next:hover, .tour-try:hover, .tour-finish:hover {
+                background: #f39c12;
+                border-color: #f39c12;
+            }
+            
+            .tour-arrow {
+                position: absolute;
+                width: 12px;
+                height: 12px;
+                background: var(--primary-navy, #0D0D0D);
+                border: 2px solid var(--accent-gold, #ffa200);
+                transform: rotate(45deg);
+                border-top: none;
+                border-left: none;
+            }
+            
+            .tour-arrow.top {
+                bottom: -8px;
+                left: 50%;
+                margin-left: -6px;
+            }
+            
+            .tour-arrow.bottom {
+                top: -8px;
+                left: 50%;
+                margin-left: -6px;
+                transform: rotate(225deg);
+            }
+            
+            .tour-arrow.left {
+                right: -8px;
+                top: 50%;
+                margin-top: -6px;
+                transform: rotate(315deg);
+            }
+            
+            .tour-arrow.right {
+                left: -8px;
+                top: 50%;
+                margin-top: -6px;
+                transform: rotate(135deg);
+            }
+            
+            @keyframes tourPulse {
+                0%, 100% { opacity: 0.3; transform: scale(1); }
+                50% { opacity: 0.6; transform: scale(1.02); }
+            }
+            
+            @media (max-width: 768px) {
+                .tour-tooltip {
+                    width: 280px;
+                }
+                
+                .tour-tooltip-content {
+                    padding: 20px;
+                }
+                
+                .tour-navigation {
+                    flex-direction: column;
+                }
+                
+                .tour-btn {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    },
+    
+    // Start the interactive tour
+    start() {
+        if (this.isActive) return;
+        
+        this.isActive = true;
+        this.currentStep = 0;
+        
+        // Show overlay
+        const overlay = document.getElementById('tourOverlay');
+        overlay.classList.add('active');
+        
+        // Prevent body scroll
+        document.body.style.overflow = 'hidden';
+        
+        // Start first step
+        this.showStep(0);
+        
+        // Track tour start
+        // if (typeof showToast === 'function') {
+        //     showToast('Interactive tour started! Follow the highlights.', 'success');
+        // }
+    },
+    
+    // Show specific step
+    showStep(stepIndex) {
+        if (stepIndex < 0 || stepIndex >= this.steps.length) return;
+        
+        this.currentStep = stepIndex;
+        const step = this.steps[stepIndex];
+        const tooltip = document.getElementById('tourTooltip');
+        
+        // Remove existing spotlight
+        const existingSpotlight = document.querySelector('.tour-spotlight');
+        if (existingSpotlight) {
+            existingSpotlight.remove();
+        }
+        
+        // Update tooltip content
+        tooltip.querySelector('.current-step').textContent = stepIndex + 1;
+        tooltip.querySelector('.tour-title').textContent = step.title;
+        tooltip.querySelector('.tour-content').textContent = step.content;
+        
+        // Update button visibility
+        const prevBtn = tooltip.querySelector('.tour-prev');
+        const nextBtn = tooltip.querySelector('.tour-next');
+        const tryBtn = tooltip.querySelector('.tour-try');
+        const finishBtn = tooltip.querySelector('.tour-finish');
+        
+        prevBtn.style.display = stepIndex > 0 ? 'inline-block' : 'none';
+        prevBtn.disabled = stepIndex === 0;
+        
+        if (step.action === 'completion') {
+            nextBtn.style.display = 'none';
+            tryBtn.style.display = 'none';
+            finishBtn.style.display = 'inline-block';
+        } else if (step.action === 'demo') {
+            nextBtn.style.display = 'none';
+            tryBtn.style.display = 'inline-block';
+            finishBtn.style.display = 'none';
+        } else {
+            nextBtn.style.display = 'inline-block';
+            tryBtn.style.display = 'none';
+            finishBtn.style.display = 'none';
+        }
+        
+        // Handle menu visibility logic
+        const menu = document.getElementById('adminMenuDropdown');
+        
+        if (step.target === 'body') {
+            // Center tooltip for completion step and close menu
+            if (menu) menu.classList.remove('active');
+            this.positionTooltip(null, 'center');
+        } 
+        else if (step.target === '#adminMenuToggle') {
+            // First step - ensure menu is visible while highlighting toggle
+            if (menu && !menu.classList.contains('active')) {
+                menu.classList.add('active');
+            }
+            this.handleTargetStep(step);
+        }
+
+        else if (step.target.includes('.admin-menu-item')) {
+            // Menu item steps - ensure menu is open and wait for it
+            this.ensureMenuOpenAndShowStep(step);
+            return; // Exit here, ensureMenuOpenAndShowStep will handle the rest
+        } else {
+            this.handleTargetStep(step);
+        }
+        
+        // Show tooltip
+        tooltip.classList.add('active');
+    },
+    
+    // Handle steps that target specific elements
+    handleTargetStep(step) {
+        const target = document.querySelector(step.target);
+        if (target) {
+            this.highlightElement(target);
+            this.positionTooltip(target, step.position);
+        } else {
+            console.warn(`Tour target not found: ${step.target}`);
+        }
+    },
+    
+    // Ensure menu is open before highlighting menu items
+    ensureMenuOpenAndShowStep(step) {
+        const menu = document.getElementById('adminMenuDropdown');
+        const tooltip = document.getElementById('tourTooltip');
+        
+        if (!menu) {
+            console.error('Admin menu dropdown not found');
+            return;
+        }
+        
+        // Open menu if not already open
+        if (!menu.classList.contains('active')) {
+            menu.classList.add('active');
+            
+            // Wait for menu animation to complete before highlighting
+            setTimeout(() => {
+                this.handleTargetStep(step);
+                tooltip.classList.add('active');
+            }, 200);
+        } else {
+            // Menu already open, proceed immediately
+            this.handleTargetStep(step);
+            tooltip.classList.add('active');
+        }
+    },
+    
+    // Highlight target element
+    highlightElement(element) {
+        const rect = element.getBoundingClientRect();
+        const spotlight = document.createElement('div');
+        spotlight.className = 'tour-spotlight';
+        spotlight.style.top = (rect.top - 8) + 'px';
+        spotlight.style.left = (rect.left - 8) + 'px';
+        spotlight.style.width = (rect.width + 16) + 'px';
+        spotlight.style.height = (rect.height + 16) + 'px';
+        
+        document.body.appendChild(spotlight);
+        
+        // Make element interactive
+        element.style.position = 'relative';
+        element.style.zIndex = '1003';
+        element.style.pointerEvents = 'auto';
+    },
+    
+    // Position tooltip relative to target
+    positionTooltip(target, position) {
+        const tooltip = document.getElementById('tourTooltip');
+        const arrow = tooltip.querySelector('.tour-arrow');
+        
+        // Reset arrow classes
+        arrow.className = 'tour-arrow';
+        
+        if (position === 'center') {
+            // Center on screen
+            tooltip.style.top = '50%';
+            tooltip.style.left = '50%';
+            tooltip.style.transform = 'translate(-50%, -50%) scale(1)';
+            arrow.style.display = 'none';
+            return;
+        }
+        
+        if (!target) return;
+        
+        const rect = target.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        let top, left;
+        
+        arrow.style.display = 'block';
+        
+        switch (position) {
+            case 'bottom':
+                top = rect.bottom + 16;
+                left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+                arrow.classList.add('top');
+                break;
+            case 'top':
+                top = rect.top - tooltipRect.height - 16;
+                left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+                arrow.classList.add('bottom');
+                break;
+            case 'left':
+                top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+                left = rect.left - tooltipRect.width - 16;
+                arrow.classList.add('right');
+                break;
+            case 'right':
+                top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+                left = rect.right + 16;
+                arrow.classList.add('left');
+                break;
+            default:
+                top = rect.bottom + 16;
+                left = rect.left;
+                arrow.classList.add('top');
+        }
+        
+        // Keep tooltip in viewport
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        if (left < 10) left = 10;
+        if (left + tooltipRect.width > viewportWidth - 10) {
+            left = viewportWidth - tooltipRect.width - 10;
+        }
+        if (top < 10) top = 10;
+        if (top + tooltipRect.height > viewportHeight - 10) {
+            top = viewportHeight - tooltipRect.height - 10;
+        }
+        
+        tooltip.style.top = top + 'px';
+        tooltip.style.left = left + 'px';
+        tooltip.style.transform = 'scale(1)';
+    },
+    
+    // Next step
+    nextStep() {
+        if (this.currentStep < this.steps.length - 1) {
+            this.showStep(this.currentStep + 1);
+        }
+    },
+    
+    // Previous step
+    previousStep() {
+        if (this.currentStep > 0) {
+            this.showStep(this.currentStep - 1);
+        }
+    },
+    
+    // Try current feature
+    tryFeature() {
+        const step = this.steps[this.currentStep];
+        if (step.demoFunction && typeof window[step.demoFunction] === 'function') {
+            // Execute the demo function
+            window[step.demoFunction]();
+            
+            // Show success feedback
+            // if (typeof showToast === 'function') {
+            //     showToast(`Great! You tried "${step.title}". Let's continue the tour.`, 'success');
+            // }
+            
+            // Move to next step after a delay
+            setTimeout(() => {
+                this.nextStep();
+            }, 1000);
+        }
+    },
+    
+    // Skip entire tour
+    skip() {
+        if (confirm('Are you sure you want to skip the interactive tour?')) {
+            this.finish();
+        }
+    },
+    
+    // Finish tour
+    finish() {
+        this.isActive = false;
+        
+        // Hide elements
+        const overlay = document.getElementById('tourOverlay');
+        const tooltip = document.getElementById('tourTooltip');
+        const spotlight = document.querySelector('.tour-spotlight');
+        
+        overlay.classList.remove('active');
+        tooltip.classList.remove('active');
+        if (spotlight) spotlight.remove();
+        
+        // Restore body scroll
+        document.body.style.overflow = '';
+        
+        // Hide admin menu
+        const menu = document.getElementById('adminMenuDropdown');
+        if (menu) menu.classList.remove('active');
+        
+        // Reset element styles
+        document.querySelectorAll('[style*="z-index: 10013"]').forEach(el => {
+            el.style.position = '';
+            el.style.zIndex = '';
+            el.style.pointerEvents = '';
+        });
+        
+        // Show completion message
+        if (typeof showToast === 'function') {
+            showToast('Tour completed! You\'re now ready to use all admin features.', 'success');
+        }
+        
+        // Remember tour completion
+        localStorage.setItem('interactive-tour-completed', Date.now());
+    },
+    
+    // Bind event listeners
+    bindEvents() {
+        // Close tour on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isActive) {
+                this.skip();
+            }
+        });
+        
+        // Handle window resize
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            if (!this.isActive) return;
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                this.showStep(this.currentStep);
+            }, 100);
+        });
+        
+        // Prevent clicks outside tour elements
+        document.addEventListener('click', (e) => {
+            if (this.isActive && !e.target.closest('.tour-tooltip') && !e.target.closest('.tour-spotlight')) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+    },
+    
+    // Check if tour should auto-start
+    checkAutoStart() {
+        const completed = localStorage.getItem('interactive-tour-completed');
+        const highlightSeen = localStorage.getItem('feature-highlight-seen');
+        
+        // Auto-start tour if highlight was seen but tour never completed
+        if (highlightSeen && !completed) {
+            setTimeout(() => {
+                if (confirm('Would you like to take an interactive tour of the admin menu features?')) {
+                    this.start();
+                }
+            }, 2000);
+        }
+    }
+};
+
+// Enhanced FeatureHighlight integration
+Object.assign(FeatureHighlight, {
+    // Start Interactive Tour from modal
+    startTour() {
+        this.closeLearnMoreModal();
+        this.dismiss();
+        
+        // Small delay to ensure modal is closed
+        setTimeout(() => {
+            InteractiveTour.start();
+        }, 300);
+    }
+});
+
+// Initialize tour system when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    InteractiveTour.init();
+    InteractiveTour.checkAutoStart();
+});

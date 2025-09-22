@@ -285,10 +285,15 @@
                    <div class="tooltip-text">
                     <h4>✨New Updates✨</h4>
                     <p>Notifications Introduced! All your updates in one place.</p>
-                    <button class="dismiss-tooltip" onclick="FeatureHighlight.dismiss()" aria-label="Dismiss">
-                        Got it
-                    </button>
+                    <div class="tooltip-actions">
+                        <button class="learn-more-btn" onclick="FeatureHighlight.openLearnMoreModal()">
+                            Learn more
+                        </button>
+                        <button class="dismiss-tooltip" onclick="FeatureHighlight.dismiss()" aria-label="Dismiss">
+                            Got it
+                        </button>
                     </div>
+                </div>
                 </div>
                 <div class="tooltip-arrow">
                     <div class="arrow-glow"></div>
@@ -1259,14 +1264,6 @@
                         </ul>
                     </div>
                 <div class="footer-column">
-                <h4 data-translate="footer-accessibility">Accessibility</h4>
-                <ul>
-                    <li><button class="theme-button" onclick="themeController.setTheme('dark')" aria-label="Dark Mode" data-translate="footer-dark-mode">Dark Mode</button></li>
-                    <li><button class="theme-button" onclick="themeController.setTheme('dark-blue')" aria-label="Dark Blue Mode" data-translate="footer-dark-blue-mode">Dark Blue Mode</button></li>
-                    <li><button class="theme-button" onclick="themeController.setTheme('light')" aria-label="Light Mode" data-translate="footer-light-mode">Light Mode</button></li>
-                </ul>
-                </div>
-                <div class="footer-column">
                     <h4 data-translate="footer-language">Language</h4>
                     <ul>
                         <li><button class="legal-link" onclick="changeLanguage('en')" data-lang="en" data-translate="lang-english">English</button></li>
@@ -1277,6 +1274,20 @@
                         <li><button class="legal-link" onclick="changeLanguage('rw')" data-lang="rw" data-translate="lang-kinyarwanda">Kinyarwanda</button></li>
                     </ul>
                 </div>
+                <div class="footer-column">
+                <h4 data-translate="footer-accessibility">Accessibility</h4>
+                <ul>
+                    <li><button class="theme-button" onclick="themeController.setTheme('dark')" aria-label="Dark Mode" data-translate="footer-dark-mode">Dark Mode</button></li>
+                    <li><button class="theme-button" onclick="themeController.setTheme('dark-blue')" aria-label="Dark Blue Mode" data-translate="footer-dark-blue-mode">Dark Blue Mode</button></li>
+                    <li><button class="theme-button" onclick="themeController.setTheme('light')" aria-label="Light Mode" data-translate="footer-light-mode">Light Mode</button></li>
+                </ul>
+                </div>
+                 <div class="footer-column">
+                        <h4 >What's New?</h4>
+                        <ul>
+                            <li><button class="legal-link" onclick="FeatureHighlight.openLearnMoreModal()" aria-label="New Features">Updates</button></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -1325,6 +1336,164 @@
     <div id="legalLoadingBar" style="display: none;">
         <div class="legal-loading-progress"></div>
     </div>
+
+
+ <!-- Advanced Learn More Modal -->
+<div class="learn-more-modal-overlay" id="learnMoreModal">
+    <div class="learn-more-modal">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <div class="header-content">
+                <div class="feature-icon">
+                    <i class="fas fa-rocket"></i>
+                    <div class="icon-glow"></div>
+                </div>
+                <div class="header-text">
+                    <h2>✨ New Admin Menu Features</h2>
+                    <p>Everything you need to know about your upgraded control center</p>
+                </div>
+            </div>
+            <button class="modal-close" onclick="FeatureHighlight.closeLearnMoreModal()" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="modal-content">
+            <!-- Feature Cards -->
+            <div class="features-grid">
+                <!-- Copy Link Feature -->
+                <div class="feature-card" data-feature="copy">
+                    <div class="card-glow"></div>
+                    <div class="card-header">
+                        <div class="card-icon copy-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <h3>Copy Portfolio Link</h3>
+                        <span class="feature-badge essential">Essential</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Instantly share your portfolio with clients, employers, or collaborators.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i>One-click copying to clipboard</li>
+                            <li><i class="fas fa-check"></i>Works across all devices</li>
+                            <li><i class="fas fa-check"></i>Perfect for sharing on social media</li>
+                        </ul>
+                        <div class="demo-preview">
+                            <div class="demo-url">https://yourportfolio.com</div>
+                            <button class="demo-btn" onclick="demoFeature('copy')">
+                                <i class="fas fa-copy"></i> Try it
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications Feature -->
+                <div class="feature-card featured" data-feature="notifications">
+                    <div class="card-glow featured-glow"></div>
+                    <div class="card-header">
+                        <div class="card-icon notification-icon">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-dot"></span>
+                        </div>
+                        <h3>Smart Notifications</h3>
+                        <span class="feature-badge new">New!</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Stay updated with messages, comments, and important updates in real-time.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i>Real-time message notifications</li>
+                            <li><i class="fas fa-check"></i>Admin announcements</li>
+                            <li><i class="fas fa-check"></i>Project updates & feedback</li>
+                            <li><i class="fas fa-check"></i>Smart filtering & organization</li>
+                        </ul>
+                        <div class="notification-preview">
+                            <div class="preview-notification">
+                                <i class="fas fa-user-circle"></i>
+                                <div>
+                                    <strong>New message from Admin</strong>
+                                    <span>Portfolio update completed successfully!</span>
+                                </div>
+                            </div>
+                            <button class="demo-btn" onclick="demoFeature('notifications')">
+                                <i class="fas fa-bell"></i> Explore
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Dashboard Feature -->
+                <div class="feature-card" data-feature="admin">
+                    <div class="card-glow"></div>
+                    <div class="card-header">
+                        <div class="card-icon admin-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <h3>Admin Dashboard</h3>
+                        <span class="feature-badge pro">Pro</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Comprehensive control panel for managing your portfolio and communications.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i>Post messages & announcements</li>
+                            <li><i class="fas fa-check"></i>Manage all communications</li>
+                            <li><i class="fas fa-check"></i>Analytics & insights</li>
+                            <li><i class="fas fa-check"></i>Advanced security features</li>
+                        </ul>
+                        <div class="admin-preview">
+                            <div class="preview-dashboard">
+                                <div class="dash-item">
+                                    <span class="dash-label">Messages</span>
+                                    <span class="dash-value">12</span>
+                                </div>
+                                <div class="dash-item">
+                                    <span class="dash-label">Views</span>
+                                    <span class="dash-value">1.2k</span>
+                                </div>
+                            </div>
+                            <button class="demo-btn" onclick="demoFeature('admin')">
+                                <i class="fas fa-cog"></i> Access
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Tips Section -->
+            <div class="tips-section">
+                <h3><i class="fas fa-lightbulb"></i> Pro Tips</h3>
+                <div class="tips-grid">
+                    <div class="tip-item">
+                        <i class="fas fa-keyboard"></i>
+                        <span>Press <kbd>Esc</kbd> to quickly close any panel</span>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>All features work seamlessly on mobile</span>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fas fa-eye"></i>
+                        <span>Menu auto-hides while scrolling for clean experience</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+            <div class="footer-content">
+                <button class="secondary-btn" onclick="FeatureHighlight.closeLearnMoreModal()">
+                    Maybe Later
+                </button>
+                <button class="primary-btn" onclick="FeatureHighlight.startTour()">
+                    <i class="fas fa-play"></i>
+                    Start Interactive Tour
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Scroll to Top Button -->
     <button class="scroll-to-top" id="scroll-to-top" aria-label="Scroll to top" title="Scroll to top">
