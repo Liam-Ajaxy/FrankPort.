@@ -1,13 +1,13 @@
 /*!
- * 🎵 FrankPort Music Experience - Complete Solution
- * Single file with HTML + CSS + JavaScript
- * Professional, compact, fully functional
+ * 🎵 FrankPort Music Experience - Enhanced Version
+ * Added: Like counting, Settings panel, Preserved original design
  */
 
 class FrankPortMusicExperience {
     constructor() {
         this.isMinimized = false;
         this.isCommentsOpen = false;
+        this.isSettingsOpen = false;
         this.currentTrack = 0;
         this.isPlaying = false;
         this.volume = 0.8;
@@ -18,6 +18,8 @@ class FrankPortMusicExperience {
         this.dragOffset = { x: 0, y: 0 };
         this.comments = [];
         this.commentCount = 0;
+        this.likeCount = Math.floor(Math.random() * 51) + 10; // Random likes 10-60
+        this.userLiked = false;
         
         // Audio playlists
         this.playlists = {
@@ -42,6 +44,7 @@ class FrankPortMusicExperience {
         this.audio = null;
         this.musicCard = null;
         this.commentsPanel = null;
+        this.settingsCard = null;
         
         this.init();
     }
@@ -59,9 +62,12 @@ class FrankPortMusicExperience {
         this.injectFontAwesome();
         this.injectStyles();
         this.createMusicCard();
+        this.createSettingsCard();
         this.setupAudioSystem();
         this.setupEventListeners();
         this.loadCommentsFromStorage();
+        this.loadLikeData();
+        this.loadSettings();
         this.hideCard(); // Start hidden
     }
 
@@ -112,7 +118,7 @@ class FrankPortMusicExperience {
                 box-shadow: 0 8px 25px rgba(0,0,0,0.15), 0 3px 10px rgba(0,0,0,0.1);
                 border: 1px solid rgba(255,255,255,0.2);
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                z-index: 10000;
+                z-index: 9999;
                 cursor: move;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 overflow: hidden;
@@ -234,6 +240,7 @@ class FrankPortMusicExperience {
                 justify-content: center;
                 min-width: 24px;
                 height: 24px;
+                position: relative;
             }
 
             .control-btn:hover {
@@ -245,6 +252,26 @@ class FrankPortMusicExperience {
             .control-btn.active {
                 color: var(--accent-gold);
                 background: rgba(102, 126, 234, 0.1);
+            }
+
+            /* Like Count Display */
+            .like-count {
+                position: absolute;
+                top: -2px;
+                right: -6px;
+                background: var(--accent-gold);
+                color: white;
+                font-size: 8px;
+                padding: 1px 4px;
+                border-radius: 8px;
+                min-width: 12px;
+                text-align: center;
+                font-weight: 600;
+                line-height: 1.2;
+            }
+            body.light-mode .like-count {
+                background: var(--text-primary);
+                color: white;
             }
 
             .controls-section {
@@ -536,6 +563,82 @@ class FrankPortMusicExperience {
                 transform: translateY(-1px);
             }
 
+            /* Settings Card - New Component */
+            .music-settings-card {
+                position: fixed;
+                width: 200px;
+                background: var(--admin-bg);
+                backdrop-filter: blur(15px);
+                border-radius: 8px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                border: 1px solid var(--border-color);
+                z-index: 10002;
+                display: none;
+                padding: 12px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }
+            body.light-mode .music-settings-card {
+                background: var(--light-mode-bg);
+                border: 1px solid var(--light-mode-border);
+            }
+
+            .settings-section {
+                margin-bottom: 12px;
+            }
+
+            .settings-section:last-child {
+                margin-bottom: 0;
+            }
+
+            .settings-section h4 {
+                font-size: 11px;
+                color: var(--text-secondary);
+                margin: 0 0 6px 0;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .settings-controls {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .settings-btn {
+                background: none;
+                border: none;
+                color: #666;
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 12px;
+                cursor: pointer;
+                transition: all 0.2s;
+                min-width: 36px;
+                text-align: center;
+            }
+            body.light-mode .settings-btn {
+                background: none;
+                border: none;
+                color: var(--text-primary);
+            }
+
+            .settings-btn:hover {
+                background: rgba(0,0,0,0.05);
+                color: var(--text-primary);
+                transform: scale(1.05);
+            }
+
+            .settings-btn.active {
+                background: var(--accent-gold);
+                color: white;
+                border-color: var(--accent-gold);
+            }
+            body.light-mode .settings-btn.active {
+                background: var(--text-primary);
+                color: white;
+            }
+
             @media (max-width: 768px) {
                 .frankport-music-card {
                     width: 240px;
@@ -588,6 +691,7 @@ class FrankPortMusicExperience {
                     <div class="header-controls">
                         <button class="control-btn like-btn" title="Like">
                             <i class="far fa-heart"></i>
+                            <span class="like-count" style="display: none;">0</span>
                         </button>
                         <button class="control-btn comments-btn" title="Comments">
                             <i class="far fa-comment"></i>
@@ -658,6 +762,47 @@ class FrankPortMusicExperience {
         this.commentsPanel = panel;
     }
 
+    createSettingsCard() {
+        const settingsCard = document.createElement('div');
+        settingsCard.className = 'music-settings-card';
+        settingsCard.innerHTML = `
+            <div class="settings-section">
+                <h4>Speed</h4>
+                <div class="settings-controls">
+                    <button class="settings-btn speed-btn" data-speed="0.5">0.5x</button>
+                    <button class="settings-btn speed-btn" data-speed="0.75">0.75x</button>
+                    <button class="settings-btn speed-btn active" data-speed="1">1x</button>
+                    <button class="settings-btn speed-btn" data-speed="1.25">1.25x</button>
+                    <button class="settings-btn speed-btn" data-speed="1.5">1.5x</button>
+                    <button class="settings-btn speed-btn" data-speed="2">2x</button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h4>Skip Controls</h4>
+                <div class="settings-controls">
+                    <button class="settings-btn skip-btn" data-skip="-10">-10s</button>
+                    <button class="settings-btn skip-btn" data-skip="-5">-5s</button>
+                    <button class="settings-btn skip-btn" data-skip="5">+5s</button>
+                    <button class="settings-btn skip-btn" data-skip="10">+10s</button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h4>Playback</h4>
+                <div class="settings-controls">
+                    <button class="settings-btn mode-btn shuffle-btn" data-mode="shuffle">
+                        <i class="fas fa-random"></i> Shuffle
+                    </button>
+                    <button class="settings-btn mode-btn repeat-btn" data-mode="repeat">
+                        <i class="fas fa-repeat"></i> Repeat
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(settingsCard);
+        this.settingsCard = settingsCard;
+    }
+
     setupAudioSystem() {
         this.audio = new Audio();
         this.audio.volume = this.volume;
@@ -685,6 +830,7 @@ class FrankPortMusicExperience {
     setupEventListeners() {
         const card = this.musicCard;
         const commentsPanel = this.commentsPanel;
+        const settingsCard = this.settingsCard;
 
         // Card controls
         card.querySelector('.minimize-btn').addEventListener('click', (e) => {
@@ -742,6 +888,10 @@ class FrankPortMusicExperience {
             this.toggleComments();
         });
 
+        card.querySelector('.settings-btn').addEventListener('click', () => {
+            this.toggleSettings();
+        });
+
         // Comments panel
         commentsPanel.querySelector('.close-comments-btn').addEventListener('click', () => {
             this.closeComments();
@@ -757,6 +907,41 @@ class FrankPortMusicExperience {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 this.submitComment();
+            }
+        });
+
+        // Settings card event listeners
+        // Speed controls
+        settingsCard.querySelectorAll('.speed-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const speed = parseFloat(btn.dataset.speed);
+                this.setPlaybackSpeed(speed);
+                settingsCard.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Skip controls
+        settingsCard.querySelectorAll('.skip-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const skipAmount = parseInt(btn.dataset.skip);
+                this.skipTime(skipAmount);
+            });
+        });
+
+        // Mode controls
+        settingsCard.querySelector('.shuffle-btn').addEventListener('click', () => {
+            this.toggleShuffle();
+        });
+
+        settingsCard.querySelector('.repeat-btn').addEventListener('click', () => {
+            this.toggleRepeat();
+        });
+
+        // Close settings when clicking outside
+        document.addEventListener('click', (e) => {
+            if (this.isSettingsOpen && !settingsCard.contains(e.target) && !card.querySelector('.settings-btn').contains(e.target)) {
+                this.closeSettings();
             }
         });
 
@@ -863,7 +1048,19 @@ class FrankPortMusicExperience {
     }
 
     nextTrack() {
-        this.currentTrack = (this.currentTrack + 1) % this.playlists[this.currentPlaylist].length;
+        const currentPlaylist = this.playlists[this.currentPlaylist];
+        
+        if (this.isShuffled) {
+            // Random track selection
+            let newTrack;
+            do {
+                newTrack = Math.floor(Math.random() * currentPlaylist.length);
+            } while (newTrack === this.currentTrack && currentPlaylist.length > 1);
+            this.currentTrack = newTrack;
+        } else {
+            this.currentTrack = (this.currentTrack + 1) % currentPlaylist.length;
+        }
+        
         this.loadTrack();
         if (this.isPlaying) {
             this.audio.play();
@@ -915,14 +1112,230 @@ class FrankPortMusicExperience {
             duration > 0 ? `${formatTime(current)}/${formatTime(duration)}` : '0:00';
     }
 
+    // Enhanced like functionality with counting
     toggleLike() {
         const likeBtn = this.musicCard.querySelector('.like-btn i');
-        if (likeBtn.classList.contains('far')) {
-            likeBtn.className = 'fas fa-heart';
-            this.musicCard.querySelector('.like-btn').classList.add('active');
-        } else {
+        const likeCountSpan = this.musicCard.querySelector('.like-count');
+        
+        if (this.userLiked) {
+            // Unlike
             likeBtn.className = 'far fa-heart';
             this.musicCard.querySelector('.like-btn').classList.remove('active');
+            this.likeCount--;
+            this.userLiked = false;
+        } else {
+            // Like
+            likeBtn.className = 'fas fa-heart';
+            this.musicCard.querySelector('.like-btn').classList.add('active');
+            this.likeCount++;
+            this.userLiked = true;
+        }
+        
+        // Update like count display
+        this.updateLikeCount();
+        this.saveLikeData();
+    }
+
+    updateLikeCount() {
+        const likeCountSpan = this.musicCard.querySelector('.like-count');
+        const formattedCount = this.formatCount(this.likeCount);
+        
+        if (this.likeCount > 0) {
+            likeCountSpan.textContent = formattedCount;
+            likeCountSpan.style.display = 'block';
+        } else {
+            likeCountSpan.style.display = 'none';
+        }
+    }
+
+    formatCount(count) {
+        if (count >= 1000000) {
+            return (count / 1000000).toFixed(1) + 'M';
+        } else if (count >= 1000) {
+            return (count / 1000).toFixed(1) + 'K';
+        }
+        return count.toString();
+    }
+
+    saveLikeData() {
+        try {
+            const data = {
+                likeCount: this.likeCount,
+                userLiked: this.userLiked
+            };
+            sessionStorage.setItem('frankport-music-likes', JSON.stringify(data));
+        } catch (e) {
+            window.frankportMusicLikes = { likeCount: this.likeCount, userLiked: this.userLiked };
+        }
+    }
+
+    loadLikeData() {
+        try {
+            const stored = sessionStorage.getItem('frankport-music-likes') || 
+                          (window.frankportMusicLikes ? JSON.stringify(window.frankportMusicLikes) : null);
+            
+            if (stored) {
+                const data = JSON.parse(stored);
+                this.likeCount = data.likeCount || this.likeCount;
+                this.userLiked = data.userLiked || false;
+                
+                // Update UI
+                if (this.userLiked) {
+                    this.musicCard.querySelector('.like-btn i').className = 'fas fa-heart';
+                    this.musicCard.querySelector('.like-btn').classList.add('active');
+                }
+                this.updateLikeCount();
+            } else {
+                this.updateLikeCount();
+            }
+        } catch (e) {
+            this.updateLikeCount();
+        }
+    }
+
+    // Settings functionality
+    toggleSettings() {
+        if (this.isSettingsOpen) {
+            this.closeSettings();
+        } else {
+            this.openSettings();
+        }
+    }
+
+    openSettings() {
+        this.isSettingsOpen = true;
+        this.settingsCard.style.display = 'block';
+        
+        // Position near the settings button
+        const settingsBtn = this.musicCard.querySelector('.settings-btn');
+        const btnRect = settingsBtn.getBoundingClientRect();
+        
+        let left = btnRect.left - 150;
+        let top = btnRect.bottom + 5;
+        
+        // Adjust if off-screen
+        if (left < 10) {
+            left = btnRect.right + 5;
+        }
+        
+        if (top + 200 > window.innerHeight) {
+            top = btnRect.top - 205;
+        }
+        
+        this.settingsCard.style.left = left + 'px';
+        this.settingsCard.style.top = top + 'px';
+        
+        this.musicCard.querySelector('.settings-btn').classList.add('active');
+    }
+
+    closeSettings() {
+        this.isSettingsOpen = false;
+        this.settingsCard.style.display = 'none';
+        this.musicCard.querySelector('.settings-btn').classList.remove('active');
+    }
+
+    setPlaybackSpeed(speed) {
+        this.playbackRate = speed;
+        this.audio.playbackRate = speed;
+        this.saveSettings();
+    }
+
+    skipTime(seconds) {
+        if (this.audio.duration) {
+            this.audio.currentTime = Math.max(0, Math.min(this.audio.currentTime + seconds, this.audio.duration));
+        }
+    }
+
+    toggleShuffle() {
+        this.isShuffled = !this.isShuffled;
+        const shuffleBtn = this.settingsCard.querySelector('.shuffle-btn');
+        shuffleBtn.classList.toggle('active', this.isShuffled);
+        this.saveSettings();
+    }
+
+    toggleRepeat() {
+        const repeatModes = ['off', 'all', 'one'];
+        const currentIndex = repeatModes.indexOf(this.repeatMode);
+        this.repeatMode = repeatModes[(currentIndex + 1) % repeatModes.length];
+        
+        const repeatBtn = this.settingsCard.querySelector('.repeat-btn');
+        const icon = repeatBtn.querySelector('i');
+        
+        if (this.repeatMode === 'off') {
+            repeatBtn.classList.remove('active');
+            icon.className = 'fas fa-repeat';
+        } else if (this.repeatMode === 'all') {
+            repeatBtn.classList.add('active');
+            icon.className = 'fas fa-repeat';
+        } else { // 'one'
+            repeatBtn.classList.add('active');
+            icon.className = 'fas fa-repeat-1';
+        }
+        
+        this.saveSettings();
+    }
+
+    saveSettings() {
+        try {
+            const data = {
+                playbackRate: this.playbackRate,
+                isShuffled: this.isShuffled,
+                repeatMode: this.repeatMode
+            };
+            sessionStorage.setItem('frankport-music-settings', JSON.stringify(data));
+        } catch (e) {
+            window.frankportMusicSettings = { 
+                playbackRate: this.playbackRate, 
+                isShuffled: this.isShuffled, 
+                repeatMode: this.repeatMode 
+            };
+        }
+    }
+
+    loadSettings() {
+        try {
+            const stored = sessionStorage.getItem('frankport-music-settings') || 
+                          (window.frankportMusicSettings ? JSON.stringify(window.frankportMusicSettings) : null);
+            
+            if (stored) {
+                const data = JSON.parse(stored);
+                this.playbackRate = data.playbackRate || 1;
+                this.isShuffled = data.isShuffled || false;
+                this.repeatMode = data.repeatMode || 'off';
+                
+                // Apply settings to audio
+                this.audio.playbackRate = this.playbackRate;
+                
+                // Update UI
+                this.updateSettingsUI();
+            }
+        } catch (e) {
+            // Use defaults
+        }
+    }
+
+    updateSettingsUI() {
+        // Update speed buttons
+        this.settingsCard.querySelectorAll('.speed-btn').forEach(btn => {
+            btn.classList.toggle('active', parseFloat(btn.dataset.speed) === this.playbackRate);
+        });
+        
+        // Update shuffle button
+        this.settingsCard.querySelector('.shuffle-btn').classList.toggle('active', this.isShuffled);
+        
+        // Update repeat button
+        const repeatBtn = this.settingsCard.querySelector('.repeat-btn');
+        const icon = repeatBtn.querySelector('i');
+        
+        if (this.repeatMode === 'off') {
+            repeatBtn.classList.remove('active');
+            icon.className = 'fas fa-repeat';
+        } else if (this.repeatMode === 'all') {
+            repeatBtn.classList.add('active');
+            icon.className = 'fas fa-repeat';
+        } else { // 'one'
+            repeatBtn.classList.add('active');
+            icon.className = 'fas fa-repeat-1';
         }
     }
 
@@ -933,12 +1346,18 @@ class FrankPortMusicExperience {
         if (this.isCommentsOpen) {
             this.closeComments();
         }
+        if (this.isSettingsOpen) {
+            this.closeSettings();
+        }
     }
 
     hideCard() {
         this.musicCard.style.display = 'none';
         if (this.isCommentsOpen) {
             this.closeComments();
+        }
+        if (this.isSettingsOpen) {
+            this.closeSettings();
         }
         
         // Create reopen button
@@ -964,7 +1383,7 @@ class FrankPortMusicExperience {
             color: var(--primary-navy);
             cursor: pointer;
             font-size: 16px;
-            z-index: 9999;
+            z-index: 999;
             transition: all 0.3s;
         `;
         
@@ -1151,15 +1570,17 @@ class FrankPortMusicExperience {
             // Clean up existing instance
             const existing = document.querySelector('.frankport-music-card');
             const existingComments = document.querySelector('.comments-panel');
+            const existingSettings = document.querySelector('.music-settings-card');
             const existingReopen = document.querySelector('.frankport-reopen-btn');
             
             if (existing) existing.remove();
             if (existingComments) existingComments.remove();
+            if (existingSettings) existingSettings.remove();
             if (existingReopen) existingReopen.remove();
         }
         
         window.frankportMusicInstance = new FrankPortMusicExperience();
     };
     
-    console.log('🎵 FrankPort Music Experience loaded successfully!');
+    console.log('🎵 FrankPort Music Experience Enhanced - Ready!');
 })();

@@ -2994,7 +2994,7 @@ let isLoading = false;
 
 // NEW: Random duration generator (3-5 seconds)
 function getRandomLoadingDuration() {
-    return Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000;
+    return Math.floor(Math.random() * (4000 - 2000 + 1)) + 2000;
 }
 
 // NEW: Show loading bar
@@ -3056,9 +3056,13 @@ function setLegalLinksState(disabled) {
         if (disabled) {
             link.style.opacity = '0.5';
             link.style.pointerEvents = 'none';
+            document.body.style.opacity = '0.8'; // Dim background
+            document.body.style.pointerEvents = 'none'; // Disable interactions
         } else {
             link.style.opacity = '';
             link.style.pointerEvents = '';
+            document.body.style.opacity = '';
+            document.body.style.pointerEvents = '';
         }
     });
 }

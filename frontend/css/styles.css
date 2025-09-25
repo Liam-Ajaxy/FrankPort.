@@ -1963,7 +1963,7 @@ body.light-mode .toast.success {
 
 .toast.error {
   background: #120202;
-  color: #7f1d1d;
+  color: #ffffff;
   border: 2px solid #7f1d1d;
 }
 body.light-mode .toast.error {
