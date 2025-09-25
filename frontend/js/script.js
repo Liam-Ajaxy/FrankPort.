@@ -1840,9 +1840,9 @@
     showThemeChangeToast(theme) {
         // Only show toast if the toast system exists
         if (typeof showToast === 'function') {
-        const message = `Switched to ${theme} mode`;
+        // const message = `Switched to ${theme} mode`;
         const icon = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
-        showToast(message, 'info', 2000, icon);
+        // showToast(message, 'info', 2000, icon);
         }
     }
 
@@ -2275,7 +2275,7 @@ function requestSecureAccess(platform) {
     
     // Add content to modal
     modalContainer.innerHTML = `
-        <div class="modal-content">
+        <div class="account-modal-content">
             <div class="security-badge">Advanced Protection</div>
             <div class="security-icon">🛡️</div>
             <h3>Secure Access Required</h3>
@@ -2373,7 +2373,7 @@ function showCompletionButton(platform) {
     }
     
     // Update modal content to show completion and access button
-    const modalContent = modalContainer.querySelector('.modal-content');
+    const modalContent = modalContainer.querySelector('.account-modal-content');
     if (modalContent) {
         modalContent.innerHTML = `
             <div class="security-badge">Verification Complete</div>
@@ -2762,7 +2762,7 @@ const additionalCSS = `
    =================================== */
 
 @media (max-width: 768px) {
-    .modal-content {
+    .account-modal-content {
         background: var(--secondary-charcoal);
         border: 1px solid var(--border-color);
     }
@@ -3097,7 +3097,7 @@ function generateContent(data) {
         </div>
         <div class="modal-body">
             <h2>${data.title}</h2>
-            <p class="last-updated">Last Updated: January 2025</p>
+            <p class="last-updated">Last Updated: August 2025</p>
     `;
 
     if (data.content.intro) {
@@ -3410,7 +3410,7 @@ class LanguageManager {
                 'footer-cookies': 'Cookie Notice',
                 'footer-accessibility': 'Accessibility',
                 'footer-dark-mode': 'Dark Mode',
-                'footer-dark-blue-mode': 'Dark Blue Mode',
+                'footer-dark-blue-mode': 'Default',
                 'footer-light-mode': 'Light Mode',
                 'footer-language': 'Language',
                 'lang-english': 'English',
@@ -4606,6 +4606,7 @@ async function copyPortfolioLink() {
 // Show Toast Notification
 function showToast(message, type = 'success') {
     const toastContainer = document.getElementById('toastContainer');
+    toastContainer.style.zIndex = '10000'; // Ensure it's above other elements
     if (!toastContainer) return;
     
     const toast = document.createElement('div');
@@ -5511,12 +5512,8 @@ Object.assign(FeatureHighlight, {
 // Demo feature functions
 function demoFeature(feature) {
     const messages = {
-        copy: 'Link copied! 📋',
-        notifications: 'Opening notifications... 🔔',
         admin: 'Launching admin dashboard... ⚙️'
     };
-    
-    showToast(messages[feature] || 'Feature demo activated!', 'success');
     
     // Trigger actual functionality
     setTimeout(() => {
@@ -5530,6 +5527,7 @@ function demoFeature(feature) {
                 FeatureHighlight.dismiss();
                 break;
             case 'admin':
+                showToast(messages[feature], 'success');
                 openAdminDashboard();
                 FeatureHighlight.closeLearnMoreModal();
                 FeatureHighlight.dismiss();
@@ -6189,19 +6187,19 @@ const InteractiveTour = {
     },
     
     // Check if tour should auto-start
-    checkAutoStart() {
-        const completed = localStorage.getItem('interactive-tour-completed');
-        const highlightSeen = localStorage.getItem('feature-highlight-seen');
+    // checkAutoStart() {
+    //     const completed = localStorage.getItem('interactive-tour-completed');
+    //     const highlightSeen = localStorage.getItem('feature-highlight-seen');
         
-        // Auto-start tour if highlight was seen but tour never completed
-        if (highlightSeen && !completed) {
-            setTimeout(() => {
-                if (confirm('Would you like to take an interactive tour of the admin menu features?')) {
-                    this.start();
-                }
-            }, 2000);
-        }
-    }
+    //     // Auto-start tour if highlight was seen but tour never completed
+    //     if (highlightSeen && !completed) {
+    //         setTimeout(() => {
+    //             if (confirm('Would you like to take an interactive tour of the admin menu features?')) {
+    //                 this.start();
+    //             }
+    //         }, 2000);
+    //     }
+    // }
 };
 
 // Enhanced FeatureHighlight integration

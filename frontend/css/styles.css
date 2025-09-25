@@ -36,7 +36,7 @@
   --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   
   /* Z-index layers */
-  --z-loading: 9999;
+  --z-loading: 99999;
   --z-navbar: 1000;
   --z-cursor: 999;
   --z-modal: 900;
@@ -1499,13 +1499,14 @@ section {
 
 .footer-content {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 4rem;
-  margin-bottom: 2rem;
+  grid-template-columns: 1fr minmax(420px, 1fr); /* left flexible, right gets at least 420px */
+  gap: 2rem;
+  align-items: start; /* keep columns aligned at the top */
+  margin-bottom: 2rem; /* preserve your spacing */
 }
 
 .footer-left {
-  max-width: 400px;
+  max-width: none;
 }
 
 .footer-logo {
@@ -1522,8 +1523,14 @@ section {
 
 .footer-links {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0rem;
+  align-items: start;
+}
+
+.footer-column {
+  min-width: 140px;
+  margin-bottom: 14px;
 }
 
 .footer-column h4 {
@@ -1554,10 +1561,19 @@ section {
   margin: 2rem 0;
 }
 
-.footer-bottom-content {
+.footer-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.footer-bottom .footer-bottom-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .footer-bottom-content p {
@@ -1729,9 +1745,9 @@ section {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .footer-content {
+ .footer-content {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.5rem;
   }
   
   .footer-links {
@@ -1889,7 +1905,7 @@ section {
   display: flex;
   flex-direction: column-reverse; /* Newest on top */
   gap: 1rem;
-  z-index: var(--z-navbar);
+  z-index: 10000;
 }
 
 .toast {
@@ -1931,38 +1947,74 @@ section {
 
 /* Toast Types */
 .toast.success {
-  background-color: #16a34a;
-  color: #ffffff;
+  background-color: #03150a;
+  color: #166534;
+  border: 2px solid #166534;
 }
+body.light-mode .toast.success {
+  background-color: #f0fdf4;
+  color: #166534;
+}
+
 .toast.success .toast-icon {
   background: #bbf7d0;
   color: #166534;
 }
 
 .toast.error {
-  background-color: #dc2626;
+  background: #120202;
+  color: #7f1d1d;
+  border: 2px solid #7f1d1d;
+}
+body.light-mode .toast.error {
+  background-color: #7f1d1d;
   color: #ffffff;
 }
 .toast.error .toast-icon {
+  background: #ffa3a3;
+  color: #7f1d1d; 
+}
+body.light-mode .toast.error .toast-icon {
   background: #fecaca;
   color: #7f1d1d; 
 }
 
 .toast.info {
-  background-color: #2563eb;
+  background-color: #040013;
   color: #ffffff;
+  border: 2px solid #1e3a8a;
+}
+body.light-mode .toast.info {
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
 }
 .toast.info .toast-icon {
   background: #dbeafe;
   color: #1e3a8a;
 }
+body.light-mode .toast.info .toast-icon {
+  background: #bfdbfe;
+  color: #1e3a8a;
+  border: none;
+}
 
 .toast.warning {
-  background-color: #f59e0b;
-  color: #111111;
+  background-color: #281407;
+  color: #ffffff;
+  border: 2px solid #ca6120;
+}
+body.light-mode .toast.warning {
+  background-color: #92460e;
+  color: #ffffff;
+  border: none;
 }
 .toast.warning .toast-icon {
   background: #fef3c7;
+  color: #92400e;
+}
+body.light-mode .toast.warning .toast-icon {
+  background: #fde68a;
   color: #92400e;
 }
 
@@ -3125,7 +3177,7 @@ body.light-mode .hero-grid {
 
 body.light-mode .floating-element {
   border: 1px solid #ffa20066;
-  background: #ffffff;
+  background: none;
   box-shadow:  0 20px 60px rgba(0, 0, 0, 0.08);
 }
 
@@ -3450,7 +3502,7 @@ body.light-mode .loading-text {
 
 body.light-mode .toast-close {
   color: #ffffff;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.03);
 }
 
 body.light-mode .toast-close:hover {
@@ -3922,7 +3974,7 @@ body.light-mode .loading-progressor {
 
 /* Light Mode Modal Styles */
 
-body.light-mode .modal-content {
+body.light-mode .account-modal-content {
     background: #ffffff;
     color: #202124;
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
@@ -3966,7 +4018,7 @@ body.light-mode .security-icon {
     50% { transform: scale(1.05); }
 }
 
-body.light-mode .modal-content h3 {
+body.light-mode .account-modal-content h3 {
     margin: 0 0 16px 0;
     font-size: 24px;
     font-weight: 400;
@@ -3974,14 +4026,14 @@ body.light-mode .modal-content h3 {
     font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-body.light-mode .modal-content p {
+body.light-mode .account-modal-content p {
     margin: 0 0 12px 0;
     font-size: 16px;
     color: #5f6368;
     line-height: 1.5;
 }
 
-body.light-mode .modal-content p:last-of-type {
+body.light-mode .account-modal-content p:last-of-type {
     margin-bottom: 32px;
     font-weight: 500;
     color: #1a73e8;
@@ -4615,7 +4667,7 @@ body.light-mode .theme-toggle::after {
     to { opacity: 1; }
 }
 
-.modal-content {
+.account-modal-content {
     background: var(--secondary-charcoal);
     color: var(--text-primary);
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
@@ -4659,7 +4711,7 @@ body.light-mode .theme-toggle::after {
     50% { transform: scale(1.05); }
 }
 
-.modal-content h3 {
+.account-modal-content h3 {
     margin: 0 0 16px 0;
     font-size: 24px;
     font-weight: 400;
@@ -4667,14 +4719,14 @@ body.light-mode .theme-toggle::after {
     font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.modal-content p {
+.account-modal-content p {
     margin: 0 0 12px 0;
     font-size: 16px;
     color: var(--text-secondary);
     line-height: 1.5;
 }
 
-.modal-content p:last-of-type {
+.account-modal-content p:last-of-type {
     margin-bottom: 32px;
     font-weight: 500;
     color: var(--accent-gold);
@@ -5359,6 +5411,12 @@ body.light-mode .lang-menu {
     transition: width 0.1s ease-out;
     border-radius: 0 2px 2px 0;
 }
+body.light-mode #legalLoadingBar {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+body.light-mode .legal-loading-progress {
+    background: #6366f1;
+}
 
 
 /* Social Media Tooltips */
@@ -5644,7 +5702,11 @@ body.light-mode .notification-header {
 }
 
 .toast.error {
-    background: #dc3545;
+    background: #130406;
+}
+body.light-mode .toast.error {
+    background: #721;
+    color: #ffffff;
 }
 
 /* Admin Dashboard */
@@ -5654,7 +5716,6 @@ body.light-mode .notification-header {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
     z-index: 1003;
     display: flex;
     align-items: center;
@@ -5662,7 +5723,7 @@ body.light-mode .notification-header {
 }
 
 .admin-dashboard-modal {
-    background: #0d0d0d00;
+    background: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5670,11 +5731,9 @@ body.light-mode .notification-header {
     max-width: 450px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 body.light-mode .admin-dashboard-modal {
-    background: #f8f9fa00;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    background: none;
 }
 
 .admin-dashboard-header {
@@ -6518,7 +6577,7 @@ body:not(.light-mode) .tooltip-dismiss:hover {
     border: none;
     color: var(--accent-gold, #ffa200);
     font-size: 14px;
-    text-decoration: underline;
+    text-decoration: none;
     cursor: pointer;
     padding: 0;
     transition: var(--transition-fast, 0.2s ease);
@@ -6527,7 +6586,7 @@ body:not(.light-mode) .tooltip-dismiss:hover {
 
 .learn-more-btn:hover {
     color: #f39c12;
-    text-decoration: none;
+    text-decoration: underline;
     transform: translateY(-1px);
 }
 
@@ -6549,6 +6608,7 @@ body:not(.light-mode) .tooltip-dismiss:hover {
     transform: scale(1.05);
 }
 
+
 /* Advanced Learn More Modal */
 .learn-more-modal-overlay {
     position: fixed;
@@ -6564,7 +6624,8 @@ body:not(.light-mode) .tooltip-dismiss:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    /* 🔥 remove padding so modal touches edges */
+    padding: 0;
 }
 
 .learn-more-modal-overlay.active {
@@ -6575,16 +6636,18 @@ body:not(.light-mode) .tooltip-dismiss:hover {
 .learn-more-modal {
     position: relative;
     width: 100%;
-    max-width: 100%;
     height: 100vh;
+    max-width: 100%;
     max-height: 100vh;
+    border-radius: 0; /* 🔥 no rounding for fullscreen */
     overflow-y: auto;
-    border-radius: 0;
-    background: url('https://images.unsplash.com/photo-1459802071246-377c0346da93?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c3BsYXNofGVufDB8fDB8fHww'), var(--admin-bg, #191919);
-    border: 2px solid var(--border-color, #2d3142);
-    transform: scale(0.8) translateY(60px);
-    transition: all var(--transition-slow, 0.6s cubic-bezier(0.4, 0, 0.2, 1));
-    font-family: var(--font-primary, 'Inter', sans-serif);
+
+    background: url('https://images.unsplash.com/photo-1459802071246-377c0346da93?w=1200&auto=format&fit=crop&q=80') center/cover no-repeat,
+                var(--admin-bg, #191919);
+
+    border: none; /* optional: remove border for seamless fullscreen */
+    transform: scale(1) translateY(0); /* 🔥 no shrinking */
+    transition: none; /* keep fullscreen stable */
     cursor: default;
 }
 
@@ -6674,6 +6737,7 @@ body.light-mode .modal-close:hover {
     border: none;
     border-radius: 1px;
     width: 100%;
+    max-width: 600px;
 }
 body.light-mode .modal-content {
     background: none;
@@ -6699,7 +6763,7 @@ body.light-mode .modal-content {
 
 body.light-mode .feature-card {
     background: #ffffff;
-    border: 2px solid #dadce0;
+    border: 1px solid #dadce0;
 }
 
 .feature-card:hover {
@@ -7038,63 +7102,65 @@ kbd {
 
 /* Modal Footer */
 .modal-footer {
-    padding: 32px 40px;
+    padding: 24px 32px;
     border-top: 2px solid var(--border-color, #2d3142);
     background: var(--admin-bg, #191919);
     border-radius: 0 0 8px 8px;
 }
+
 body.light-mode .modal-footer {
     background: #ffffff;
     border-top: 2px solid #dadce0;
 }
 
-.footer-content {
+.modal-footer-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
 }
 
-.secondary-btn {
+/* Modal Secondary Button */
+.modal-btn-secondary {
     background: transparent;
     border: 2px solid var(--border-color, #2d3142);
     color: var(--text-secondary, #b8bcc8);
-    padding: 14px 24px;
+    padding: 12px 24px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    transition: all var(--transition-fast, 0.2s ease);
+    transition: all 0.2s ease;
     font-family: var(--font-primary, 'Inter', sans-serif);
 }
 
-.secondary-btn:hover {
+.modal-btn-secondary:hover {
     border-color: var(--accent-gold, #ffa200);
     color: var(--accent-gold, #ffa200);
     transform: translateY(-2px);
 }
 
-.primary-btn {
+/* Modal Primary Button */
+.modal-btn-primary {
     background: var(--accent-gold, #ffa200);
     color: var(--primary-navy, #0D0D0D);
     border: none;
-    padding: 16px 32px;
+    padding: 12px 28px;
     border-radius: 6px;
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 10px;
-    transition: all var(--transition-fast, 0.2s ease);
+    gap: 8px;
+    transition: all 0.2s ease;
     font-family: var(--font-primary, 'Inter', sans-serif);
 }
 
-.primary-btn:hover {
+.modal-btn-primary:hover {
     background: #f39c12;
-    transform: translateY(-3px);
+    transform: translateY(-2px);
 }
-
 /* Animations */
 @keyframes iconFloat {
     0%, 100% { transform: translateY(0px); }
@@ -7116,15 +7182,14 @@ body.light-mode .modal-footer {
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .learn-more-modal {
-        margin: 10px;
-        max-width: none;
-        width: calc(100% - 20px);
-        max-height: calc(100vh - 20px);
-        border-radius: 8px;
+        margin: 0;      /* 🔥 remove margins */
+        border-radius: 0;
+        height: 100vh;
+        max-height: 100vh;
     }
     
     .modal-header {
-        padding: 24px 20px;
+        padding: 20px 10px;
     }
     
     .header-content {
@@ -7154,7 +7219,7 @@ body.light-mode .modal-footer {
         padding: 24px;
     }
     
-    .footer-content {
+    .modal-footer-content {
         flex-direction: column-reverse;
         gap: 16px;
     }
