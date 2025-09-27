@@ -5376,10 +5376,10 @@ const FeatureHighlight = {
         // document.body.style.overflow = 'hidden';
         this.isActive = true;
         
-        // Auto-hide after 10 seconds
+        // Auto-hide after 6 seconds
         this.autoHideTimer = setTimeout(() => {
             this.dismiss(true);
-        }, 10000);
+        }, 6000);
         
         // Focus management for accessibility
         document.getElementById('featureTooltip').focus();
@@ -6225,3 +6225,872 @@ document.addEventListener('DOMContentLoaded', () => {
     InteractiveTour.init();
     InteractiveTour.checkAutoStart();
 });
+
+
+
+
+
+
+
+
+        class FrankPortMusicModal {
+            constructor() {
+                this.modal = null;
+                this.isVisible = false;
+                this.currentStep = 0;
+                this.totalSteps = 4;
+                
+                this.init();
+            }
+
+            init() {
+                this.injectStyles();
+                this.createModal();
+            }
+
+            injectStyles() {
+                const styles = `
+                    :root {
+                        /* Dark Professional Theme */
+                        --primary-navy: #0D0D0D;
+                        --secondary-charcoal: #0D0D0D;
+                        --accent-gold: #ffa200;
+                        --text-primary: #ffffff;
+                        --text-secondary: #b8bcc8;
+                        --text-muted: #6c7293;
+                        --border-color: #2d3142;
+                        --shadow-light: rgba(244, 208, 63, 0.1);
+                        --shadow-dark: rgba(0, 0, 0, 0.3);
+                        --gradient-primary: #0D0D0D;
+                        --gradient-accent: linear-gradient(135deg, #ffa200 0%, #f39c12 100%);
+                        --gradient-hover: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+                        --admin-bg: #191919;
+                        --admin-light-bg: #1c1c1c;
+                    }
+
+                    body.light-mode {
+                        --primary-navy: #ffffff;
+                        --secondary-charcoal: #f8f9fa;
+                        --text-primary: #2c3e50;
+                        --text-secondary: #5a6c7d;
+                        --text-muted: #8b9dc3;
+                        --border-color: #e1e8ed;
+                        --shadow-light: rgba(244, 208, 63, 0.15);
+                        --shadow-dark: rgba(0, 0, 0, 0.1);
+                        --gradient-primary: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                        --admin-bg: #ffffff;
+                        --admin-light-bg: #f8f9fa;
+                    }
+
+                    .frankport-music-modal-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.8);
+                        backdrop-filter: blur(10px);
+                        z-index: 999999;
+                        display: none;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 20px;
+                        animation: modalFadeIn 0.3s ease-out;
+                    }
+
+                    body.light-mode .frankport-music-modal-overlay {
+                        background: rgba(0, 0, 0, 0.6);
+                    }
+
+                    .frankport-music-modal {
+                        background: var(--admin-bg);
+                        border-radius: 16px;
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.2);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        max-width: 600px;
+                        width: 100%;
+                        max-height: 80vh;
+                        overflow: hidden;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                        position: relative;
+                        animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+
+                    body.light-mode .frankport-music-modal {
+                        background: var(--admin-bg);
+                        border: 1px solid var(--border-color);
+                        box-shadow: 0 20px 40px var(--shadow-dark), 0 8px 16px var(--shadow-dark);
+                    }
+
+                    @keyframes modalFadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+
+                    @keyframes modalSlideIn {
+                        from { 
+                            opacity: 0; 
+                            transform: scale(0.9) translateY(20px); 
+                        }
+                        to { 
+                            opacity: 1; 
+                            transform: scale(1) translateY(0); 
+                        }
+                    }
+
+                    .modal-header {
+                        background: var(--gradient-accent);
+                        padding: 24px 28px;
+                        position: relative;
+                        overflow: hidden;
+                    }
+
+                    .modal-header::before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="30" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="60" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
+                        opacity: 0.3;
+                    }
+
+                    .modal-close {
+                        position: absolute;
+                        top: 16px;
+                        right: 16px;
+                        background: rgba(0, 0, 0, 0.3);
+                        border: none;
+                        color: white;
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        font-size: 14px;
+                        transition: all 0.2s;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 1;
+                    }
+
+                    .modal-close:hover {
+                        background: rgba(0, 0, 0, 0.5);
+                        transform: scale(1.1);
+                    }
+
+                    .modal-title {
+                        color: white;
+                        font-size: 28px;
+                        font-weight: 700;
+                        margin: 0 0 8px 0;
+                        position: relative;
+                        z-index: 1;
+                    }
+
+                    .modal-subtitle {
+                        color: rgba(255, 255, 255, 0.9);
+                        font-size: 16px;
+                        margin: 0;
+                        position: relative;
+                        z-index: 1;
+                    }
+
+                    .modal-body {
+                        padding: 0;
+                        background: var(--admin-bg);
+                    }
+
+                    .feature-showcase {
+                        position: relative;
+                        overflow: hidden;
+                    }
+
+                    .showcase-step {
+                        display: none;
+                        padding: 32px 28px;
+                        min-height: 320px;
+                        position: relative;
+                    }
+
+                    .showcase-step.active {
+                        display: block;
+                        animation: stepFadeIn 0.5s ease-out;
+                    }
+
+                    @keyframes stepFadeIn {
+                        from { opacity: 0; transform: translateX(20px); }
+                        to { opacity: 1; transform: translateX(0); }
+                    }
+
+                    .step-header {
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 20px;
+                    }
+
+                    .step-icon {
+                        width: 48px;
+                        height: 48px;
+                        background: var(--gradient-accent);
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-size: 20px;
+                        margin-right: 16px;
+                        box-shadow: 0 4px 12px rgba(255, 162, 0, 0.3);
+                    }
+
+                    .step-title {
+                        font-size: 22px;
+                        font-weight: 600;
+                        color: var(--text-primary);
+                        margin: 0;
+                    }
+
+                    .step-description {
+                        font-size: 16px;
+                        line-height: 1.6;
+                        color: var(--text-secondary);
+                        margin-bottom: 24px;
+                    }
+
+                    .feature-demo {
+                        background: var(--admin-light-bg);
+                        border-radius: 12px;
+                        padding: 20px;
+                        border: 1px solid var(--border-color);
+                        position: relative;
+                        overflow: hidden;
+                    }
+
+                    .demo-preview {
+                        display: flex;
+                        align-items: center;
+                        gap: 16px;
+                        margin-bottom: 16px;
+                    }
+
+                    .demo-icon {
+                        width: 40px;
+                        height: 40px;
+                        background: var(--accent-gold);
+                        border-radius: 8px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #000;
+                        font-size: 16px;
+                    }
+
+                    .demo-text {
+                        flex: 1;
+                    }
+
+                    .demo-text h4 {
+                        margin: 0 0 4px 0;
+                        color: var(--text-primary);
+                        font-size: 14px;
+                        font-weight: 600;
+                    }
+
+                    .demo-text p {
+                        margin: 0;
+                        color: var(--text-muted);
+                        font-size: 12px;
+                    }
+
+                    .feature-highlights {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 16px;
+                        margin-top: 20px;
+                    }
+
+                    .highlight-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        font-size: 14px;
+                        color: var(--text-secondary);
+                    }
+
+                    .highlight-item i {
+                        color: var(--accent-gold);
+                        width: 16px;
+                    }
+
+                    .modal-navigation {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 20px 28px;
+                        background: var(--admin-light-bg);
+                        border-top: 1px solid var(--border-color);
+                    }
+
+                    .step-indicators {
+                        display: flex;
+                        gap: 8px;
+                    }
+
+                    .step-dot {
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 50%;
+                        background: var(--border-color);
+                        transition: all 0.3s;
+                        cursor: pointer;
+                    }
+
+                    .step-dot.active {
+                        background: var(--accent-gold);
+                        transform: scale(1.2);
+                    }
+
+                    .nav-buttons {
+                        display: flex;
+                        gap: 12px;
+                    }
+
+                    .nav-btn {
+                        padding: 10px 20px;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+
+                    .nav-btn:disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                    }
+
+                    .nav-btn-secondary {
+                        background: transparent;
+                        color: var(--text-muted);
+                        border: 1px solid var(--border-color);
+                    }
+
+                    .nav-btn-secondary:hover:not(:disabled) {
+                        background: var(--admin-bg);
+                        color: var(--text-primary);
+                    }
+
+                    .nav-btn-primary {
+                        background: var(--gradient-accent);
+                        color: white;
+                        border: 1px solid transparent;
+                    }
+
+                    .nav-btn-primary:hover {
+                        background: var(--gradient-hover);
+                        transform: translateY(-1px);
+                    }
+
+                    .loading-demo {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        padding: 16px;
+                        background: rgba(255, 162, 0, 0.1);
+                        border-radius: 8px;
+                        margin-top: 16px;
+                    }
+
+                    .loading-spinner-demo {
+                        width: 24px;
+                        height: 24px;
+                        position: relative;
+                    }
+
+                    .loading-spinner-demo::before {
+                        content: '🎵';
+                        font-size: 16px;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        animation: demoMusicSpin 1.5s linear infinite;
+                    }
+
+                    .loading-spinner-demo::after {
+                        content: '';
+                        width: 100%;
+                        height: 100%;
+                        border: 2px solid rgba(255, 162, 0, 0.3);
+                        border-top: 2px solid var(--accent-gold);
+                        border-radius: 50%;
+                        position: absolute;
+                        animation: demoSpin 1s linear infinite;
+                    }
+
+                    @keyframes demoSpin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+
+                    @keyframes demoMusicSpin {
+                        0% { transform: translate(-50%, -50%) rotate(0deg); }
+                        100% { transform: translate(-50%, -50%) rotate(360deg); }
+                    }
+
+                    .layout-comparison {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 20px;
+                        margin-top: 20px;
+                    }
+
+                    .layout-preview {
+                        background: var(--admin-light-bg);
+                        border-radius: 8px;
+                        padding: 16px;
+                        border: 2px solid var(--border-color);
+                        text-align: center;
+                        transition: all 0.3s;
+                    }
+
+                    .layout-preview.highlight {
+                        border-color: var(--accent-gold);
+                        box-shadow: 0 4px 12px rgba(255, 162, 0, 0.2);
+                    }
+
+                    .layout-preview h4 {
+                        margin: 0 0 8px 0;
+                        font-size: 14px;
+                        color: var(--text-primary);
+                    }
+
+                    .layout-mockup {
+                        width: 100%;
+                        height: 80px;
+                        background: var(--admin-bg);
+                        border-radius: 6px;
+                        margin-bottom: 8px;
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 10px;
+                        color: var(--text-muted);
+                    }
+
+                    @media (max-width: 768px) {
+                        .frankport-music-modal {
+                            margin: 10px;
+                            max-height: 90vh;
+                        }
+
+                        .modal-header {
+                            padding: 20px 24px;
+                        }
+
+                        .modal-title {
+                            font-size: 24px;
+                        }
+
+                        .showcase-step {
+                            padding: 24px 20px;
+                            min-height: 280px;
+                        }
+
+                        .feature-highlights {
+                            grid-template-columns: 1fr;
+                        }
+
+                        .layout-comparison {
+                            grid-template-columns: 1fr;
+                        }
+
+                        .modal-navigation {
+                            padding: 16px 20px;
+                        }
+                    }
+                `;
+
+                const styleSheet = document.createElement('style');
+                styleSheet.textContent = styles;
+                document.head.appendChild(styleSheet);
+            }
+
+            createModal() {
+                const overlay = document.createElement('div');
+                overlay.className = 'frankport-music-modal-overlay';
+                overlay.innerHTML = `
+                    <div class="frankport-music-modal">
+                        <div class="modal-header">
+                            <button class="modal-close" aria-label="Close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <h2 class="modal-title">🎵 New Music Experience</h2>
+                            <p class="modal-subtitle">Stream live from Audiomack with advanced features</p>
+                        </div>
+                        
+                        <div class="modal-body">
+                            <div class="feature-showcase">
+                                <!-- Step 1: Live Streaming -->
+                                <div class="showcase-step active" data-step="0">
+                                    <div class="step-header">
+                                        <div class="step-icon">
+                                            <i class="fas fa-broadcast-tower"></i>
+                                        </div>
+                                        <h3 class="step-title">Live Music Streaming</h3>
+                                    </div>
+                                    <p class="step-description">
+                                        Experience your favorite tracks streaming live from Audiomack. No more fake audio files - 
+                                        this is the real deal with full playlist functionality and high-quality streaming.
+                                    </p>
+                                    <div class="feature-demo">
+                                        <div class="demo-preview">
+                                            <div class="demo-icon">
+                                                <i class="fas fa-music"></i>
+                                            </div>
+                                            <div class="demo-text">
+                                                <h4>BEST SONGS 🔥🔥🔥🔥</h4>
+                                                <p>Ryan Artist • Live from Audiomack</p>
+                                            </div>
+                                        </div>
+                                        <div class="feature-highlights">
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>Real-time streaming</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>Full playlist access</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>High-quality audio</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>Secure embedding</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2: Loading Experience -->
+                                <div class="showcase-step" data-step="1">
+                                    <div class="step-header">
+                                        <div class="step-icon">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </div>
+                                        <h3 class="step-title">Smart Loading States</h3>
+                                    </div>
+                                    <p class="step-description">
+                                        Never wonder what's happening again. Beautiful loading animations with friendly messages 
+                                        keep you informed during buffering, connection issues, or track changes.
+                                    </p>
+                                    <div class="feature-demo">
+                                        <div class="loading-demo">
+                                            <div class="loading-spinner-demo"></div>
+                                            <div>
+                                                <h4 style="margin: 0; color: var(--text-primary); font-size: 14px;">Getting your music ready...</h4>
+                                                <p style="margin: 0; color: var(--text-muted); font-size: 12px;">Connecting to Audiomack</p>
+                                            </div>
+                                        </div>
+                                        <div class="feature-highlights">
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>Animated spinner</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>Dynamic messages</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>Auto-detection</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>Smooth transitions</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3: TikTok-Style Layout -->
+                                <div class="showcase-step" data-step="2">
+                                    <div class="step-header">
+                                        <div class="step-icon">
+                                            <i class="fas fa-comments"></i>
+                                        </div>
+                                        <h3 class="step-title">TikTok-Style Comments</h3>
+                                    </div>
+                                    <p class="step-description">
+                                        Inspired by TikTok's interface, comments open in a side panel while keeping the music player 
+                                        visible and functional. Perfect balance of interaction and content visibility.
+                                    </p>
+                                    <div class="feature-demo">
+                                        <div class="layout-comparison">
+                                            <div class="layout-preview">
+                                                <h4>Normal View</h4>
+                                                <div class="layout-mockup">Music Player (400px)</div>
+                                                <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Full-size player</p>
+                                            </div>
+                                            <div class="layout-preview highlight">
+                                                <h4>With Comments</h4>
+                                                <div class="layout-mockup" style="display: grid; grid-template-columns: 1fr 100px; gap: 4px;">
+                                                    <div style="background: var(--accent-gold); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 8px; color: #000;">Player</div>
+                                                    <div style="background: var(--admin-bg); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 8px;">Comments</div>
+                                                </div>
+                                                <p style="margin: 0; font-size: 12px; color: var(--accent-gold);">Side-by-side layout</p>
+                                            </div>
+                                        </div>
+                                        <div class="feature-highlights">
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>Horizontal split layout</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>Player stays functional</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>Real-time counter</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-check"></i>
+                                                <span>Mobile optimized</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 4: Professional Features -->
+                                <div class="showcase-step" data-step="3">
+                                    <div class="step-header">
+                                        <div class="step-icon">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <h3 class="step-title">Professional Features</h3>
+                                    </div>
+                                    <p class="step-description">
+                                        Everything you'd expect from a premium music player: draggable interface, responsive design, 
+                                        persistent storage, and seamless integration with your existing portfolio.
+                                    </p>
+                                    <div class="feature-demo">
+                                        <div class="feature-highlights">
+                                            <div class="highlight-item">
+                                                <i class="fas fa-arrows-alt"></i>
+                                                <span>Draggable anywhere</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-expand-arrows-alt"></i>
+                                                <span>Minimize/Maximize</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-mobile-alt"></i>
+                                                <span>Mobile responsive</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-save"></i>
+                                                <span>Persistent comments</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-keyboard"></i>
+                                                <span>Keyboard shortcuts</span>
+                                            </div>
+                                            <div class="highlight-item">
+                                                <i class="fas fa-shield-alt"></i>
+                                                <span>Secure & safe</span>
+                                            </div>
+                                        </div>
+                                        <div style="margin-top: 20px; padding: 16px; background: rgba(255, 162, 0, 0.1); border-radius: 8px; text-align: center;">
+                                            <h4 style="margin: 0 0 8px 0; color: var(--accent-gold); font-size: 16px;">
+                                                <i class="fas fa-rocket"></i> Ready to Experience?
+                                            </h4>
+                                            <p style="margin: 0; color: var(--text-secondary); font-size: 14px;">
+                                                Click anywhere on the portfolio to try the new music player!
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-navigation">
+                            <div class="step-indicators">
+                                <div class="step-dot active" data-step="0"></div>
+                                <div class="step-dot" data-step="1"></div>
+                                <div class="step-dot" data-step="2"></div>
+                                <div class="step-dot" data-step="3"></div>
+                            </div>
+                            <div class="nav-buttons">
+                                <button class="nav-btn nav-btn-secondary prev-btn" disabled>
+                                    <i class="fas fa-chevron-left"></i>
+                                    Previous
+                                </button>
+                                <button class="nav-btn nav-btn-primary next-btn">
+                                    Next
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(overlay);
+                this.modal = overlay;
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                // Close modal
+                this.modal.querySelector('.modal-close').addEventListener('click', () => {
+                    this.hide();
+                });
+
+                // Close on overlay click
+                this.modal.addEventListener('click', (e) => {
+                    if (e.target === this.modal) {
+                        this.hide();
+                    }
+                });
+
+                // Navigation buttons
+                this.modal.querySelector('.prev-btn').addEventListener('click', () => {
+                    this.previousStep();
+                });
+
+                this.modal.querySelector('.next-btn').addEventListener('click', () => {
+                    this.nextStep();
+                });
+
+                // Step indicators
+                this.modal.querySelectorAll('.step-dot').forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        this.goToStep(index);
+                    });
+                });
+
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (this.isVisible) {
+                        if (e.key === 'Escape') {
+                            this.hide();
+                        } else if (e.key === 'ArrowLeft') {
+                            this.previousStep();
+                        } else if (e.key === 'ArrowRight') {
+                            this.nextStep();
+                        }
+                    }
+                });
+            }
+
+            show() {
+                this.isVisible = true;
+                this.modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                this.currentStep = 0;
+                this.updateStep();
+            }
+
+            hide() {
+                this.isVisible = false;
+                this.modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+
+            nextStep() {
+                if (this.currentStep < this.totalSteps - 1) {
+                    this.currentStep++;
+                    this.updateStep();
+                }
+            }
+
+            previousStep() {
+                if (this.currentStep > 0) {
+                    this.currentStep--;
+                    this.updateStep();
+                }
+            }
+            goToStep(step) {
+                if (step >= 0 && step < this.totalSteps) {
+                    this.currentStep = step;
+                    this.updateStep();
+                }
+            }
+
+            updateStep() {
+                // Update step indicators
+                this.modal.querySelectorAll('.step-dot').forEach((dot, index) => {
+                    dot.classList.toggle('active', index === this.currentStep);
+                });
+
+                // Update step content
+                this.modal.querySelectorAll('.showcase-step').forEach((step, index) => {
+                    step.classList.toggle('active', index === this.currentStep);
+                });
+
+                // Update navigation buttons
+                const prevBtn = this.modal.querySelector('.prev-btn');
+                const nextBtn = this.modal.querySelector('.next-btn');
+
+                prevBtn.disabled = this.currentStep === 0;
+                nextBtn.disabled = this.currentStep === this.totalSteps - 1;
+
+                // Update next button text on last step
+                if (this.currentStep === this.totalSteps - 1) {
+                    nextBtn.innerHTML = `
+                        Get Started
+                        <i class="fas fa-rocket"></i>
+                    `;
+                } else {
+                    nextBtn.innerHTML = `
+                        Next
+                        <i class="fas fa-chevron-right"></i>
+                    `;
+                }
+
+                // Add special highlight animation for TikTok layout step
+                if (this.currentStep === 2) {
+                    setTimeout(() => {
+                        const highlight = this.modal.querySelector('.layout-preview.highlight');
+                        if (highlight) {
+                            highlight.style.transform = 'scale(1.05)';
+                            setTimeout(() => {
+                                highlight.style.transform = 'scale(1)';
+                            }, 300);
+                        }
+                    }, 500);
+                }
+            }
+
+            // Public method to open modal from external code
+            static openModal() {
+                if (window.frankPortMusicModal) {
+                    window.frankPortMusicModal.show();
+                } else {
+                    window.frankPortMusicModal = new FrankPortMusicModal();
+                    window.frankPortMusicModal.show();
+                }
+            }
+        }
+
+        // Initialize the modal system
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create modal instance but don't show it
+            window.frankPortMusicModal = new FrankPortMusicModal();
+            
+            // Make it globally accessible
+            window.showFrankPortMusicModal = () => {
+                window.frankPortMusicModal.show();
+            };
+        });
+
+        // Expose the class globally for external access
+        window.FrankPortMusicModal = FrankPortMusicModal;
