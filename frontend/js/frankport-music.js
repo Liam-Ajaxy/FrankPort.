@@ -49,7 +49,7 @@
                         cursor: pointer;
                         font-size: 20px;
                         color: #000;
-                        z-index: 9998;
+                        z-index: 999;
                         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                         display: flex;
                         align-items: center;
@@ -963,7 +963,7 @@
                     const notice = document.createElement('div');
                     notice.style.cssText = `
                         position: fixed;
-                        top: 20px;
+                        top: 50px;
                         left: 50%;
                         transform: translateX(-50%);
                         background: var(--admin-bg);
@@ -971,9 +971,9 @@
                         padding: 12px 20px;
                         border-radius: 8px;
                         border: 1px solid var(--border-color);
-                        z-index: 10000;
+                        z-index: 1000;
                         font-size: 12px;
-                        max-width: 300px;
+                        max-width: 400px;
                         text-align: center;
                         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                     `;
