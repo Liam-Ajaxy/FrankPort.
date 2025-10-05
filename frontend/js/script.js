@@ -5636,9 +5636,9 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-    checkFirstVisitShortcuts();
-});
+// document.addEventListener('DOMContentLoaded', () => {
+//     checkFirstVisitShortcuts();
+// });
 
 // Close on overlay click
 document.getElementById('shortcutsOverlay')?.addEventListener('click', (e) => {
