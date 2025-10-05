@@ -72,7 +72,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css-obf">
     <!-- HTML: swappable stylesheet -->
-    <link id="theme-stylesheet" rel="stylesheet" href="css/dark-blue.css">
+    <!-- <link id="theme-stylesheet" rel="stylesheet" href="css/dark-blue.css"> -->
 </head>
 <body>
     <!-- Custom Cursor -->
@@ -82,9 +82,11 @@
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
+            <a href="frankport.vercel.app">
             <div class="nav-logo">
                 <span class="logo-text">Frank<span class="logo-accent">Port.</span></span>
             </div>
+            </a>
             <ul class="nav-menu" id="nav-menu">
                 <li class="nav-item">
                     <a href="#hero" class="nav-link active" data-section="hero" data-translate="nav-home">Home</a>
@@ -203,7 +205,7 @@
                             <label for="adminPassword">Password:</label>
                             <input type="password" id="adminPassword" required>
                         </div>
-                        <button type="submit">Login</button>
+                        <button id="submit" type="submit">Login</button>
                         <p class="forgot-password">
                             <button onclick="showBackupLogin()" class="forgot-password-btn">Forgot password? Use backup key</button>
                         </p>
@@ -888,7 +890,11 @@
         
     <section id="user" class="user-section">
     <div class="container">
-        <h2 class="section-title" data-translate="testimonials-title">What People Say</h2>
+        <div class="section-header">
+            <span class="section-number">04</span>
+            <h2 class="section-title" data-translate="">Testimonials</h2>
+            <p class="section-subtitle">Honest impressions and experiences from people who have engaged with our work. Their voices reflect the quality, creativity, and reliability that define these collaborations.</p>
+        </div>
         <div class="user-grid">
         
         <!-- Feedback Card -->
@@ -940,7 +946,7 @@
     <section id="contact" class="contact">
         <div class="container">
             <div class="section-header">
-                <span class="section-number">04</span>
+                <span class="section-number">05</span>
                 <h2 class="section-title" data-translate="contact-title">Get In Touch</h2>
                 <p class="section-subtitle" data-translate="contact-subtitle">Let's discuss your next project or opportunity</p>
             </div>
@@ -1278,7 +1284,7 @@
                 <h4 data-translate="footer-accessibility">Accessibility</h4>
                 <ul>
                     <li><button class="theme-button" onclick="themeController.setTheme('dark')" aria-label="Dark Mode" data-translate="footer-dark-mode">Dark Mode</button></li>
-                    <li><button class="theme-button" onclick="themeController.setTheme('dark-blue')" aria-label="Dark Blue Mode" data-translate="footer-dark-blue-mode">Default</button></li>
+                    <!-- <li><button class="theme-button" onclick="themeController.setTheme('dark-blue')" aria-label="Dark Blue Mode" data-translate="footer-dark-blue-mode">Default</button></li> -->
                     <li><button class="theme-button" onclick="themeController.setTheme('light')" aria-label="Light Mode" data-translate="footer-light-mode">Light Mode</button></li>
                 </ul>
                 </div>
@@ -1287,6 +1293,12 @@
                         <ul>
                             <li><button class="legal-link" onclick="FeatureHighlight.openLearnMoreModal()" aria-label="New Features">Admin Menu</button></li>
                             <li><button class="legal-link" onclick="showMusicModal()" aria-label="New Features">Music Streaming</button></li>
+                        </ul>
+                    </div>
+                     <div class="footer-column">
+                        <h4 >Help</h4>
+                        <ul>
+                             <li><button class="legal-link" onclick="openShortcutsPanel()" aria-label="Keyboard Shortcuts">Shortcuts</button></li>
                         </ul>
                     </div>
                 </div>
@@ -1330,7 +1342,7 @@
             <div class="loading-bar">
                 <div class="loading-progress" id="loading-progress"></div>
             </div>
-            <p class="loading-text" id="loading-text" data-translate="loading-portfolio">Loading portfolio...</p>
+            <p class="loading-text" id="loading-text">Loading portfolio...</p>
         </div>
     </div>
 
@@ -1492,6 +1504,145 @@
                     Start Interactive Tour
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Keyboard Shortcuts Help Panel -->
+<div class="shortcuts-panel-overlay" id="shortcutsOverlay">
+    <div class="shortcuts-panel" id="shortcutsPanel">
+        <div class="shortcuts-header">
+            <div class="shortcuts-header-content">
+                <div class="shortcuts-icon">
+                    <i class="fas fa-keyboard"></i>
+                </div>
+                <div class="shortcuts-title-group">
+                    <h2>Keyboard Shortcuts</h2>
+                    <p>Master FrankPort with these powerful shortcuts</p>
+                </div>
+            </div>
+            <button class="shortcuts-close" onclick="closeShortcutsPanel()" aria-label="Close shortcuts panel">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="shortcuts-content">
+            <!-- Navigation & UI -->
+            <div class="shortcuts-category">
+                <div class="category-header">
+                    <i class="fas fa-compass"></i>
+                    <h3>Navigation & Interface</h3>
+                </div>
+                <div class="shortcuts-list">
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>Ctrl</kbd>
+                            <span class="key-separator">+</span>
+                            <kbd>Shift</kbd>
+                            <span class="key-separator">+</span>
+                            <kbd>L</kbd>
+                        </div>
+                        <span class="shortcut-description">Toggle Light/Dark Theme</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>Ctrl</kbd>
+                            <span class="key-separator">+</span>
+                            <kbd>Alt</kbd>
+                            <span class="key-separator">+</span>
+                            <kbd>L</kbd>
+                        </div>
+                        <span class="shortcut-description">Open Language Menu</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>Esc</kbd>
+                        </div>
+                        <span class="shortcut-description">Close Any Modal/Panel</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>?</kbd>
+                        </div>
+                        <span class="shortcut-description">Show This Help Panel</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Music Player -->
+            <div class="shortcuts-category">
+                <div class="category-header">
+                    <i class="fas fa-music"></i>
+                    <h3>Music Player</h3>
+                </div>
+                <div class="shortcuts-list">
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>Ctrl</kbd>
+                            <span class="key-separator">+</span>
+                            <kbd>M</kbd>
+                        </div>
+                        <span class="shortcut-description">Toggle Music Player</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>←</kbd>
+                            <kbd>→</kbd>
+                        </div>
+                        <span class="shortcut-description">Navigate Music Modal Steps</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>Enter</kbd>
+                        </div>
+                        <span class="shortcut-description">Submit Comment</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <div class="shortcut-keys">
+                            <kbd>Tab</kbd>
+                        </div>
+                        <span class="shortcut-description">Navigate Modal Elements</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pro Tips -->
+            <div class="shortcuts-tips">
+                <div class="tips-header">
+                    <i class="fas fa-lightbulb"></i>
+                    <h4>Pro Tips</h4>
+                </div>
+                <div class="tips-list">
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Hold <kbd>Shift</kbd> while clicking navigation links for smooth scrolling</span>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>All shortcuts work across desktop and mobile browsers</span>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Press <kbd>Esc</kbd> quickly closes any open modal or panel</span>
+                    </div>
+                    <div class="tip-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Press <kbd>Shift + ?</kbd> to Show This Help Panel</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="shortcuts-footer">
+            <label class="shortcuts-checkbox">
+                <input type="checkbox" id="dontShowAgain" onchange="toggleShortcutsReminder()">
+                <span class="checkbox-custom"></span>
+                <span class="checkbox-label">Don't show this on startup</span>
+            </label>
+            <button class="shortcuts-btn-close" onclick="closeShortcutsPanel()">
+                Got it!
+            </button>
         </div>
     </div>
 </div>

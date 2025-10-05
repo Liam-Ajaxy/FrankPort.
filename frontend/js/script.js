@@ -98,37 +98,72 @@
         },
 
         simulateLoading() {
+            // Each step now includes its own duration (in milliseconds)
             const loadingSteps = [
-                { progress: 20, text: 'Loading assets...' },
-                { progress: 40, text: 'Initializing components...' },
-                { progress: 60, text: 'Setting up interactions...' },
-                { progress: 80, text: 'Preparing experience...' },
-                { progress: 100, text: 'Welcome!' }
+                { progress: 10, text: 'Loading FrankPort...', duration: 500 },
+                { progress: 20, text: 'Loading FrankPort...', duration: 500 },
+                { progress: 40, text: 'Rendering interface...', duration: 700 },
+                { progress: 60, text: 'Optimizing performance...', duration: 800 },
+                { progress: 80, text: 'Finalizing details...', duration: 700 },
+                { progress: 99, text: 'Launching FrankPort...', duration: 2000 },
+                { progress: 100, text: 'Welcome!', duration: 600 }
             ];
 
             let currentStep = 0;
-            const stepInterval = setInterval(() => {
+
+            // Define a recursive function that runs each step with its custom delay
+            const runStep = () => {
                 if (currentStep < loadingSteps.length) {
                     const step = loadingSteps[currentStep];
+
+                    // Update UI
                     this.progressBar.style.width = step.progress + '%';
                     this.loadingText.textContent = step.text;
-                    currentStep++;
+
+                    // Move to the next step after this step's duration
+                    setTimeout(() => {
+                        currentStep++;
+                        runStep(); // recursive call
+                    }, step.duration);
                 } else {
-                    clearInterval(stepInterval);
+                    // All steps done
                     setTimeout(() => this.hideLoading(), 300);
                 }
-            }, 300);
+            };
+
+            // Start the sequence
+            runStep();
         },
 
         hideLoading() {
             this.loadingScreen.classList.add('hidden');
             document.body.classList.remove('loading');
             portfolio.isLoading = false;
-            
-            // Initialize all components after loading
+
+            // Initialize main app components
             setTimeout(() => {
                 portfolioApp.initializeComponents();
-            }, 300);
+
+                // Show welcome toast AFTER loading is complete
+                const welcomeMessages = [
+                    "Hey there! Welcome to FrankPort.",
+                    "Glad you’re here! Discover FrankPort.",
+                    "Hello! Enjoy exploring FrankPort.",
+                    "Hey! FrankPort is open for you.",
+                    "Welcome aboard! Check out FrankPort.",
+                    "Hi! Enjoy your journey here.",
+                    "Hello! Dive into FrankPort.",
+                    "Hey! Explore and enjoy FrankPort.",
+                    "Welcome! Glad to have you here."
+                ];
+
+                const msg = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+                showToast(msg, 'info', 6000); // trigger toast
+
+                 // Initialize and auto-show feature highlight AFTER loading
+                    FeatureHighlight.init();
+        
+            }, 300); // match my existing 300ms delay
         }
     };
 
@@ -985,31 +1020,10 @@
         attachAll(document);
         bindIframes();
     })();
-    // End of DevTools Hardening ==================
+
     // ============================================
-
-
-        // Welcome Toast =========================
-        // =======================================
-        const welcomeMessages = [
-        "Hey there! Welcome to FrankPort.",
-        "Glad you’re here! Discover FrankPort.",
-        "Hello! Enjoy exploring FrankPort.",
-        "Hey! FrankPort is open for you.",
-        "Welcome aboard! Check out FrankPort.",
-        "Hi! Enjoy your journey here.",
-        "Hello! Dive into FrankPort.",
-        "Hey! Explore and enjoy FrankPort.",
-        "Welcome! Glad to have you here."
-        ];
-
-        const msg = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
-        setTimeout(() => {
-            showToast(msg, 'info', 6000);
-        }, 4000);
-
-
-
+    // ===== Advanced Feedback System =============
+    // ============================================
         class AdvancedFeedbackSystem {
         constructor() {
             this.currentSection = 0;
@@ -1728,9 +1742,9 @@
             case 'light':
                 cssPath = 'css/styles.css'; // default main CSS
                 break;
-            case 'dark-blue':
-                cssPath = 'css/dark-blue-obf'; // fully standalone
-                break;
+            // case 'dark-blue':
+            //     cssPath = 'css/dark-blue-obf'; // fully standalone
+            //     break;
             default:
                 cssPath = 'css/styles.css';
         }
@@ -1869,7 +1883,7 @@
 
     addKeyboardShortcut() {
         document.addEventListener('keydown', (e) => {
-        // Ctrl/Cmd + Shift + L
+        // Ctrl/Cmd + Shift + T
         if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'l') {
             e.preventDefault();
             this.toggleTheme();
@@ -3425,7 +3439,6 @@ class LanguageManager {
                 'lang-kinyarwanda': 'Kinyarwanda',
                 'footer-copyright': '© 2025 Frank Portfolio. All rights reserved.',
                 'footer-loading-version': 'Loading version...',
-                'loading-portfolio': 'Loading portfolio...'
             },
 
             fr: {
@@ -4308,16 +4321,22 @@ function createLanguageSwitcher(containerId) {
 }
 
 // Keyboard shortcuts for language switching
-document.addEventListener('keydown', function(e) {
-    // Ctrl/Cmd + Shift + L for language menu
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'L') {
-        e.preventDefault();
-        const langButtons = document.querySelectorAll('[data-lang]');
-        if (langButtons.length > 0) {
-            langButtons[0].focus();
-        }
+document.addEventListener('keydown', (e) => {
+  // Detect Ctrl (or Cmd) + Alt + L
+  if ((e.ctrlKey || e.metaKey) && e.altKey && e.key.toLowerCase() === 'l') {
+    e.preventDefault();
+
+    const langBtn = document.querySelector('#lang-toggle');
+    if (langBtn) {
+      langBtn.focus();
+      // optional open dropdown
+      langBtn.click();
+    } else {
+      console.warn('Language button not found');
     }
+  }
 });
+
 
 // RTL language support helper
 function updateTextDirection(langCode) {
@@ -5379,7 +5398,7 @@ const FeatureHighlight = {
         // Auto-hide after 6 seconds
         this.autoHideTimer = setTimeout(() => {
             this.dismiss(true);
-        }, 6000);
+        }, 10000);
         
         // Focus management for accessibility
         document.getElementById('featureTooltip').focus();
@@ -5413,27 +5432,29 @@ const FeatureHighlight = {
     
     // Bind event listeners
     bindEvents() {
-        // // Close on backdrop click
-        // document.addEventListener('click', (e) => {
-        //     if (e.target.classList.contains('highlight-backdrop')) {
-        //         this.dismiss();
-        //     }
-        // });
+        const system = document.getElementById('featureHighlightSystem');
+        const tooltip = document.getElementById('featureTooltip');
 
-        // Close on clicking outside tooltip but inside admin menu
-        document.getElementById('adminMenuDropdown').addEventListener('click', (e) => {
-            if (this.isActive && !e.target.closest('#featureTooltip')) {
-                this.dismiss();
+        // Hide when clicking anywhere outside tooltip
+        document.addEventListener('click', (e) => {
+            if (this.isActive && system.classList.contains('active')) {
+                const clickedInside = e.target.closest('#featureTooltip');
+                if (!clickedInside) {
+                    // Just hide visually, don’t dismiss permanently
+                    system.classList.remove('active');
+                    this.isActive = false;
+                }
             }
         });
-        
-        // Close on escape key
+
+        // Close on Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.isActive) {
-                this.dismiss();
+                system.classList.remove('active');
+                this.isActive = false;
             }
         });
-        
+
         // Reposition on resize
         let resizeTimer;
         window.addEventListener('resize', () => {
@@ -5454,15 +5475,10 @@ const FeatureHighlight = {
         
         // Show if never seen or seen more than 7 days ago
         if (daysSinceLastSeen > 7) {
-            setTimeout(() => this.show(), 6000);
+            setTimeout(() => this.show(), 2000);
         }
     }
 };
-
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    FeatureHighlight.init();
-});
 
 // Manual trigger function
 function showFeatureHighlight() {
@@ -5508,7 +5524,7 @@ Object.assign(FeatureHighlight, {
         
         // Simulate tour functionality
         setTimeout(() => {
-            showToast('🎉 Interactive tour coming soon! For now, explore the menu naturally.', 'success');
+            showToast('This Process won\'t work for your device.', 'error');
         }, 500);
     }
 });
@@ -5516,7 +5532,7 @@ Object.assign(FeatureHighlight, {
 // Demo feature functions
 function demoFeature(feature) {
     const messages = {
-        admin: 'Launching admin dashboard... ⚙️'
+        admin: 'Launching admin dashboard...'
     };
     
     // Trigger actual functionality
@@ -5556,1909 +5572,77 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// ==================== Interactive Tour System ==================== //
-// Interactive Tour System
-const InteractiveTour = {
-    isActive: false,
-    currentStep: 0,
-    steps: [
-        {
-            target: '#adminMenuToggle',
-            title: 'Admin Menu Toggle',
-            content: 'This is your admin menu button. Click it to access all admin features.',
-            action: 'highlight',
-            position: 'bottom'
-        },
-        {
-            target: '.admin-menu-item:first-child',
-            title: 'Copy Portfolio Link',
-            content: 'Click here to instantly copy your portfolio URL to clipboard. Perfect for sharing with clients!',
-            action: 'demo',
-            position: 'left',
-            demoFunction: 'copyPortfolioLink'
-        },
-        {
-            target: '.admin-menu-item:nth-child(2)',
-            title: 'Smart Notifications',
-            content: 'Your notification center! Stay updated with messages, comments, and admin announcements.',
-            action: 'demo',
-            position: 'left',
-            demoFunction: 'toggleNotifications'
-        },
-        {
-            target: '.admin-menu-item:nth-child(3)',
-            title: 'Admin Dashboard',
-            content: 'Your control center for posting messages, managing communications, and accessing analytics.',
-            action: 'demo',
-            position: 'left',
-            demoFunction: 'openAdminDashboard'
-        },
-        {
-            target: 'body',
-            title: 'Tour Complete!',
-            content: 'You\'re all set! The menu will auto-hide when scrolling and you can always press Escape to close panels quickly.',
-            action: 'completion',
-            position: 'center'
-        }
-    ],
+
+// =================== Keyboard Shortcuts Panel ==================== //
+// Keyboard Shortcuts Panel Management
+function openShortcutsPanel() {
+    const overlay = document.getElementById('shortcutsOverlay');
+    const panel = document.getElementById('shortcutsPanel');
     
-    // Initialize tour system
-    init() {
-        this.createTourElements();
-        this.bindEvents();
-    },
-    
-    // Create tour overlay and tooltip elements
-    createTourElements() {
-        // Tour overlay
-        const overlay = document.createElement('div');
-        overlay.id = 'tourOverlay';
-        overlay.className = 'tour-overlay';
-        document.body.appendChild(overlay);
-        
-        // Tour tooltip
-        const tooltip = document.createElement('div');
-        tooltip.id = 'tourTooltip';
-        tooltip.className = 'tour-tooltip';
-        tooltip.innerHTML = `
-            <div class="tour-tooltip-content">
-                <div class="tour-step-counter">
-                    <span class="current-step">1</span> of <span class="total-steps">${this.steps.length}</span>
-                </div>
-                <h3 class="tour-title"></h3>
-                <p class="tour-content"></p>
-                <div class="tour-actions">
-                    <button class="tour-btn tour-skip" onclick="InteractiveTour.skip()">Skip Tour</button>
-                    <div class="tour-navigation">
-                        <button class="tour-btn tour-prev" onclick="InteractiveTour.previousStep()">Previous</button>
-                        <button class="tour-btn tour-next" onclick="InteractiveTour.nextStep()">Next</button>
-                        <button class="tour-btn tour-try" onclick="InteractiveTour.tryFeature()" style="display: none;">Try It</button>
-                        <button class="tour-btn tour-finish" onclick="InteractiveTour.finish()" style="display: none;">Finish</button>
-                    </div>
-                </div>
-            </div>
-            <div class="tour-arrow"></div>
-        `;
-        document.body.appendChild(tooltip);
-        
-        // Add tour styles
-        this.addTourStyles();
-    },
-    
-    // Add tour CSS styles
-    addTourStyles() {
-        const style = document.createElement('style');
-        style.textContent = `
-            .tour-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.25);
-                z-index: 1000;
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.3s ease;
-                pointer-events: none;
-            }
-            
-            .tour-overlay.active {
-                opacity: 1;
-                visibility: visible;
-                pointer-events: auto;
-            }
-            
-            .tour-spotlight {
-                position: fixed;
-                border: 3px solid var(--accent-gold, #ffa200);
-                border-radius: 8px;
-                z-index: 1001;
-                cursor: default;
-                transition: all 0.4s ease;
-                background: transparent;
-            }
-            
-            .tour-spotlight::before {
-                content: '';
-                position: absolute;
-                top: -6px;
-                left: -6px;
-                right: -6px;
-                bottom: -6px;
-                border: 1px solid var(--accent-gold, #ffa200);
-                border-radius: 12px;
-                opacity: 0.5;
-                animation: tourPulse 2s ease-in-out infinite;
-            }
-            
-            .tour-tooltip {
-                position: fixed;
-                width: 320px;
-                background: var(--primary-navy, #0D0D0D);
-                border: 2px solid var(--accent-gold, #ffa200);
-                border-radius: 8px;
-                z-index: 1000;
-                opacity: 0;
-                visibility: hidden;
-                transform: scale(0.8);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                font-family: var(--font-primary, 'Inter', sans-serif);
-                cursor: default;
-            }
-            
-            .tour-tooltip.active {
-                opacity: 1;
-                visibility: visible;
-                transform: scale(1);
-            }
-            
-            .tour-tooltip-content {
-                padding: 24px;
-            }
-            
-            .tour-step-counter {
-                font-size: 12px;
-                color: var(--text-muted, #6c7293);
-                margin-bottom: 8px;
-                text-align: center;
-            }
-            
-            .current-step {
-                color: var(--accent-gold, #ffa200);
-                font-weight: 600;
-            }
-            
-            .tour-title {
-                margin: 0 0 12px 0;
-                font-size: 18px;
-                font-weight: 600;
-                color: var(--text-primary, #ffffff);
-            }
-            
-            .tour-content {
-                margin: 0 0 20px 0;
-                font-size: 14px;
-                line-height: 1.5;
-                color: var(--text-secondary, #b8bcc8);
-            }
-            
-            .tour-actions {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-            }
-            
-            .tour-navigation {
-                display: flex;
-                gap: 8px;
-                justify-content: flex-end;
-            }
-            
-            .tour-btn {
-                padding: 8px 16px;
-                border: 1px solid var(--border-color, #2d3142);
-                border-radius: 4px;
-                font-size: 12px;
-                font-weight: 500;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                font-family: var(--font-primary, 'Inter', sans-serif);
-            }
-            
-            .tour-skip {
-                background: transparent;
-                color: var(--text-muted, #6c7293);
-                align-self: flex-start;
-            }
-            
-            .tour-skip:hover {
-                color: var(--text-secondary, #b8bcc8);
-                border-color: var(--text-muted, #6c7293);
-            }
-            
-            .tour-prev {
-                background: transparent;
-                color: var(--text-secondary, #b8bcc8);
-            }
-            
-            .tour-prev:hover {
-                border-color: var(--accent-gold, #ffa200);
-                color: var(--accent-gold, #ffa200);
-            }
-            
-            .tour-prev:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-            }
-            
-            .tour-next, .tour-try, .tour-finish {
-                background: var(--accent-gold, #ffa200);
-                color: var(--primary-navy, #0D0D0D);
-                border-color: var(--accent-gold, #ffa200);
-            }
-            
-            .tour-next:hover, .tour-try:hover, .tour-finish:hover {
-                background: #f39c12;
-                border-color: #f39c12;
-            }
-            
-            .tour-arrow {
-                position: absolute;
-                width: 12px;
-                height: 12px;
-                background: var(--primary-navy, #0D0D0D);
-                border: 2px solid var(--accent-gold, #ffa200);
-                transform: rotate(45deg);
-                border-top: none;
-                border-left: none;
-            }
-            
-            .tour-arrow.top {
-                bottom: -8px;
-                left: 50%;
-                margin-left: -6px;
-            }
-            
-            .tour-arrow.bottom {
-                top: -8px;
-                left: 50%;
-                margin-left: -6px;
-                transform: rotate(225deg);
-            }
-            
-            .tour-arrow.left {
-                right: -8px;
-                top: 50%;
-                margin-top: -6px;
-                transform: rotate(315deg);
-            }
-            
-            .tour-arrow.right {
-                left: -8px;
-                top: 50%;
-                margin-top: -6px;
-                transform: rotate(135deg);
-            }
-            
-            @keyframes tourPulse {
-                0%, 100% { opacity: 0.3; transform: scale(1); }
-                50% { opacity: 0.6; transform: scale(1.02); }
-            }
-            
-            @media (max-width: 768px) {
-                .tour-tooltip {
-                    width: 280px;
-                }
-                
-                .tour-tooltip-content {
-                    padding: 20px;
-                }
-                
-                .tour-navigation {
-                    flex-direction: column;
-                }
-                
-                .tour-btn {
-                    width: 100%;
-                    justify-content: center;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    },
-    
-    // Start the interactive tour
-    start() {
-        if (this.isActive) return;
-        
-        this.isActive = true;
-        this.currentStep = 0;
-        
-        // Show overlay
-        const overlay = document.getElementById('tourOverlay');
+    if (overlay && panel) {
         overlay.classList.add('active');
-        
-        // Prevent body scroll
+        panel.classList.add('active');
         document.body.style.overflow = 'hidden';
-        
-        // Start first step
-        this.showStep(0);
-        
-        // Track tour start
-        // if (typeof showToast === 'function') {
-        //     showToast('Interactive tour started! Follow the highlights.', 'success');
-        // }
-    },
-    
-    // Show specific step
-    showStep(stepIndex) {
-        if (stepIndex < 0 || stepIndex >= this.steps.length) return;
-        
-        this.currentStep = stepIndex;
-        const step = this.steps[stepIndex];
-        const tooltip = document.getElementById('tourTooltip');
-        
-        // Remove existing spotlight
-        const existingSpotlight = document.querySelector('.tour-spotlight');
-        if (existingSpotlight) {
-            existingSpotlight.remove();
-        }
-        
-        // Update tooltip content
-        tooltip.querySelector('.current-step').textContent = stepIndex + 1;
-        tooltip.querySelector('.tour-title').textContent = step.title;
-        tooltip.querySelector('.tour-content').textContent = step.content;
-        
-        // Update button visibility
-        const prevBtn = tooltip.querySelector('.tour-prev');
-        const nextBtn = tooltip.querySelector('.tour-next');
-        const tryBtn = tooltip.querySelector('.tour-try');
-        const finishBtn = tooltip.querySelector('.tour-finish');
-        
-        prevBtn.style.display = stepIndex > 0 ? 'inline-block' : 'none';
-        prevBtn.disabled = stepIndex === 0;
-        
-        if (step.action === 'completion') {
-            nextBtn.style.display = 'none';
-            tryBtn.style.display = 'none';
-            finishBtn.style.display = 'inline-block';
-        } else if (step.action === 'demo') {
-            nextBtn.style.display = 'none';
-            tryBtn.style.display = 'inline-block';
-            finishBtn.style.display = 'none';
-        } else {
-            nextBtn.style.display = 'inline-block';
-            tryBtn.style.display = 'none';
-            finishBtn.style.display = 'none';
-        }
-        
-        // Handle menu visibility logic
-        const menu = document.getElementById('adminMenuDropdown');
-        
-        if (step.target === 'body') {
-            // Center tooltip for completion step and close menu
-            if (menu) menu.classList.remove('active');
-            this.positionTooltip(null, 'center');
-        } 
-        else if (step.target === '#adminMenuToggle') {
-            // First step - ensure menu is visible while highlighting toggle
-            if (menu && !menu.classList.contains('active')) {
-                menu.classList.add('active');
-            }
-            this.handleTargetStep(step);
-        }
+    }
+}
 
-        else if (step.target.includes('.admin-menu-item')) {
-            // Menu item steps - ensure menu is open and wait for it
-            this.ensureMenuOpenAndShowStep(step);
-            return; // Exit here, ensureMenuOpenAndShowStep will handle the rest
-        } else {
-            this.handleTargetStep(step);
-        }
-        
-        // Show tooltip
-        tooltip.classList.add('active');
-    },
+function closeShortcutsPanel() {
+    const overlay = document.getElementById('shortcutsOverlay');
+    const panel = document.getElementById('shortcutsPanel');
     
-    // Handle steps that target specific elements
-    handleTargetStep(step) {
-        const target = document.querySelector(step.target);
-        if (target) {
-            this.highlightElement(target);
-            this.positionTooltip(target, step.position);
-        } else {
-            console.warn(`Tour target not found: ${step.target}`);
-        }
-    },
-    
-    // Ensure menu is open before highlighting menu items
-    ensureMenuOpenAndShowStep(step) {
-        const menu = document.getElementById('adminMenuDropdown');
-        const tooltip = document.getElementById('tourTooltip');
-        
-        if (!menu) {
-            console.error('Admin menu dropdown not found');
-            return;
-        }
-        
-        // Open menu if not already open
-        if (!menu.classList.contains('active')) {
-            menu.classList.add('active');
-            
-            // Wait for menu animation to complete before highlighting
-            setTimeout(() => {
-                this.handleTargetStep(step);
-                tooltip.classList.add('active');
-            }, 200);
-        } else {
-            // Menu already open, proceed immediately
-            this.handleTargetStep(step);
-            tooltip.classList.add('active');
-        }
-    },
-    
-    // Highlight target element
-    highlightElement(element) {
-        const rect = element.getBoundingClientRect();
-        const spotlight = document.createElement('div');
-        spotlight.className = 'tour-spotlight';
-        spotlight.style.top = (rect.top - 8) + 'px';
-        spotlight.style.left = (rect.left - 8) + 'px';
-        spotlight.style.width = (rect.width + 16) + 'px';
-        spotlight.style.height = (rect.height + 16) + 'px';
-        
-        document.body.appendChild(spotlight);
-        
-        // Make element interactive
-        element.style.position = 'relative';
-        element.style.zIndex = '1003';
-        element.style.pointerEvents = 'auto';
-    },
-    
-    // Position tooltip relative to target
-    positionTooltip(target, position) {
-        const tooltip = document.getElementById('tourTooltip');
-        const arrow = tooltip.querySelector('.tour-arrow');
-        
-        // Reset arrow classes
-        arrow.className = 'tour-arrow';
-        
-        if (position === 'center') {
-            // Center on screen
-            tooltip.style.top = '50%';
-            tooltip.style.left = '50%';
-            tooltip.style.transform = 'translate(-50%, -50%) scale(1)';
-            arrow.style.display = 'none';
-            return;
-        }
-        
-        if (!target) return;
-        
-        const rect = target.getBoundingClientRect();
-        const tooltipRect = tooltip.getBoundingClientRect();
-        let top, left;
-        
-        arrow.style.display = 'block';
-        
-        switch (position) {
-            case 'bottom':
-                top = rect.bottom + 16;
-                left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
-                arrow.classList.add('top');
-                break;
-            case 'top':
-                top = rect.top - tooltipRect.height - 16;
-                left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
-                arrow.classList.add('bottom');
-                break;
-            case 'left':
-                top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
-                left = rect.left - tooltipRect.width - 16;
-                arrow.classList.add('right');
-                break;
-            case 'right':
-                top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
-                left = rect.right + 16;
-                arrow.classList.add('left');
-                break;
-            default:
-                top = rect.bottom + 16;
-                left = rect.left;
-                arrow.classList.add('top');
-        }
-        
-        // Keep tooltip in viewport
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        
-        if (left < 10) left = 10;
-        if (left + tooltipRect.width > viewportWidth - 10) {
-            left = viewportWidth - tooltipRect.width - 10;
-        }
-        if (top < 10) top = 10;
-        if (top + tooltipRect.height > viewportHeight - 10) {
-            top = viewportHeight - tooltipRect.height - 10;
-        }
-        
-        tooltip.style.top = top + 'px';
-        tooltip.style.left = left + 'px';
-        tooltip.style.transform = 'scale(1)';
-    },
-    
-    // Next step
-    nextStep() {
-        if (this.currentStep < this.steps.length - 1) {
-            this.showStep(this.currentStep + 1);
-        }
-    },
-    
-    // Previous step
-    previousStep() {
-        if (this.currentStep > 0) {
-            this.showStep(this.currentStep - 1);
-        }
-    },
-    
-    // Try current feature
-    tryFeature() {
-        const step = this.steps[this.currentStep];
-        if (step.demoFunction && typeof window[step.demoFunction] === 'function') {
-            // Execute the demo function
-            window[step.demoFunction]();
-            
-            // Show success feedback
-            // if (typeof showToast === 'function') {
-            //     showToast(`Great! You tried "${step.title}". Let's continue the tour.`, 'success');
-            // }
-            
-            // Move to next step after a delay
-            setTimeout(() => {
-                this.nextStep();
-            }, 1000);
-        }
-    },
-    
-    // Skip entire tour
-    skip() {
-        if (confirm('Are you sure you want to skip the interactive tour?')) {
-            this.finish();
-        }
-    },
-    
-    // Finish tour
-    finish() {
-        this.isActive = false;
-        
-        // Hide elements
-        const overlay = document.getElementById('tourOverlay');
-        const tooltip = document.getElementById('tourTooltip');
-        const spotlight = document.querySelector('.tour-spotlight');
-        
+    if (overlay && panel) {
         overlay.classList.remove('active');
-        tooltip.classList.remove('active');
-        if (spotlight) spotlight.remove();
-        
-        // Restore body scroll
+        panel.classList.remove('active');
         document.body.style.overflow = '';
-        
-        // Hide admin menu
-        const menu = document.getElementById('adminMenuDropdown');
-        if (menu) menu.classList.remove('active');
-        
-        // Reset element styles
-        document.querySelectorAll('[style*="z-index: 10013"]').forEach(el => {
-            el.style.position = '';
-            el.style.zIndex = '';
-            el.style.pointerEvents = '';
-        });
-        
-        // Show completion message
-        if (typeof showToast === 'function') {
-            showToast('Tour completed! You\'re now ready to use all admin features.', 'success');
-        }
-        
-        // Remember tour completion
-        localStorage.setItem('interactive-tour-completed', Date.now());
-    },
-    
-    // Bind event listeners
-    bindEvents() {
-        // Close tour on escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.isActive) {
-                this.skip();
-            }
-        });
-        
-        // Handle window resize
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            if (!this.isActive) return;
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                this.showStep(this.currentStep);
-            }, 100);
-        });
-        
-        // Prevent clicks outside tour elements
-        document.addEventListener('click', (e) => {
-            if (this.isActive && !e.target.closest('.tour-tooltip') && !e.target.closest('.tour-spotlight')) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        }, true);
-    },
-    
-    // Check if tour should auto-start
-    // checkAutoStart() {
-    //     const completed = localStorage.getItem('interactive-tour-completed');
-    //     const highlightSeen = localStorage.getItem('feature-highlight-seen');
-        
-    //     // Auto-start tour if highlight was seen but tour never completed
-    //     if (highlightSeen && !completed) {
-    //         setTimeout(() => {
-    //             if (confirm('Would you like to take an interactive tour of the admin menu features?')) {
-    //                 this.start();
-    //             }
-    //         }, 2000);
-    //     }
-    // }
-};
-
-// Enhanced FeatureHighlight integration
-Object.assign(FeatureHighlight, {
-    // Start Interactive Tour from modal
-    startTour() {
-        this.closeLearnMoreModal();
-        this.dismiss();
-        
-        // Small delay to ensure modal is closed
-        setTimeout(() => {
-            InteractiveTour.start();
-        }, 300);
-    }
-});
-
-// Initialize tour system when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    InteractiveTour.init();
-    InteractiveTour.checkAutoStart();
-});
-/**
- * Professional Music Modal System
- * Version: 2.0.0
- * Features: Accessibility-first, Performance-optimized, Properly architected
- */
-
-class FrankPortfolioProfessionalMusicModalSystem {
-    constructor(config = {}) {
-        // Configuration with defaults
-        this.config = {
-            animationDuration: config.animationDuration || 300,
-            enableKeyboardNav: config.enableKeyboardNav !== false,
-            autoShowOnLoad: config.autoShowOnLoad || false,
-            totalSteps: config.totalSteps || 4,
-            theme: config.theme || 'dark',
-            ...config
-        };
-
-        // State management
-        this.state = {
-            isVisible: false,
-            currentStep: 0,
-            isAnimating: false,
-            focusTrapEnabled: false
-        };
-
-        // Cached DOM references
-        this.elements = {
-            overlay: null,
-            modal: null,
-            closeButton: null,
-            prevButton: null,
-            nextButton: null,
-            stepDots: [],
-            steps: [],
-            focusableElements: []
-        };
-
-        // Bound methods for proper event cleanup
-        this.boundHandlers = {
-            handleKeyDown: this.handleKeyDown.bind(this),
-            handleOverlayClick: this.handleOverlayClick.bind(this),
-            handleClose: this.hide.bind(this),
-            handlePrevious: this.previousStep.bind(this),
-            handleNext: this.nextStep.bind(this)
-        };
-
-        this.initialize();
-    }
-
-    initialize() {
-        try {
-            this.injectStyles();
-            this.createModalDOM();
-            this.cacheElements();
-            this.attachEventListeners();
-            
-            if (this.config.autoShowOnLoad) {
-                // Small delay for better UX
-                setTimeout(() => this.show(), 100);
-            }
-        } catch (error) {
-            console.error('FrankPortfolioProfessionalMusicModalSystem initialization failed:', error);
-        }
-    }
-
-    injectStyles() {
-        if (document.getElementById('frankportfolio-music-modal-system-styles')) {
-            return; // Styles already injected
-        }
-
-        const styleSheet = document.createElement('style');
-        styleSheet.id = 'frankportfolio-music-modal-system-styles';
-        styleSheet.textContent = `
-            /* CSS Variables for Theme Management */
-            :root {
-                --frankportfolio-modal-primary-bg: #0a0a0a;
-                --frankportfolio-modal-secondary-bg: #141414;
-                --frankportfolio-modal-accent: #ffa200;
-                --frankportfolio-modal-accent-hover: #ff8800;
-                --frankportfolio-modal-text-primary: #ffffff;
-                --frankportfolio-modal-text-secondary: #b8bcc8;
-                --frankportfolio-modal-text-muted: #6c7293;
-                --frankportfolio-modal-border: #2d3142;
-                --frankportfolio-modal-shadow: rgba(0, 0, 0, 0.5);
-                --frankportfolio-modal-overlay-bg: rgba(0, 0, 0, 0.85);
-                --frankportfolio-modal-transition-speed: 300ms;
-                --frankportfolio-modal-border-radius: 16px;
-            }
-
-            body.light-mode {
-                --frankportfolio-modal-primary-bg: #ffffff;
-                --frankportfolio-modal-secondary-bg: #f8f9fa;
-                --frankportfolio-modal-text-primary: #2c3e50;
-                --frankportfolio-modal-text-secondary: #5a6c7d;
-                --frankportfolio-modal-text-muted: #8b9dc3;
-                --frankportfolio-modal-border: #e1e8ed;
-                --frankportfolio-modal-shadow: rgba(0, 0, 0, 0.15);
-                --frankportfolio-modal-overlay-bg: rgba(0, 0, 0, 0.6);
-            }
-
-            /* Overlay */
-            .frankportfolio-professional-music-modal-overlay-container {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: var(--frankportfolio-modal-overlay-bg);
-                backdrop-filter: blur(8px);
-                z-index: 999999;
-                display: none;
-                opacity: 0;
-                transition: opacity var(--frankportfolio-modal-transition-speed) ease-out;
-                cursor: default;
-            }
-
-            .frankportfolio-professional-music-modal-overlay-container.frankportfolio-modal-visible-state {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-            }
-
-            .frankportfolio-professional-music-modal-overlay-container.frankportfolio-modal-animated-in {
-                opacity: 1;
-            }
-
-            /* Modal Container */
-          .frankportfolio-professional-music-modal-main-container {
-                background: var(--frankportfolio-modal-primary-bg);
-                border-radius: 5px;
-                box-shadow: 0 24px 48px var(--frankportfolio-modal-shadow);
-                border: 1px solid var(--frankportfolio-modal-border);
-                max-width: 640px;
-                width: 100%;
-                max-height: 100vh;
-                overflow-y: auto;  /* ✅ allow vertical scroll */
-                position: relative;
-                transform: scale(0.95) translateY(20px);
-                transition: transform var(--frankportfolio-modal-transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
-                cursor: auto;
-            }
-
-            .frankportfolio-modal-animated-in .frankportfolio-professional-music-modal-main-container {
-                transform: scale(1) translateY(0);
-            }
-
-            /* Header Section */
-            .frankportfolio-professional-music-modal-header-section {
-                background: linear-gradient(135deg, #ffa200 0%, #ff8800 100%);
-                padding: 28px 32px;
-                position: relative;
-                overflow: hidden;
-            }
-
-            .frankportfolio-professional-music-modal-header-pattern-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                opacity: 0.15;
-                background-image: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 50%),
-                                  radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
-                pointer-events: none;
-            }
-
-            .frankportfolio-professional-music-modal-close-button {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                background: rgba(0, 0, 0, 0.25);
-                border: none;
-                color: #ffffff;
-                font-size: 18px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 200ms ease;
-                z-index: 10;
-            }
-
-            .frankportfolio-professional-music-modal-close-button:hover {
-                background: rgba(0, 0, 0, 0.4);
-                transform: scale(1.1);
-            }
-
-            .frankportfolio-professional-music-modal-close-button:focus-visible {
-                outline: 2px solid #ffffff;
-                outline-offset: 2px;
-            }
-
-            .frankportfolio-professional-music-modal-title-text {
-                font-size: 32px;
-                font-weight: 700;
-                color: #ffffff;
-                margin: 0 0 8px 0;
-                position: relative;
-                z-index: 1;
-                line-height: 1.2;
-            }
-
-            .frankportfolio-professional-music-modal-subtitle-text {
-                font-size: 16px;
-                color: rgba(255, 255, 255, 0.95);
-                margin: 0;
-                position: relative;
-                z-index: 1;
-                line-height: 1.4;
-            }
-
-            /* Body Section */
-            .frankportfolio-professional-music-modal-body-section {
-                background: var(--frankportfolio-modal-primary-bg);
-            }
-
-            .frankportfolio-professional-music-modal-content-showcase {
-                position: relative;
-                min-height: 380px;
-            }
-
-            .frankportfolio-professional-music-modal-step-container {
-                display: none;
-                padding: 36px 32px;
-                opacity: 0;
-                transform: translateX(30px);
-                transition: opacity 400ms ease-out, transform 400ms ease-out;
-            }
-
-            .frankportfolio-professional-music-modal-step-container.frankportfolio-step-active-state {
-                display: block;
-            }
-
-            .frankportfolio-professional-music-modal-step-container.frankportfolio-step-visible-state {
-                opacity: 1;
-                transform: translateX(0);
-            }
-
-            .frankportfolio-professional-music-modal-step-header-wrapper {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                margin-bottom: 24px;
-            }
-
-            .frankportfolio-professional-music-modal-step-icon-wrapper {
-                width: 56px;
-                height: 56px;
-                background: linear-gradient(135deg, var(--frankportfolio-modal-accent) 0%, var(--frankportfolio-modal-accent-hover) 100%);
-                border-radius: 14px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 24px;
-                flex-shrink: 0;
-                box-shadow: 0 4px 12px rgba(255, 162, 0, 0.3);
-            }
-
-            .frankportfolio-professional-music-modal-step-title-text {
-                font-size: 24px;
-                font-weight: 600;
-                color: var(--frankportfolio-modal-text-primary);
-                margin: 0;
-                line-height: 1.3;
-            }
-
-            .frankportfolio-professional-music-modal-step-description-text {
-                font-size: 16px;
-                line-height: 1.65;
-                color: var(--frankportfolio-modal-text-secondary);
-                margin-bottom: 28px;
-            }
-
-            .frankportfolio-professional-music-modal-feature-demo-box {
-                background: var(--frankportfolio-modal-secondary-bg);
-                border-radius: 12px;
-                padding: 24px;
-                border: 1px solid var(--frankportfolio-modal-border);
-            }
-
-            .frankportfolio-professional-music-modal-demo-preview-row {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                padding-bottom: 20px;
-                border-bottom: 1px solid var(--frankportfolio-modal-border);
-                margin-bottom: 20px;
-            }
-
-            .frankportfolio-professional-music-modal-demo-icon-box {
-                width: 48px;
-                height: 48px;
-                background: var(--frankportfolio-modal-accent);
-                border-radius: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 20px;
-                flex-shrink: 0;
-            }
-
-            .frankportfolio-professional-music-modal-demo-text-content {
-                flex: 1;
-                min-width: 0;
-            }
-
-            .frankportfolio-professional-music-modal-demo-title {
-                font-size: 16px;
-                font-weight: 600;
-                color: var(--frankportfolio-modal-text-primary);
-                margin: 0 0 4px 0;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .frankportfolio-professional-music-modal-demo-subtitle {
-                font-size: 14px;
-                color: var(--frankportfolio-modal-text-muted);
-                margin: 0;
-            }
-
-            .frankportfolio-professional-music-modal-highlights-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 14px;
-            }
-
-            .frankportfolio-professional-music-modal-highlight-item {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                font-size: 14px;
-                color: var(--frankportfolio-modal-text-secondary);
-            }
-
-            .frankportfolio-professional-music-modal-highlight-icon {
-                color: var(--frankportfolio-modal-accent);
-                width: 18px;
-                height: 18px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-            }
-
-            /* Navigation Footer */
-            .frankportfolio-professional-music-modal-navigation-footer {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 24px 32px;
-                background: var(--frankportfolio-modal-secondary-bg);
-                border-top: 1px solid var(--frankportfolio-modal-border);
-            }
-
-            .frankportfolio-professional-music-modal-step-indicators-wrapper {
-                display: flex;
-                gap: 10px;
-                align-items: center;
-            }
-
-            .frankportfolio-professional-music-modal-step-dot-indicator {
-                width: 10px;
-                height: 10px;
-                border-radius: 50%;
-                background: var(--frankportfolio-modal-border);
-                transition: all 250ms ease;
-                cursor: pointer;
-                border: 2px solid transparent;
-            }
-
-            .frankportfolio-professional-music-modal-step-dot-indicator:hover {
-                background: var(--frankportfolio-modal-text-muted);
-                transform: scale(1.15);
-            }
-
-            .frankportfolio-professional-music-modal-step-dot-indicator:focus-visible {
-                outline: 2px solid var(--frankportfolio-modal-accent);
-                outline-offset: 3px;
-            }
-
-            .frankportfolio-professional-music-modal-step-dot-indicator.frankportfolio-dot-active-state {
-                background: var(--frankportfolio-modal-accent);
-                transform: scale(1.3);
-                box-shadow: 0 0 8px rgba(255, 162, 0, 0.4);
-            }
-
-            .frankportfolio-professional-music-modal-navigation-buttons-wrapper {
-                display: flex;
-                gap: 12px;
-            }
-
-            .frankportfolio-professional-music-modal-navigation-button {
-                padding: 12px 24px;
-                border-radius: 10px;
-                font-size: 15px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 200ms ease;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                border: none;
-                font-family: inherit;
-            }
-
-            .frankportfolio-professional-music-modal-navigation-button:disabled {
-                opacity: 0.4;
-                cursor: not-allowed;
-                transform: none !important;
-            }
-
-            .frankportfolio-professional-music-modal-navigation-button:focus-visible {
-                outline: 2px solid var(--frankportfolio-modal-accent);
-                outline-offset: 2px;
-            }
-
-            .frankportfolio-professional-music-modal-button-secondary {
-                background: transparent;
-                color: var(--frankportfolio-modal-text-secondary);
-                border: 1px solid var(--frankportfolio-modal-border);
-            }
-
-            .frankportfolio-professional-music-modal-button-secondary:hover:not(:disabled) {
-                background: var(--frankportfolio-modal-primary-bg);
-                color: var(--frankportfolio-modal-text-primary);
-                border-color: var(--frankportfolio-modal-accent);
-            }
-
-            .frankportfolio-professional-music-modal-button-primary {
-                background: linear-gradient(135deg, var(--frankportfolio-modal-accent) 0%, var(--frankportfolio-modal-accent-hover) 100%);
-                color: #ffffff;
-                border: none;
-                box-shadow: 0 2px 8px rgba(255, 162, 0, 0.3);
-            }
-
-            .frankportfolio-professional-music-modal-button-primary:hover:not(:disabled) {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(255, 162, 0, 0.4);
-            }
-
-            /* Responsive Design */
-            @media (max-width: 768px) {
-                .frankportfolio-professional-music-modal-overlay-container {
-                    padding: 12px;
-                }
-
-                .frankportfolio-professional-music-modal-main-container {
-                    max-height: 90vh;
-                }
-
-                .frankportfolio-professional-music-modal-header-section {
-                    padding: 24px 20px;
-                }
-
-                .frankportfolio-professional-music-modal-title-text {
-                    font-size: 26px;
-                }
-
-                .frankportfolio-professional-music-modal-subtitle-text {
-                    font-size: 14px;
-                }
-
-                .frankportfolio-professional-music-modal-step-container {
-                    padding: 28px 20px;
-                    min-height: 320px;
-                }
-
-                .frankportfolio-professional-music-modal-highlights-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .frankportfolio-professional-music-modal-navigation-footer {
-                    padding: 20px;
-                    flex-direction: column;
-                    gap: 16px;
-                }
-
-                .frankportfolio-professional-music-modal-navigation-buttons-wrapper {
-                    width: 100%;
-                }
-
-                .frankportfolio-professional-music-modal-navigation-button {
-                    flex: 1;
-                    justify-content: center;
-                }
-            }
-
-            @media (max-width: 480px) {
-                .frankportfolio-professional-music-modal-step-icon-wrapper {
-                    width: 48px;
-                    height: 48px;
-                    font-size: 20px;
-                }
-
-                .frankportfolio-professional-music-modal-step-title-text {
-                    font-size: 20px;
-                }
-
-                .frankportfolio-professional-music-modal-navigation-button {
-                    padding: 10px 16px;
-                    font-size: 14px;
-                }
-            }
-
-            /* Accessibility */
-            @media (prefers-reduced-motion: reduce) {
-                .frankportfolio-professional-music-modal-overlay-container,
-                .frankportfolio-professional-music-modal-main-container,
-                .frankportfolio-professional-music-modal-step-container,
-                .frankportfolio-professional-music-modal-step-dot-indicator,
-                .frankportfolio-professional-music-modal-navigation-button {
-                    transition: none !important;
-                    animation: none !important;
-                }
-            }
-
-            /* Focus visible for keyboard navigation */
-            .frankportfolio-professional-music-modal-overlay-container *:focus {
-                outline: none;
-            }
-
-            .frankportfolio-professional-music-modal-overlay-container *:focus-visible {
-                outline: 2px solid var(--frankportfolio-modal-accent);
-                outline-offset: 2px;
-            }
-        `;
-        
-        document.head.appendChild(styleSheet);
-    }
-
-    createModalDOM() {
-        const overlay = document.createElement('div');
-        overlay.className = 'frankportfolio-professional-music-modal-overlay-container';
-        overlay.setAttribute('role', 'dialog');
-        overlay.setAttribute('aria-modal', 'true');
-        overlay.setAttribute('aria-labelledby', 'frankportfolio-modal-title');
-        overlay.setAttribute('aria-describedby', 'frankportfolio-modal-description');
-
-        const modal = document.createElement('div');
-        modal.className = 'frankportfolio-professional-music-modal-main-container';
-
-        // Header
-        const header = this.createHeader();
-        modal.appendChild(header);
-
-        // Body with steps
-        const body = this.createBody();
-        modal.appendChild(body);
-
-        // Navigation
-        const navigation = this.createNavigation();
-        modal.appendChild(navigation);
-
-        overlay.appendChild(modal);
-        document.body.appendChild(overlay);
-
-        this.elements.overlay = overlay;
-        this.elements.modal = modal;
-    }
-
-    createHeader() {
-        const header = document.createElement('div');
-        header.className = 'frankportfolio-professional-music-modal-header-section';
-
-        const pattern = document.createElement('div');
-        pattern.className = 'frankportfolio-professional-music-modal-header-pattern-overlay';
-        pattern.setAttribute('aria-hidden', 'true');
-
-        const closeButton = document.createElement('button');
-        closeButton.className = 'frankportfolio-professional-music-modal-close-button';
-        closeButton.setAttribute('aria-label', 'Close modal dialog');
-        closeButton.setAttribute('type', 'button');
-        closeButton.innerHTML = '&times;';
-
-        const title = document.createElement('h2');
-        title.id = 'frankportfolio-modal-title';
-        title.className = 'frankportfolio-professional-music-modal-title-text';
-        title.textContent = 'New Music Experience';
-
-        const subtitle = document.createElement('p');
-        subtitle.id = 'frankportfolio-modal-description';
-        subtitle.className = 'frankportfolio-professional-music-modal-subtitle-text';
-        subtitle.textContent = 'Stream live from Audiomack with advanced features';
-
-        header.appendChild(pattern);
-        header.appendChild(closeButton);
-        header.appendChild(title);
-        header.appendChild(subtitle);
-
-        return header;
-    }
-
-    createBody() {
-        const body = document.createElement('div');
-        body.className = 'frankportfolio-professional-music-modal-body-section';
-
-        const showcase = document.createElement('div');
-        showcase.className = 'frankportfolio-professional-music-modal-content-showcase';
-
-        const steps = this.getStepsContent();
-        steps.forEach((stepData, index) => {
-            const step = this.createStep(stepData, index);
-            showcase.appendChild(step);
-        });
-
-        body.appendChild(showcase);
-        return body;
-    }
-
-    createStep(stepData, index) {
-        const step = document.createElement('div');
-        step.className = 'frankportfolio-professional-music-modal-step-container';
-        step.setAttribute('data-step-index', index);
-        step.setAttribute('role', 'tabpanel');
-        step.setAttribute('aria-labelledby', `frankportfolio-step-${index}-title`);
-        
-        if (index === 0) {
-            step.classList.add('frankportfolio-step-active-state');
-        }
-
-        // Header
-        const headerWrapper = document.createElement('div');
-        headerWrapper.className = 'frankportfolio-professional-music-modal-step-header-wrapper';
-
-        const iconWrapper = document.createElement('div');
-        iconWrapper.className = 'frankportfolio-professional-music-modal-step-icon-wrapper';
-        iconWrapper.setAttribute('aria-hidden', 'true');
-        iconWrapper.textContent = stepData.icon;
-
-        const titleText = document.createElement('h3');
-        titleText.id = `frankportfolio-step-${index}-title`;
-        titleText.className = 'frankportfolio-professional-music-modal-step-title-text';
-        titleText.textContent = stepData.title;
-
-        headerWrapper.appendChild(iconWrapper);
-        headerWrapper.appendChild(titleText);
-
-        // Description
-        const description = document.createElement('p');
-        description.className = 'frankportfolio-professional-music-modal-step-description-text';
-        description.textContent = stepData.description;
-
-        // Demo box
-        const demoBox = this.createDemoBox(stepData);
-
-        step.appendChild(headerWrapper);
-        step.appendChild(description);
-        step.appendChild(demoBox);
-
-        return step;
-    }
-
-    createDemoBox(stepData) {
-        const demoBox = document.createElement('div');
-        demoBox.className = 'frankportfolio-professional-music-modal-feature-demo-box';
-
-        if (stepData.showPreview) {
-            const previewRow = document.createElement('div');
-            previewRow.className = 'frankportfolio-professional-music-modal-demo-preview-row';
-
-            const iconBox = document.createElement('div');
-            iconBox.className = 'frankportfolio-professional-music-modal-demo-icon-box';
-            iconBox.setAttribute('aria-hidden', 'true');
-            iconBox.textContent = '🎵';
-
-            const textContent = document.createElement('div');
-            textContent.className = 'frankportfolio-professional-music-modal-demo-text-content';
-
-            const demoTitle = document.createElement('h4');
-            demoTitle.className = 'frankportfolio-professional-music-modal-demo-title';
-            demoTitle.textContent = 'Featured Playlist';
-
-            const demoSubtitle = document.createElement('p');
-            demoSubtitle.className = 'frankportfolio-professional-music-modal-demo-subtitle';
-            demoSubtitle.textContent = 'Live from Audiomack';
-
-            textContent.appendChild(demoTitle);
-            textContent.appendChild(demoSubtitle);
-            previewRow.appendChild(iconBox);
-            previewRow.appendChild(textContent);
-            demoBox.appendChild(previewRow);
-        }
-
-        // Highlights
-        if (stepData.highlights && stepData.highlights.length > 0) {
-            const highlightsGrid = document.createElement('div');
-            highlightsGrid.className = 'frankportfolio-professional-music-modal-highlights-grid';
-
-            stepData.highlights.forEach(highlight => {
-                const item = document.createElement('div');
-                item.className = 'frankportfolio-professional-music-modal-highlight-item';
-
-                const icon = document.createElement('span');
-                icon.className = 'frankportfolio-professional-music-modal-highlight-icon';
-                icon.setAttribute('aria-hidden', 'true');
-                icon.textContent = '✓';
-
-                const text = document.createElement('span');
-                text.textContent = highlight;
-
-                item.appendChild(icon);
-                item.appendChild(text);
-                highlightsGrid.appendChild(item);
-            });
-
-            demoBox.appendChild(highlightsGrid);
-        }
-
-        return demoBox;
-    }
-
-    createNavigation() {
-        const nav = document.createElement('nav');
-        nav.className = 'frankportfolio-professional-music-modal-navigation-footer';
-        nav.setAttribute('aria-label', 'Modal step navigation');
-
-        // Step indicators
-        const indicators = document.createElement('div');
-        indicators.className = 'frankportfolio-professional-music-modal-step-indicators-wrapper';
-        indicators.setAttribute('role', 'tablist');
-        indicators.setAttribute('aria-label', 'Step indicators');
-
-        for (let i = 0; i < this.config.totalSteps; i++) {
-            const dot = document.createElement('button');
-            dot.className = 'frankportfolio-professional-music-modal-step-dot-indicator';
-            dot.setAttribute('type', 'button');
-            dot.setAttribute('role', 'tab');
-            dot.setAttribute('aria-label', `Go to step ${i + 1}`);
-            dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
-            dot.setAttribute('data-step-index', i);
-            
-            if (i === 0) {
-                dot.classList.add('frankportfolio-dot-active-state');
-            }
-            
-            indicators.appendChild(dot);
-        }
-
-        // Navigation buttons
-        const buttons = document.createElement('div');
-        buttons.className = 'frankportfolio-professional-music-modal-navigation-buttons-wrapper';
-
-        const prevButton = document.createElement('button');
-        prevButton.className = 'frankportfolio-professional-music-modal-navigation-button frankportfolio-professional-music-modal-button-secondary';
-        prevButton.setAttribute('type', 'button');
-        prevButton.setAttribute('aria-label', 'Previous step');
-        prevButton.disabled = true;
-        prevButton.innerHTML = '<span aria-hidden="true">←</span> Previous';
-
-        const nextButton = document.createElement('button');
-        nextButton.className = 'frankportfolio-professional-music-modal-navigation-button frankportfolio-professional-music-modal-button-primary';
-        nextButton.setAttribute('type', 'button');
-        nextButton.setAttribute('aria-label', 'Next step');
-        nextButton.innerHTML = 'Next <span aria-hidden="true">→</span>';
-
-        buttons.appendChild(prevButton);
-        buttons.appendChild(nextButton);
-
-        nav.appendChild(indicators);
-        nav.appendChild(buttons);
-
-        return nav;
-    }
-
-    cacheElements() {
-        this.elements.closeButton = this.elements.overlay.querySelector('.frankportfolio-professional-music-modal-close-button');
-        this.elements.prevButton = this.elements.overlay.querySelector('.frankportfolio-professional-music-modal-button-secondary');
-        this.elements.nextButton = this.elements.overlay.querySelector('.frankportfolio-professional-music-modal-button-primary');
-        this.elements.stepDots = Array.from(this.elements.overlay.querySelectorAll('.frankportfolio-professional-music-modal-step-dot-indicator'));
-        this.elements.steps = Array.from(this.elements.overlay.querySelectorAll('.frankportfolio-professional-music-modal-step-container'));
-        this.cacheFocusableElements();
-    }
-
-    cacheFocusableElements() {
-        const focusableSelectors = [
-            'button:not([disabled])',
-            'a[href]',
-            'input:not([disabled])',
-            'select:not([disabled])',
-            'textarea:not([disabled])',
-            '[tabindex]:not([tabindex="-1"])'
-        ].join(', ');
-
-        this.elements.focusableElements = Array.from(
-            this.elements.modal.querySelectorAll(focusableSelectors)
-        );
-    }
-
-    attachEventListeners() {
-        if (!this.elements.closeButton || !this.elements.prevButton || !this.elements.nextButton) {
-            console.error('Required elements not found for event attachment');
-            return;
-        }
-
-        // Close button
-        this.elements.closeButton.addEventListener('click', this.boundHandlers.handleClose);
-
-        // Overlay click (close on backdrop)
-        this.elements.overlay.addEventListener('click', this.boundHandlers.handleOverlayClick);
-
-        // Navigation buttons
-        this.elements.prevButton.addEventListener('click', this.boundHandlers.handlePrevious);
-        this.elements.nextButton.addEventListener('click', this.boundHandlers.handleNext);
-
-        // Step indicator dots
-        this.elements.stepDots.forEach((dot, index) => {
-            dot.addEventListener('click', () => this.goToStep(index));
-        });
-
-        // Keyboard navigation
-        if (this.config.enableKeyboardNav) {
-            document.addEventListener('keydown', this.boundHandlers.handleKeyDown);
-        }
-    }
-
-    removeEventListeners() {
-        if (this.elements.closeButton) {
-            this.elements.closeButton.removeEventListener('click', this.boundHandlers.handleClose);
-        }
-
-        if (this.elements.overlay) {
-            this.elements.overlay.removeEventListener('click', this.boundHandlers.handleOverlayClick);
-        }
-
-        if (this.elements.prevButton) {
-            this.elements.prevButton.removeEventListener('click', this.boundHandlers.handlePrevious);
-        }
-
-        if (this.elements.nextButton) {
-            this.elements.nextButton.removeEventListener('click', this.boundHandlers.handleNext);
-        }
-
-        if (this.config.enableKeyboardNav) {
-            document.removeEventListener('keydown', this.boundHandlers.handleKeyDown);
-        }
-    }
-
-    handleKeyDown(event) {
-        if (!this.state.isVisible || this.state.isAnimating) return;
-
-        switch (event.key) {
-            case 'Escape':
-                event.preventDefault();
-                this.hide();
-                break;
-            case 'ArrowLeft':
-                event.preventDefault();
-                this.previousStep();
-                break;
-            case 'ArrowRight':
-                event.preventDefault();
-                this.nextStep();
-                break;
-            case 'Tab':
-                this.handleTabTrap(event);
-                break;
-        }
-    }
-
-    handleTabTrap(event) {
-        if (!this.elements.focusableElements.length) return;
-
-        const firstFocusable = this.elements.focusableElements[0];
-        const lastFocusable = this.elements.focusableElements[this.elements.focusableElements.length - 1];
-
-        if (event.shiftKey) {
-            if (document.activeElement === firstFocusable) {
-                event.preventDefault();
-                lastFocusable.focus();
-            }
-        } else {
-            if (document.activeElement === lastFocusable) {
-                event.preventDefault();
-                firstFocusable.focus();
-            }
-        }
-    }
-
-    handleOverlayClick(event) {
-        if (event.target === this.elements.overlay) {
-            this.hide();
-        }
-    }
-
-    show() {
-        if (this.state.isVisible || this.state.isAnimating) return;
-
-        this.state.isAnimating = true;
-        this.state.isVisible = true;
-
-        // Store previously focused element
-        this.previouslyFocusedElement = document.activeElement;
-
-        // Show overlay
-        this.elements.overlay.classList.add('frankportfolio-modal-visible-state');
-        
-        // Prevent body scroll
-        document.body.style.overflow = 'hidden';
-
-        // Trigger animation
-        requestAnimationFrame(() => {
-            this.elements.overlay.classList.add('frankportfolio-modal-animated-in');
-            
-            // Show first step with animation
-            const firstStep = this.elements.steps[0];
-            if (firstStep) {
-                setTimeout(() => {
-                    firstStep.classList.add('frankportfolio-step-visible-state');
-                }, 50);
-            }
-        });
-
-        // Animation complete
-        setTimeout(() => {
-            this.state.isAnimating = false;
-            this.enableFocusTrap();
-            
-            // Focus close button for accessibility
-            if (this.elements.closeButton) {
-                this.elements.closeButton.focus();
-            }
-        }, this.config.animationDuration);
-
-        // Announce to screen readers
-        this.announceToScreenReader('Modal opened. Use arrow keys to navigate steps, Escape to close.');
-    }
-
-    hide() {
-        if (!this.state.isVisible || this.state.isAnimating) return;
-
-        this.state.isAnimating = true;
-
-        // Remove animation classes
-        this.elements.overlay.classList.remove('frankportfolio-modal-animated-in');
-
-        setTimeout(() => {
-            this.elements.overlay.classList.remove('frankportfolio-modal-visible-state');
-            document.body.style.overflow = '';
-            this.state.isVisible = false;
-            this.state.isAnimating = false;
-            this.disableFocusTrap();
-
-            // Restore focus
-            if (this.previouslyFocusedElement && this.previouslyFocusedElement.focus) {
-                this.previouslyFocusedElement.focus();
-            }
-        }, this.config.animationDuration);
-
-        this.announceToScreenReader('Modal closed');
-    }
-
-    nextStep() {
-        if (this.state.isAnimating || this.state.currentStep >= this.config.totalSteps - 1) return;
-        
-        const nextStep = this.state.currentStep + 1;
-        this.goToStep(nextStep);
-    }
-
-    previousStep() {
-        if (this.state.isAnimating || this.state.currentStep <= 0) return;
-        
-        const prevStep = this.state.currentStep - 1;
-        this.goToStep(prevStep);
-    }
-
-    goToStep(stepIndex) {
-        if (this.state.isAnimating || 
-            stepIndex < 0 || 
-            stepIndex >= this.config.totalSteps || 
-            stepIndex === this.state.currentStep) {
-            return;
-        }
-
-        this.state.isAnimating = true;
-        const previousStepIndex = this.state.currentStep;
-
-        // Hide current step
-        const currentStepElement = this.elements.steps[previousStepIndex];
-        if (currentStepElement) {
-            currentStepElement.classList.remove('frankportfolio-step-visible-state');
-        }
-
-        setTimeout(() => {
-            // Update state
-            this.state.currentStep = stepIndex;
-
-            // Hide all steps
-            this.elements.steps.forEach(step => {
-                step.classList.remove('frankportfolio-step-active-state', 'frankportfolio-step-visible-state');
-            });
-
-            // Show new step
-            const newStepElement = this.elements.steps[stepIndex];
-            if (newStepElement) {
-                newStepElement.classList.add('frankportfolio-step-active-state');
-                
-                // Trigger animation
-                requestAnimationFrame(() => {
-                    newStepElement.classList.add('frankportfolio-step-visible-state');
-                });
-            }
-
-            this.updateNavigationUI();
-            this.state.isAnimating = false;
-
-            // Announce step change
-            const stepTitle = newStepElement?.querySelector('.frankportfolio-professional-music-modal-step-title-text')?.textContent;
-            if (stepTitle) {
-                this.announceToScreenReader(`Step ${stepIndex + 1} of ${this.config.totalSteps}: ${stepTitle}`);
-            }
-        }, 200);
-    }
-
-    updateNavigationUI() {
-        // Update step dots
-        this.elements.stepDots.forEach((dot, index) => {
-            const isActive = index === this.state.currentStep;
-            dot.classList.toggle('frankportfolio-dot-active-state', isActive);
-            dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        });
-
-        // Update prev button
-        this.elements.prevButton.disabled = this.state.currentStep === 0;
-
-        // Update next button
-        const isLastStep = this.state.currentStep === this.config.totalSteps - 1;
-        this.elements.nextButton.disabled = false; // Never disable
-
-        if (isLastStep) {
-            this.elements.nextButton.innerHTML = 'Get Started <span aria-hidden="true">🚀</span>';
-            this.elements.nextButton.setAttribute('aria-label', 'Get started with music player');
-            // On last step, open music player and close modal
-            this.elements.nextButton.onclick = () => {
-                this.hide();
-                // Wait for modal to close, then open music player
-                setTimeout(() => {
-                    if (window.frankportMusicPlayer) {
-                        window.frankportMusicPlayer.showMusicCard();
-                    }
-                }, 400);
-            };
-        } else {
-            this.elements.nextButton.innerHTML = 'Next <span aria-hidden="true">→</span>';
-            this.elements.nextButton.setAttribute('aria-label', 'Next step');
-            // Reset to normal next behavior
-            this.elements.nextButton.onclick = null;
-        }
-    }
-
-    enableFocusTrap() {
-        this.state.focusTrapEnabled = true;
-    }
-
-    disableFocusTrap() {
-        this.state.focusTrapEnabled = false;
-    }
-
-    announceToScreenReader(message) {
-        // Create or get live region
-        let liveRegion = document.getElementById('frankportfolio-modal-live-region');
-        
-        if (!liveRegion) {
-            liveRegion = document.createElement('div');
-            liveRegion.id = 'frankportfolio-modal-live-region';
-            liveRegion.setAttribute('role', 'status');
-            liveRegion.setAttribute('aria-live', 'polite');
-            liveRegion.setAttribute('aria-atomic', 'true');
-            liveRegion.style.position = 'absolute';
-            liveRegion.style.left = '-10000px';
-            liveRegion.style.width = '1px';
-            liveRegion.style.height = '1px';
-            liveRegion.style.overflow = 'hidden';
-            document.body.appendChild(liveRegion);
-        }
-
-        // Clear and set new message
-        liveRegion.textContent = '';
-        setTimeout(() => {
-            liveRegion.textContent = message;
-        }, 100);
-    }
-
-    getStepsContent() {
-        return [
-            {
-                icon: '📡',
-                title: 'Live Music Streaming',
-                description: 'Experience your favorite tracks streaming live from Audiomack. Real-time playback with full playlist functionality and high-quality audio streaming.',
-                showPreview: true,
-                highlights: [
-                    'Real-time streaming',
-                    'Full playlist access',
-                    'High-quality audio',
-                    'Secure embedding'
-                ]
-            },
-            {
-                icon: '🔄',
-                title: 'Smart Loading States',
-                description: 'Beautiful loading animations with informative messages keep you updated during buffering, connection issues, or track changes.',
-                showPreview: false,
-                highlights: [
-                    'Animated feedback',
-                    'Dynamic messages',
-                    'Auto-detection',
-                    'Smooth transitions'
-                ]
-            },
-            {
-                icon: '💬',
-                title: 'TikTok-Style Layout',
-                description: 'Comments open in a side panel while keeping the music player visible and functional. Perfect balance of interaction and content visibility.',
-                showPreview: false,
-                highlights: [
-                    'Side-by-side layout',
-                    'Player stays active',
-                    'Real-time updates',
-                    'Mobile optimized'
-                ]
-            },
-            {
-                icon: '⭐',
-                title: 'Professional Features',
-                description: 'Everything you expect from a premium music player: draggable interface, responsive design, persistent storage, and seamless portfolio integration.',
-                showPreview: false,
-                highlights: [
-                    'Draggable positioning',
-                    'Minimize/Maximize',
-                    'Mobile responsive',
-                    'Persistent state',
-                    'Keyboard shortcuts',
-                    'Secure & accessible'
-                ]
-            }
-        ];
-    }
-
-    destroy() {
-        this.removeEventListeners();
-        
-        if (this.elements.overlay && this.elements.overlay.parentNode) {
-            this.elements.overlay.parentNode.removeChild(this.elements.overlay);
-        }
-
-        const styleSheet = document.getElementById('frankportfolio-music-modal-system-styles');
-        if (styleSheet && styleSheet.parentNode) {
-            styleSheet.parentNode.removeChild(styleSheet);
-        }
-
-        const liveRegion = document.getElementById('frankportfolio-modal-live-region');
-        if (liveRegion && liveRegion.parentNode) {
-            liveRegion.parentNode.removeChild(liveRegion);
-        }
-
-        // Clear references
-        this.elements = {};
-        this.state = {};
-    }
-
-    // Public API
-    toggle() {
-        if (this.state.isVisible) {
-            this.hide();
-        } else {
-            this.show();
-        }
-    }
-
-    getCurrentStep() {
-        return this.state.currentStep;
-    }
-
-    isOpen() {
-        return this.state.isVisible;
     }
 }
 
-// Initialize on DOM ready
-if (typeof window !== 'undefined') {
-    let modalInstance = null;
-
-    const initializeModal = () => {
-        if (modalInstance) {
-            console.warn('FrankPortfolioProfessionalMusicModalSystem already initialized');
-            return modalInstance;
-        }
-
-        modalInstance = new FrankPortfolioProfessionalMusicModalSystem({
-            autoShowOnLoad: false,
-            enableKeyboardNav: true
-        });
-
-        return modalInstance;
-    };
-
-    // Auto-initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeModal);
+function toggleShortcutsReminder() {
+    const checkbox = document.getElementById('dontShowAgain');
+    if (checkbox.checked) {
+        localStorage.setItem('hideShortcutsPanel', 'true');
+        showToast('Shortcuts panel will not show on startup', 'info');
     } else {
-        initializeModal();
+        localStorage.removeItem('hideShortcutsPanel');
     }
+}
 
-    // Global API
-    window.FrankPortfolioProfessionalMusicModalSystem = FrankPortfolioProfessionalMusicModalSystem;
+// Auto-show shortcuts panel on first visit
+function checkFirstVisitShortcuts() {
+    const hasSeenShortcuts = localStorage.getItem('hideShortcutsPanel');
+    const hasVisited = sessionStorage.getItem('visited-shortcuts');
     
-    window.showMusicModal = () => {
-        if (!modalInstance) {
-            modalInstance = initializeModal();
-        }
-        modalInstance.show();
-    };
-
-    window.hideMusicModal = () => {
-        if (modalInstance) {
-            modalInstance.hide();
-        }
-    };
-
-    window.toggleMusicModal = () => {
-        if (!modalInstance) {
-            modalInstance = initializeModal();
-        }
-        modalInstance.toggle();
-    };
+    if (!hasSeenShortcuts && !hasVisited) {
+        setTimeout(() => {
+            openShortcutsPanel();
+            sessionStorage.setItem('visited-shortcuts', 'true');
+        }, 3000);
+    }
 }
 
-// Export for module systems
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = FrankPortfolioProfessionalMusicModalSystem;
-}
+// Press "?" key to open shortcuts panel
+document.addEventListener('keydown', (e) => {
+    if (e.key === '?' && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        const activeElement = document.activeElement;
+        const isTyping = activeElement.tagName === 'INPUT' || 
+                        activeElement.tagName === 'TEXTAREA' || 
+                        activeElement.isContentEditable;
+        
+        if (!isTyping) {
+            e.preventDefault();
+            openShortcutsPanel();
+        }
+    }
+});
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    checkFirstVisitShortcuts();
+});
+
+// Close on overlay click
+document.getElementById('shortcutsOverlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'shortcutsOverlay') {
+        closeShortcutsPanel();
+    }
+});
