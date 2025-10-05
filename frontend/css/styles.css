@@ -6619,7 +6619,7 @@ body:not(.light-mode) .tooltip-dismiss:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.5);
     z-index: var(--z-modal, 900);
     opacity: 0;
     visibility: hidden;
@@ -6641,17 +6641,18 @@ body:not(.light-mode) .tooltip-dismiss:hover {
     width: 100%;
     height: 100vh;
     max-width: 700px;
-    max-height: 100vh;
+    max-height: 98vh;
     border-radius: 0; /* 🔥 no rounding for fullscreen */
     overflow-y: auto;
 
     background: url('https://images.unsplash.com/photo-1459802071246-377c0346da93?w=1200&auto=format&fit=crop&q=80') center/cover no-repeat,
                 var(--admin-bg, #191919);
 
-    border: none; /* optional: remove border for seamless fullscreen */
+    border: 1px solid var(--border-color);
     transform: scale(1) translateY(0); /* 🔥 no shrinking */
     transition: none; /* keep fullscreen stable */
     cursor: default;
+    border-radius: 5px;
 }
 
 .learn-more-modal-overlay.active .learn-more-modal {
@@ -7188,7 +7189,7 @@ body.light-mode .modal-footer {
         margin: 0;      /* 🔥 remove margins */
         border-radius: 0;
         height: 100vh;
-        max-height: 100vh;
+        max-height: 98vh;
     }
     
     .modal-header {
@@ -7756,4 +7757,478 @@ body.light-mode .checkbox-custom {
     .shortcut-description {
         font-size: 13px;
     }
+}
+
+
+ /* CSS Variables for Theme Management */
+    /* CSS Variables for Theme Management */
+:root {
+    --frankportfolio-modal-primary-bg: #0a0a0a;
+    --frankportfolio-modal-secondary-bg: #141414;
+    --frankportfolio-modal-accent: #ffa200;
+    --frankportfolio-modal-accent-hover: #ff8800;
+    --frankportfolio-modal-text-primary: #ffffff;
+    --frankportfolio-modal-text-secondary: #b8bcc8;
+    --frankportfolio-modal-text-muted: #6c7293;
+    --frankportfolio-modal-border: #2d3142;
+    --frankportfolio-modal-shadow: rgba(0, 0, 0, 0.5);
+    --frankportfolio-modal-overlay-bg: rgba(0, 0, 0, 0.46);
+    --frankportfolio-modal-transition-speed: 300ms;
+    --frankportfolio-modal-border-radius: 16px;
+}
+
+body.light-mode {
+    --frankportfolio-modal-primary-bg: #ffffff;
+    --frankportfolio-modal-secondary-bg: #f8f9fa;
+    --frankportfolio-modal-text-primary: #2c3e50;
+    --frankportfolio-modal-text-secondary: #5a6c7d;
+    --frankportfolio-modal-text-muted: #8b9dc3;
+    --frankportfolio-modal-border: #e1e8ed;
+    --frankportfolio-modal-shadow: rgba(0, 0, 0, 0.15);
+    --frankportfolio-modal-overlay-bg: rgba(0, 0, 0, 0.6);
+}
+
+/* Overlay */
+.frankportfolio-professional-music-modal-overlay-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--frankportfolio-modal-overlay-bg);
+    z-index: 999999;
+    display: none;
+    opacity: 0;
+    transition: opacity var(--frankportfolio-modal-transition-speed) ease-out;
+    cursor: default;
+}
+
+.frankportfolio-professional-music-modal-overlay-container.frankportfolio-modal-visible-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.frankportfolio-professional-music-modal-overlay-container.frankportfolio-modal-animated-in {
+    opacity: 1;
+}
+
+/* Modal Container */
+.frankportfolio-professional-music-modal-main-container {
+    background: var(--frankportfolio-modal-primary-bg);
+    border-radius: 5px;
+    box-shadow: 0 24px 48px var(--frankportfolio-modal-shadow);
+    border: 1px solid var(--frankportfolio-modal-border);
+    max-width: 640px;
+    width: 100%;
+    max-height: 100vh;
+    position: relative;
+    transform: scale(0.95) translateY(20px);
+    transition: transform var(--frankportfolio-modal-transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.frankportfolio-modal-animated-in .frankportfolio-professional-music-modal-main-container {
+    transform: scale(1) translateY(0);
+}
+
+/* Header Section */
+.frankportfolio-professional-music-modal-header-section {
+    background: linear-gradient(135deg, #ffa200 0%, #ff8800 100%);
+    padding: 28px 32px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.frankportfolio-professional-music-modal-header-pattern-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.15;
+    background-image: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.frankportfolio-professional-music-modal-close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.25);
+    border: none;
+    color: #ffffff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 200ms ease;
+    z-index: 10;
+}
+
+.frankportfolio-professional-music-modal-close-button:hover {
+    background: rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.frankportfolio-professional-music-modal-close-button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.frankportfolio-professional-music-modal-title-text {
+    font-size: 32px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+    position: relative;
+    z-index: 1;
+    line-height: 1.2;
+}
+
+.frankportfolio-professional-music-modal-subtitle-text {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    line-height: 1.4;
+}
+
+/* Body Section */
+.frankportfolio-professional-music-modal-body-section {
+    background: var(--frankportfolio-modal-primary-bg);
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.frankportfolio-professional-music-modal-content-showcase {
+    position: relative;
+    height: 100%;
+}
+
+.frankportfolio-professional-music-modal-step-container {
+    display: none;
+    padding: 36px 32px;
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 400ms ease-out, transform 400ms ease-out;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.frankportfolio-professional-music-modal-step-container.frankportfolio-step-active-state {
+    display: block;
+}
+
+.frankportfolio-professional-music-modal-step-container.frankportfolio-step-visible-state {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.frankportfolio-professional-music-modal-step-header-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.frankportfolio-professional-music-modal-step-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--frankportfolio-modal-accent) 0%, var(--frankportfolio-modal-accent-hover) 100%);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.frankportfolio-professional-music-modal-step-title-text {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--frankportfolio-modal-text-primary);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.frankportfolio-professional-music-modal-step-description-text {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--frankportfolio-modal-text-secondary);
+    margin-bottom: 28px;
+}
+
+.frankportfolio-professional-music-modal-feature-demo-box {
+    background: var(--frankportfolio-modal-secondary-bg);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--frankportfolio-modal-border);
+}
+
+.frankportfolio-professional-music-modal-demo-preview-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--frankportfolio-modal-border);
+    margin-bottom: 20px;
+}
+
+.frankportfolio-professional-music-modal-demo-icon-box {
+    width: 48px;
+    height: 48px;
+    background: var(--frankportfolio-modal-accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.frankportfolio-professional-music-modal-demo-text-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.frankportfolio-professional-music-modal-demo-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--frankportfolio-modal-text-primary);
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.frankportfolio-professional-music-modal-demo-subtitle {
+    font-size: 14px;
+    color: var(--frankportfolio-modal-text-muted);
+    margin: 0;
+}
+
+.frankportfolio-professional-music-modal-highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+}
+
+.frankportfolio-professional-music-modal-highlight-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--frankportfolio-modal-text-secondary);
+}
+
+.frankportfolio-professional-music-modal-highlight-icon {
+    color: var(--frankportfolio-modal-accent);
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Navigation Footer */
+.frankportfolio-professional-music-modal-navigation-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 32px;
+    background: var(--frankportfolio-modal-secondary-bg);
+    border-top: 1px solid var(--frankportfolio-modal-border);
+    flex-shrink: 0;
+}
+
+.frankportfolio-professional-music-modal-step-indicators-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.frankportfolio-professional-music-modal-step-dot-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--frankportfolio-modal-border);
+    transition: all 250ms ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.frankportfolio-professional-music-modal-step-dot-indicator:hover {
+    background: var(--frankportfolio-modal-text-muted);
+    transform: scale(1.15);
+}
+
+.frankportfolio-professional-music-modal-step-dot-indicator:focus-visible {
+    outline: 2px solid var(--frankportfolio-modal-accent);
+    outline-offset: 3px;
+}
+
+.frankportfolio-professional-music-modal-step-dot-indicator.frankportfolio-dot-active-state {
+    background: var(--frankportfolio-modal-accent);
+    transform: scale(1.3);
+}
+
+.frankportfolio-professional-music-modal-navigation-buttons-wrapper {
+    display: flex;
+    gap: 12px;
+}
+
+.frankportfolio-professional-music-modal-navigation-button {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 200ms ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    font-family: inherit;
+}
+
+.frankportfolio-professional-music-modal-navigation-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.frankportfolio-professional-music-modal-navigation-button:focus-visible {
+    outline: 2px solid var(--frankportfolio-modal-accent);
+    outline-offset: 2px;
+}
+
+.frankportfolio-professional-music-modal-button-secondary {
+    background: transparent;
+    color: var(--frankportfolio-modal-text-secondary);
+    border: 1px solid var(--frankportfolio-modal-border);
+}
+
+.frankportfolio-professional-music-modal-button-secondary:hover:not(:disabled) {
+    background: var(--frankportfolio-modal-primary-bg);
+    color: var(--frankportfolio-modal-text-primary);
+    border-color: var(--frankportfolio-modal-accent);
+}
+
+.frankportfolio-professional-music-modal-button-primary {
+    background: linear-gradient(135deg, var(--frankportfolio-modal-accent) 0%, var(--frankportfolio-modal-accent-hover) 100%);
+    color: #ffffff;
+    border: none;
+}
+
+.frankportfolio-professional-music-modal-button-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .frankportfolio-professional-music-modal-overlay-container {
+        padding: 0;
+    }
+
+    .frankportfolio-professional-music-modal-overlay-container.frankportfolio-modal-visible-state {
+        align-items: stretch;
+        justify-content: stretch;
+    }
+
+    .frankportfolio-professional-music-modal-main-container {
+        max-width: 100%;
+        max-height: 100vh;
+        height: 100vh;
+        border-radius: 0;
+        border: none;
+    }
+
+    .frankportfolio-professional-music-modal-header-section {
+        padding: 24px 20px;
+    }
+
+    .frankportfolio-professional-music-modal-title-text {
+        font-size: 26px;
+    }
+
+    .frankportfolio-professional-music-modal-subtitle-text {
+        font-size: 14px;
+    }
+
+    .frankportfolio-professional-music-modal-step-container {
+        padding: 28px 20px;
+        min-height: 320px;
+    }
+
+    .frankportfolio-professional-music-modal-highlights-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .frankportfolio-professional-music-modal-navigation-footer {
+        padding: 20px;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .frankportfolio-professional-music-modal-navigation-buttons-wrapper {
+        width: 100%;
+        margin-bottom: 50px;
+    }
+
+    .frankportfolio-professional-music-modal-navigation-button {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .frankportfolio-professional-music-modal-step-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    .frankportfolio-professional-music-modal-step-title-text {
+        font-size: 20px;
+    }
+
+    .frankportfolio-professional-music-modal-navigation-button {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .frankportfolio-professional-music-modal-overlay-container,
+    .frankportfolio-professional-music-modal-main-container,
+    .frankportfolio-professional-music-modal-step-container,
+    .frankportfolio-professional-music-modal-step-dot-indicator,
+    .frankportfolio-professional-music-modal-navigation-button {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* Focus visible for keyboard navigation */
+.frankportfolio-professional-music-modal-overlay-container *:focus {
+    outline: none;
+}
+
+.frankportfolio-professional-music-modal-overlay-container *:focus-visible {
+    outline: 2px solid var(--frankportfolio-modal-accent);
+    outline-offset: 2px;
 }

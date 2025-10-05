@@ -105,8 +105,8 @@
                 { progress: 40, text: 'Rendering interface...', duration: 700 },
                 { progress: 60, text: 'Optimizing performance...', duration: 800 },
                 { progress: 80, text: 'Finalizing details...', duration: 700 },
-                { progress: 99, text: 'Launching FrankPort...', duration: 2000 },
-                { progress: 100, text: 'Welcome!', duration: 600 }
+                { progress: 99, text: 'Launching FrankPort...', duration: 1000 },
+                { progress: 100, text: 'Welcome to FrankPort!', duration: 300 }
             ];
 
             let currentStep = 0;
@@ -4768,34 +4768,34 @@ function showBackupLogin() {
 }
 
 // Admin Login (placeholder - will connect to backend)
-function adminLogin(event) {
-    event.preventDefault();
-    const password = document.getElementById('adminPassword').value;
+// function adminLogin(event) {
+//     event.preventDefault();
+//     const password = document.getElementById('adminPassword').value;
     
-    // Placeholder validation - will be replaced with backend call
-    if (password === 'demo123') { // Temporary for testing
-        isAdminLoggedIn = true;
-        showAdminContent();
-        showToast('Welcome back, Admin Frank!', 'success');
-    } else {
-        showToast('Invalid password', 'error');
-    }
-}
+//     // Placeholder validation - will be replaced with backend call
+//     if (password === 'demo123') { // Temporary for testing
+//         isAdminLoggedIn = true;
+//         showAdminContent();
+//         showToast('Welcome back, Admin Frank!', 'success');
+//     } else {
+//         showToast('Invalid password', 'error');
+//     }
+// }
 
 // Admin Backup Login (placeholder)
-function adminBackupLogin(event) {
-    event.preventDefault();
-    const backupKey = document.getElementById('backupKey').value;
+// function adminBackupLogin(event) {
+//     event.preventDefault();
+//     const backupKey = document.getElementById('backupKey').value;
     
-    // Placeholder validation
-    if (backupKey === 'BACKUP2025') { // Temporary for testing
-        isAdminLoggedIn = true;
-        showAdminContent();
-        showToast('Access recovered successfully!', 'success');
-    } else {
-        showToast('Invalid backup key', 'error');
-    }
-}
+//     // Placeholder validation
+//     if (backupKey === 'BACKUP2025') { // Temporary for testing
+//         isAdminLoggedIn = true;
+//         showAdminContent();
+//         showToast('Access recovered successfully!', 'success');
+//     } else {
+//         showToast('Invalid backup key', 'error');
+//     }
+// }
 
 // Show Admin Content
 function showAdminContent() {
@@ -5002,11 +5002,17 @@ function markAsRead(messageId) {
 }
 
 // Enhanced admin login with backend
+// Admin Login with loading state
 function adminLogin(event) {
     event.preventDefault();
     const password = document.getElementById('adminPassword').value;
     
-    // UPDATED: Use single API endpoint
+    // Get the submit button and show loading state
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Logging in...';
+    submitBtn.disabled = true;
+    
     fetch(`${API_BASE}/api/admin?action=login`, {
         method: 'POST',
         headers: {
@@ -5028,15 +5034,28 @@ function adminLogin(event) {
     .catch(error => {
         console.error('Login error:', error);
         showToast('Connection error', 'error');
+    })
+    .finally(() => {
+        // Re-enable button (only if login failed, otherwise we're in admin dashboard)
+        if (!isAdminLoggedIn) {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
     });
 }
 
 // Enhanced backup login with backend
+// Admin Backup Login with loading state
 function adminBackupLogin(event) {
     event.preventDefault();
     const backupKey = document.getElementById('backupKey').value;
     
-    // UPDATED: Use single API endpoint
+    // Get the submit button and show loading state
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Verifying...';
+    submitBtn.disabled = true;
+    
     fetch(`${API_BASE}/api/admin?action=login`, {
         method: 'POST',
         headers: {
@@ -5058,6 +5077,13 @@ function adminBackupLogin(event) {
     .catch(error => {
         console.error('Backup login error:', error);
         showToast('Connection error', 'error');
+    })
+    .finally(() => {
+        // Re-enable button (only if login failed, otherwise we're in admin dashboard)
+        if (!isAdminLoggedIn) {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
     });
 }
 
@@ -5259,26 +5285,26 @@ function checkNotifications() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                updateNotificationBadge(data.count);
-            }
-        })
-        .catch(error => {
-            console.error('Error checking notifications:', error);
-        });
-}
+                    updateNotificationBadge(data.count);
+                }
+            })
+            .catch(error => {
+                console.error('Error checking notifications:', error);
+            }); 
+    }
 
-// HTML escape utility (UNCHANGED)
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
+    // HTML escape utility (UNCHANGED)
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
 
-// Start notification checking when page loads (UNCHANGED)
-document.addEventListener('DOMContentLoaded', function() {
-    // Start checking for notifications periodically
-    startNotificationChecking();
-});
+    // Start notification checking when page loads (UNCHANGED)
+    document.addEventListener('DOMContentLoaded', function() {
+        // Start checking for notifications periodically
+        startNotificationChecking();
+    });
 
 // ==================== Notification Highlight Card ==================== //
 // Advanced Feature Highlight System
