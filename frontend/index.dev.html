@@ -70,7 +70,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css-obf">
     <!-- HTML: swappable stylesheet -->
     <!-- <link id="theme-stylesheet" rel="stylesheet" href="css/dark-blue.css"> -->
 </head>
@@ -1280,20 +1280,21 @@
                         <li><button class="legal-link" onclick="changeLanguage('rw')" data-lang="rw" data-translate="lang-kinyarwanda">Kinyarwanda</button></li>
                     </ul>
                 </div>
-                <div class="footer-column">
-                <h4 data-translate="footer-accessibility">Accessibility</h4>
-                <ul>
-                    <li><button class="theme-button" onclick="themeController.setTheme('dark')" aria-label="Dark Mode" data-translate="footer-dark-mode">Dark Mode</button></li>
-                    <!-- <li><button class="theme-button" onclick="themeController.setTheme('dark-blue')" aria-label="Dark Blue Mode" data-translate="footer-dark-blue-mode">Default</button></li> -->
-                    <li><button class="theme-button" onclick="themeController.setTheme('light')" aria-label="Light Mode" data-translate="footer-light-mode">Light Mode</button></li>
-                </ul>
-                </div>
                  <div class="footer-column">
                         <h4 >What's New?</h4>
                         <ul>
+                            <li><button class="legal-link" onclick="openFrankAIShowcase()" aria-label="FrankPort Chatbot">AI ChatBot</button></li>
                             <li><button class="legal-link" onclick="FeatureHighlight.openLearnMoreModal()" aria-label="New Features">Admin Menu</button></li>
                             <li><button class="legal-link" onclick="showMusicModal()" aria-label="New Features">Music Streaming</button></li>
                         </ul>
+                    </div>
+                    <div class="footer-column">
+                    <h4 data-translate="footer-accessibility">Accessibility</h4>
+                    <ul>
+                        <li><button class="theme-button" onclick="themeController.setTheme('dark')" aria-label="Dark Mode" data-translate="footer-dark-mode">Dark Mode</button></li>
+                        <!-- <li><button class="theme-button" onclick="themeController.setTheme('dark-blue')" aria-label="Dark Blue Mode" data-translate="footer-dark-blue-mode">Default</button></li> -->
+                        <li><button class="theme-button" onclick="themeController.setTheme('light')" aria-label="Light Mode" data-translate="footer-light-mode">Light Mode</button></li>
+                    </ul>
                     </div>
                      <div class="footer-column">
                         <h4 >Help</h4>
@@ -1346,6 +1347,40 @@
         </div>
     </div>
 
+    <!-- Chatbot Button and Overlay -->
+    <button id="openChatbot" class="chatbot-btn" aria-label="Chat with Frank Ai">Ask anything...</button>
+
+    <div id="chatbotOverlay" class="chatbot-overlay">
+    <div class="chat-container">
+        <div class="chat-header">
+        FrankAI Assistant
+        <button id="closeChatbot" class="close-chat-btn">Done</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+            <div class="message-content">
+            Hello! I'm <b>FrankAI</b> your smart assistant. I can answer questions about technology, science, general knowledge, and more. How can I help you today?
+            </div>
+        </div>
+        </div>
+        <!-- AI Disclaimer (collapsible) -->
+        <div class="chat-warning" id="chatWarning">
+        <div class="chat-warning-header" id="toggleWarning" title="View safety notice">
+            <span class="chat-warning-header-icon">ⓘ</span> <p class="chat-warning-header-p">AI Info</p>
+        </div>
+        <div class="chat-warning-content">
+            ⚠️ FrankAI can make mistakes. Please verify important information.
+        </div>
+        </div>
+
+        <div class="chat-input-container">
+        <input type="text" id="userInput" placeholder="Ask anything" autocomplete="off">
+        <button id="sendBtn">Send</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- Legal Loading Bar -->
     <div id="legalLoadingBar" style="display: none;">
         <div class="legal-loading-progress"></div>
     </div>
@@ -1394,7 +1429,7 @@
                             <li><i class="fas fa-check"></i>Perfect for sharing on social media</li>
                         </ul>
                         <div class="demo-preview">
-                            <div class="demo-url">https://frankport.com</div>
+                            <div class="demo-url">https://www.frankport.com</div>
                             <button class="demo-btn" onclick="demoFeature('copy')">
                                 <i class="fas fa-copy"></i> Try it
                             </button>
@@ -1658,5 +1693,6 @@
     <!-- JavaScript Files -->
     <script src="js/script-obf.js"></script>
     <script src="js/frankport-music.obf.js"></script>
+    <script src="js/frankport.ai.obf.js"></script>
 </body>
 </html>

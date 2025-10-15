@@ -5672,3 +5672,327 @@ document.getElementById('shortcutsOverlay')?.addEventListener('click', (e) => {
         closeShortcutsPanel();
     }
 });
+
+
+// =================== FrankAI Chatbot Showcase ==================== //
+// FrankAI Showcase Modal - Vanilla JS with Real Icons
+(function() {
+    const showcaseData = {
+        steps: [
+            {
+                id: 1,
+                icon: 'fa-sparkles',
+                title: 'Welcome to FrankAI',
+                description: 'An intelligent assistant built into the FrankPort ecosystem, ready to help you with any questions about technology, science, general knowledge, and more.',
+                type: 'features',
+                content: ['Instant Answers', 'Smart Conversations', 'Always Learning']
+            },
+            {
+                id: 2,
+                icon: 'fa-brain',
+                title: 'What Can FrankAI Do?',
+                description: 'FrankAI specializes in a wide range of topics:',
+                type: 'capabilities',
+                content: [
+                    { icon: 'fa-laptop-code', label: 'Technology' },
+                    { icon: 'fa-flask', label: 'Science' },
+                    { icon: 'fa-book', label: 'General Knowledge' },
+                    { icon: 'fa-calculator', label: 'Math & Logic' }
+                ]
+            },
+            {
+                id: 3,
+                icon: 'fa-star',
+                title: 'Key Features',
+                description: '',
+                type: 'demos',
+                content: [
+                    { icon: 'fa-comments', title: 'Natural Conversations', desc: 'Chat naturally about any topic' },
+                    { icon: 'fa-bolt', title: 'Fast Responses', desc: 'Get answers instantly' },
+                    { icon: 'fa-shield-halved', title: 'Always Available', desc: '24/7 support whenever you need it' }
+                ]
+            },
+            {
+                id: 4,
+                icon: 'fa-rocket',
+                title: 'Ready to Get Started?',
+                description: "You're all set to explore FrankAI! Ask anything you want to know.",
+                type: 'examples',
+                content: ['What is JavaScript?', 'Explain photosynthesis', 'What is the speed of light?']
+            }
+        ]
+    };
+
+    let currentStep = 1;
+    const totalSteps = showcaseData.steps.length;
+
+    // Create Modal HTML
+    function createModal() {
+        const container = document.createElement('div');
+        container.id = 'frankaiShowcaseContainer';
+        container.className = 'frankai-showcase-container';
+        container.innerHTML = `
+            <div class="frankai-modal" id="frankaiModal">
+                <!-- Header -->
+                <div class="frankai-header">
+                    <button class="frankai-close-btn" id="frankaiCloseBtn" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="frankai-header-inner">
+                        <div class="frankai-header-icon" id="headerIcon">
+                            <i class="fas fa-sparkles"></i>
+                        </div>
+                        <div class="frankai-header-text">
+                            <h2>Meet FrankAI</h2>
+                            <p>Your Intelligent Assistant</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body -->
+                <div class="frankai-body">
+                    <div class="frankai-step active" id="step1"></div>
+                    <div class="frankai-step" id="step2"></div>
+                    <div class="frankai-step" id="step3"></div>
+                    <div class="frankai-step" id="step4"></div>
+                </div>
+
+                <!-- Footer -->
+                <div class="frankai-footer">
+                    <div class="frankai-indicators" id="frankaiIndicators"></div>
+                    <div class="frankai-buttons">
+                        <button class="frankai-btn frankai-btn-secondary" id="frankaiPrevBtn">
+                            <i class="fas fa-arrow-left"></i>
+                            <span class="btn-text">Back</span>
+                        </button>
+                        <button class="frankai-btn frankai-btn-primary" id="frankaiNextBtn">
+                            <span class="btn-text">Next</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(container);
+    }
+
+    // Render Step Content
+    function renderStep(stepId) {
+        const step = showcaseData.steps.find(s => s.id === stepId);
+        const stepElement = document.getElementById(`step${stepId}`);
+        
+        let content = `
+            <div class="frankai-step-icon">
+                <i class="fas ${step.icon}"></i>
+            </div>
+            <h3>${step.title}</h3>
+            ${step.description ? `<p class="step-description">${step.description}</p>` : ''}
+        `;
+
+        if (step.type === 'features') {
+            content += '<div class="frankai-feature-list">';
+            step.content.forEach(feature => {
+                content += `
+                    <div class="frankai-feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>${feature}</span>
+                    </div>
+                `;
+            });
+            content += '</div>';
+        }
+
+        if (step.type === 'capabilities') {
+            content += '<div class="frankai-capabilities-grid">';
+            step.content.forEach(cap => {
+                content += `
+                    <div class="frankai-capability-card">
+                        <div class="icon"><i class="fas ${cap.icon}"></i></div>
+                        <span>${cap.label}</span>
+                    </div>
+                `;
+            });
+            content += '</div>';
+        }
+
+        if (step.type === 'demos') {
+            content += '<div class="frankai-features-showcase">';
+            step.content.forEach(demo => {
+                content += `
+                    <div class="frankai-feature-demo">
+                        <div class="frankai-demo-icon">
+                            <i class="fas ${demo.icon}"></i>
+                        </div>
+                        <div class="frankai-demo-text">
+                            <strong>${demo.title}</strong>
+                            <p>${demo.desc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            content += '</div>';
+        }
+
+        if (step.type === 'examples') {
+            content += '<div class="frankai-example-questions"><p>Try asking:</p><div class="example-tags-wrapper">';
+            step.content.forEach(example => {
+                content += `<div class="frankai-example-tag"><i class="fas fa-lightbulb"></i> ${example}</div>`;
+            });
+            content += '</div></div>';
+        }
+
+        stepElement.innerHTML = content;
+    }
+
+    // Render Indicators
+    function renderIndicators() {
+        const indicatorsContainer = document.getElementById('frankaiIndicators');
+        indicatorsContainer.innerHTML = '';
+        
+        for (let i = 1; i <= totalSteps; i++) {
+            const indicator = document.createElement('span');
+            indicator.className = `frankai-indicator ${i === currentStep ? 'active' : ''}`;
+            indicator.setAttribute('aria-label', `Step ${i} of ${totalSteps}`);
+            indicator.onclick = () => goToStep(i);
+            indicatorsContainer.appendChild(indicator);
+        }
+    }
+
+    // Update UI
+    function updateUI() {
+        // Hide all steps
+        document.querySelectorAll('.frankai-step').forEach(s => s.classList.remove('active'));
+        // Show current step
+        document.getElementById(`step${currentStep}`).classList.add('active');
+
+        // Update header icon
+        const step = showcaseData.steps.find(s => s.id === currentStep);
+        document.getElementById('headerIcon').innerHTML = `<i class="fas ${step.icon}"></i>`;
+
+        // Update indicators
+        document.querySelectorAll('.frankai-indicator').forEach((ind, idx) => {
+            ind.classList.toggle('active', idx + 1 === currentStep);
+        });
+
+        // Update button states
+        const prevBtn = document.getElementById('frankaiPrevBtn');
+        const nextBtn = document.getElementById('frankaiNextBtn');
+        
+        prevBtn.disabled = currentStep === 1;
+        
+        if (currentStep === totalSteps) {
+            nextBtn.innerHTML = '<span class="btn-text">Start Chatting</span><i class="fas fa-rocket"></i>';
+        } else {
+            nextBtn.innerHTML = '<span class="btn-text">Next</span><i class="fas fa-arrow-right"></i>';
+        }
+    }
+
+    // Navigation
+    function goToStep(step) {
+        currentStep = step;
+        renderStep(currentStep);
+        updateUI();
+    }
+
+    function nextStep() {
+        if (currentStep < totalSteps) {
+            goToStep(currentStep + 1);
+        } else {
+            closeShowcase();
+            setTimeout(() => {
+                const chatBtn = document.getElementById('openChatbot');
+                if (chatBtn) chatBtn.click();
+            }, 300);
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 1) {
+            goToStep(currentStep - 1);
+        }
+    }
+
+    // Open/Close
+    function openShowcase() {
+        const container = document.getElementById('frankaiShowcaseContainer');
+        if (!container) {
+            createModal();
+            initializeEvents();
+            renderAllSteps();
+        }
+        document.getElementById('frankaiShowcaseContainer').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeShowcase() {
+        const container = document.getElementById('frankaiShowcaseContainer');
+        if (container) {
+            container.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Initialize Events
+    function initializeEvents() {
+        document.getElementById('frankaiCloseBtn').addEventListener('click', closeShowcase);
+        document.getElementById('frankaiShowcaseContainer').addEventListener('click', (e) => {
+            if (e.target.id === 'frankaiShowcaseContainer') closeShowcase();
+        });
+        document.getElementById('frankaiPrevBtn').addEventListener('click', prevStep);
+        document.getElementById('frankaiNextBtn').addEventListener('click', nextStep);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const container = document.getElementById('frankaiShowcaseContainer');
+            if (container && container.classList.contains('show')) {
+                if (e.key === 'ArrowRight' && currentStep < totalSteps) nextStep();
+                if (e.key === 'ArrowLeft' && currentStep > 1) prevStep();
+                if (e.key === 'Escape') closeShowcase();
+            }
+        });
+
+        // Touch swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const modal = document.getElementById('frankaiModal');
+        
+        modal.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        modal.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50 && currentStep < totalSteps) nextStep();
+            if (touchEndX > touchStartX + 50 && currentStep > 1) prevStep();
+        }
+    }
+
+    function renderAllSteps() {
+        showcaseData.steps.forEach(step => {
+            renderStep(step.id);
+        });
+        renderIndicators();
+        updateUI();
+    }
+
+    // Global Functions
+    window.openFrankAIShowcase = openShowcase;
+    window.closeFrankAIShowcase = closeShowcase;
+
+    // Auto-initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            createModal();
+            initializeEvents();
+            renderAllSteps();
+        });
+    } else {
+        createModal();
+        initializeEvents();
+        renderAllSteps();
+    }
+})();
