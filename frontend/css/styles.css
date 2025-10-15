@@ -8266,7 +8266,7 @@ body.light-mode {
 /* --- Floating Open Button --- */
 .chatbot-btn {
   position: fixed;
-  bottom: 15px;
+  bottom: 50px;
   right: 65px;
   background: #0D0D0D;
   color: var(--accent-gold);
@@ -8318,17 +8318,37 @@ body.light-mode .chat-container {
 }
 
 .chat-header {
-    background: var(--admin-bg);
-    color: var(--accent-gold);
-    padding: 20px;
-    text-align: start;
-    font-size: 24px;
-    font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--admin-bg);
+  color: var(--accent-gold);
+  padding: 16px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 body.light-mode .chat-header {
-    background: #f8f9fa;
-    color: var(--text-primary);
+  background: #f8f9fa;
+  color: var(--text-primary);
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ai-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  height: 34px;
+  width: auto;
+}
+
+.header-title {
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 /* --- Done Button in Header --- */
@@ -8358,6 +8378,12 @@ body.light-mode .chat-header {
 
 /* --- Hide Chat Button on Scroll (Mobile) --- */
 @media (max-width: 768px) {
+  .chatbot-btn {
+    bottom: 30px;
+    width: 290px;
+    height: 28px;
+    font-size: 15px;
+  }
   .chatbot-btn.hidden {
     opacity: 0;
     pointer-events: none;
@@ -8575,6 +8601,116 @@ body.light-mode .chat-warning {
 }
 
 
+
+/* ========================
+   FRANKAI WELCOME SCREEN
+   ======================== */
+.chat-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  padding: 40px 20px;
+  color: var(--accent-gold);
+  font-family: monospace;
+  animation: fadeIn 0.8s ease-in;
+}
+
+.frankai-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  opacity: 0.9;
+  transform: scale(1.5);
+}
+
+.frankai-name {
+  font-size: 26px;
+  font-weight: bold;
+  color: var(--accent-gold);
+  margin-bottom: 6px;
+}
+
+.frankai-tagline {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.suggestion-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 20px 15px 20px;
+  justify-content: center;
+}
+
+.suggestion-btn {
+  background: var(--admin-light-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  color: var(--accent-gold);
+  font-size: 11px;
+  font-family: monospace;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.suggestion-btn:hover {
+  background: var(--accent-gold);
+  color: var(--primary-navy);
+  border-color: var(--accent-gold);
+}
+body.light-mode .suggestion-btn {
+  background: #f1f1f1;
+  color: var(--text-primary);
+}
+body.light-mode .suggestion-btn:hover {
+  background: var(--accent-gold);
+  color: #fff;
+}
+
+
+
+/* === Suggestion chips UI (keeps FrankPort theme) === */
+.suggestions {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.suggestion-chip {
+  background: rgba(255, 215, 0, 0.08); /* soft gold */
+  color: var(--accent-gold);
+  border: 1px solid rgba(255, 215, 0, 0.12);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-family: monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.14s ease, background 0.14s;
+  user-select: none;
+}
+.suggestion-chip:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 215, 0, 0.14);
+}
+
+/* Slightly different style in light mode */
+body.light-mode .suggestion-chip {
+  background: rgba(0,0,0,0.04);
+  color: var(--text-primary);
+  border-color: rgba(0,0,0,0.06);
+}
+
+
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -8658,12 +8794,13 @@ body.light-mode .frankai-showcase-container {
     border-radius: clamp(0.75rem, 2vw, 1rem);
     width: 100%;
     max-width: min(700px, 95vw);
-    max-height: min(90vh, 800px);
+    max-height: min(100vh, 800px);
     display: flex;
     flex-direction: column;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
     animation: frankai-slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
+    cursor: auto;
 }
 
 @keyframes frankai-slideIn {
@@ -8679,11 +8816,14 @@ body.light-mode .frankai-showcase-container {
 
 /* Header */
 .frankai-header {
-    background: var(--gradient-accent);
+    background: var(--admin-bg);
     padding: var(--header-padding);
     position: relative;
     overflow: hidden;
     flex-shrink: 0;
+}
+body.light-mode .frankai-header {
+    background: #f9f9f9;
 }
 
 .frankai-header::before {
@@ -8734,11 +8874,17 @@ body.light-mode .frankai-showcase-container {
     color: #ffffff;
     line-height: 1.2;
 }
+body.light-mode .frankai-header-text h2 {
+  color: var(--text-primary);
+}
 
 .frankai-header-text p {
     margin: 0.25rem 0 0 0;
     font-size: clamp(0.75rem, 2.5vw, 0.875rem);
     color: rgba(255, 255, 255, 0.95);
+}
+body.light-mode .frankai-header-text p {
+  color: var(--text-muted);
 }
 
 .frankai-close-btn {

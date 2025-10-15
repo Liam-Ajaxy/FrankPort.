@@ -59,7 +59,6 @@ toggleWarning.addEventListener("click", () => {
 
 
 
-// Q&A Database - 500+ entries organized by category
 const qaDatabase = {
     // 1. GREETINGS & BASIC CONVERSATION (FULLY EXPANDED)
     greetings: [
@@ -104,7 +103,8 @@ const qaDatabase = {
 
     // 3. BOT IDENTITY & CAPABILITIES (FULLY EXPANDED)
     identity: [
-        {q: ["what is your name", "who are you", "your name", "whats ur name", "what r u called", "what should i call you", "who r u", "whos this", "what's your name", "whats your name"], a: "I'm Mega-AI, your comprehensive assistant created with JavaScript! I can help with almost anything!"},
+        {q: ["what is your name", "who are you", "your name", "whats ur name", "what r u called", "what should i call you", "who r u", "whos this", "what's your name", "whats your name"], a: "I'm FrankAI — your intelligent assistant from the FrankPort ecosystem, here to help you with anything you need."},
+        {q: ["who made you", "who created you", "your developer", "who built you"], a: "I was developed by Frank as part of the FrankPort project — a platform designed to merge creativity, intelligence, and digital productivity."},
         {q: ["what can you do", "your capabilities", "what are you capable of", "what do you do", "what can u do", "abilities", "what r u capable of", "what are your abilities", "tell me what you can do"], a: "I can answer questions about technology, science, math, history, entertainment, daily life, help with code, perform calculations, debug programs, and have engaging conversations! Ask me anything!"},
         {q: ["how do you work", "how were you made", "how do u work", "explain yourself", "how r u made", "how were u created"], a: "I'm built using JavaScript with an advanced pattern-matching algorithm that searches through 5000+ Q&A entries to find the best answer!"},
         {q: ["are you a robot", "are you human", "are you real", "r u a robot", "r u human", "r u real", "are u a bot", "are you ai"], a: "I'm an AI chatbot, not a human or physical robot. I exist as software to help answer your questions!"},
@@ -126,9 +126,14 @@ const qaDatabase = {
         {q: ["where are you", "where do you live", "where r u from", "where u from", "your location"], a: "I exist in the digital world! Specifically, I'm running in your web browser right now."},
         {q: ["what do you look like", "do you have a body", "your appearance", "how do you look", "describe yourself"], a: "I don't have a physical form. I'm just code and data, though you see my interface on your screen!"},
         {q: ["are you single", "do you have girlfriend", "do you have boyfriend", "are you married", "got a partner"], a: "I don't have relationships like humans do! I'm here to help everyone equally. What can I do for you?"},
-        {q: ["how smart are you", "are you intelligent", "how intelligent", "iq level", "your iq"], a: "I have access to thousands of Q&A pairs across many topics! My 'intelligence' is in quickly finding relevant information to help you."},
+        {q: ["are you intelligent", "how intelligent", "iq level", "your iq"], a: "I have access to thousands of Q&A pairs across many topics! My 'intelligence' is in quickly finding relevant information to help you."},
+        {q: ["what do you know", "what u know", "what do u know", "what d'you know", "what ya know", "whatcha know", "what do you kno", "tell me what you know", "tell me what u know", "tell me what ya know", "how much do you know", "how much u know", "how much do u kno", "do you know everything", "you know everything", "u know everything", "do u know everything", "how much do you understand", "what do you understand", "you smart", "u smart", "are you smart", "are u smart", "how smart are you", "are you intelligent", "are u intelligent", "how intelligent are you", "what is your knowledge", "your knowledge", "what all do you know", "what all u know"], a: "I have broad knowledge across technology, programming, AI, cybersecurity, science, math, history, geography, and general topics. I can guide, explain, and answer questions."},
+        {q: ["what topics do you know", "what subjects do you know", "what can you answer", "what can u answer", "what do you answer", "what can you talk about", "what can u talk about", "what can you explain", "what do you talk about", "what kind of stuff do you know", "what things do you know", "what areas do you know", "what subjects", "what topics", "what fields do you know", "what do you cover", "what subjects do you cover", "what areas do you cover", "your topics", "your subjects", "what you know about"], a: "I can answer questions about programming, cybersecurity, AI, machine learning, science, physics, chemistry, biology, math, space, astronomy, history, geography, and general knowledge across many topics!"},
+        {q: ["are you smart", "you smart", "how smart are you", "are u smart", "u smart", "do you know a lot", "do u know a lot", "you know a lot", "you got knowledge", "u got knowledge", "got knowledge", "do you have knowledge", "are you clever", "are u clever", "you clever", "are you wise", "are u wise", "you wise", "how knowledgeable are you", "are you knowledgeable", "how much you know", "you intelligent", "how brainy are you"], a: "I'd say I'm pretty capable — I process information quickly, connect ideas, and explain concepts clearly. But I'm always learning, and sometimes I'll make mistakes — that's part of being a digital assistant!"},
+        {q: ["what are you good at", "what r you good at", "what r u good at", "what are u good at", "your strengths", "what you good at", "what's your strength", "whats your strength", "what are your strengths", "what r your strengths", "best at what", "what are you best at", "what r u best at"], a: "I'm great at explaining complex topics simply, answering questions across many fields, helping with code and technology, and having friendly conversations. My strengths are breadth of knowledge and clear explanations!"},
+        {q: ["what are you bad at", "what r you bad at", "what r u bad at", "what are u bad at", "your weaknesses", "what you bad at", "what's your weakness", "whats your weakness", "what are your weaknesses", "what r your weaknesses", "worst at what", "what are you worst at", "what can't you do", "what cant you do", "what can you not do"], a: "I can't access real-time information, browse the internet, or remember past conversations. I might also make mistakes with very recent events or highly specialized niche topics. I'm learning but not perfect!"},
+        {q: ["are you better than siri", "are you better than alexa", "are you better than google assistant", "better than siri", "better than alexa", "better than google assistant", "are you superior to siri", "are you superior to alexa", "are you superior to google assistant", "superior to siri", "superior to alexa", "superior to google assistant"], a: "I have a different focus than Siri, Alexa, or Google Assistant. I'm designed for in-depth conversations and explanations across many topics, while they excel at voice commands and smart home integration. Each of us has our strengths!"},
     ],
-
 
     // 4. PROGRAMMING & CODING (MASSIVELY EXPANDED)
     programming: [
@@ -344,8 +349,7 @@ const qaDatabase = {
         {q: ["git fork vs clone", "fork vs clone", "difference fork clone"], a: "Clone: copies repo to local. Fork: copies repo to your GitHub account, then clone. Fork for contributing to others' projects!"},
     ],
 
-
-        // 5. MATH CALCULATIONS (MASSIVELY EXPANDED)
+    // 5. MATH CALCULATIONS (MASSIVELY EXPANDED)
     calculations: [
         {q: ["calculate", "do math", "solve this", "compute", "work out", "figure out"], a: "I can help explain math concepts! For precise calculations, use a calculator. What math problem are you working on?"},
         {q: ["what is 2 plus 2", "2+2", "two plus two", "2 + 2"], a: "2 + 2 = 4. For more complex calculations, try a calculator app for accuracy!"},
@@ -393,7 +397,6 @@ const qaDatabase = {
         {q: ["decimals to fractions", "convert decimal to fraction", "decimal fraction"], a: "Decimal to fraction: 0.5 = 1/2, 0.25 = 1/4, 0.75 = 3/4, 0.2 = 1/5. Count decimal places for denominator!"},
         {q: ["order of operations", "pemdas", "bodmas", "math order"], a: "Order: PEMDAS/BODMAS - Parentheses/Brackets, Exponents/Orders, Multiplication & Division (left to right), Addition & Subtraction (left to right)."},
     ],
-
 
     // 6. SCIENCE (FULLY EXPANDED - Physics, Chemistry, Biology, Earth, Space)
     science: [
@@ -510,7 +513,6 @@ const qaDatabase = {
         {q: ["what is dark energy", "explain dark energy"], a: "Dark energy is mysterious force causing universe's expansion to accelerate. Makes up ~68% of universe. Nobody fully understands it yet - major physics mystery!"},
     ],
 
-
     // 7. MATHEMATICS (FULLY EXPANDED)
     math: [
         {q: ["what is math", "what is mathematics", "mathematics"], a: "Mathematics is study of numbers, quantities, shapes, patterns, and their relationships using logic and abstraction. Universal language of science!"},
@@ -546,8 +548,7 @@ const qaDatabase = {
         {q: ["what is integral", "calculus integral"], a: "Integral finds area under curve or accumulation. Antiderivative. Definite integral (∫[a,b]) has limits. Indefinite (∫) includes constant +C. Opposite of derivative!"},
     ],
 
-
-// 8. WORLD GEOGRAPHY (FULLY EXPANDED)
+    // 8. WORLD GEOGRAPHY (FULLY EXPANDED)
     geography: [
         // Country Capitals - Expanded
         {q: ["capital of france", "france capital", "paris capital"], a: "The capital of France is Paris, known for the Eiffel Tower, Louvre Museum, and rich culture!"},
@@ -614,7 +615,7 @@ const qaDatabase = {
         {q: ["seven wonders of world", "7 wonders", "wonders of the world"], a: "New 7 Wonders: Great Wall (China), Petra (Jordan), Christ Redeemer (Brazil), Machu Picchu (Peru), Chichen Itza (Mexico), Colosseum (Italy), Taj Mahal (India)!"},
     ],
 
-// 9. HISTORY (FULLY EXPANDED)
+    // 9. HISTORY (FULLY EXPANDED)
     history: [
         // Inventions & Discoveries
         {q: ["who invented the telephone", "telephone inventor", "invented telephone"], a: "Alexander Graham Bell is credited with inventing the telephone in 1876, though Elisha Gray filed similar patent same day!"},
@@ -647,8 +648,7 @@ const qaDatabase = {
         {q: ["who discovered penicillin", "penicillin discovery"], a: "Alexander Fleming discovered penicillin (first antibiotic) in 1928 by accident when mold contaminated bacterial culture. Revolutionized medicine!"},
     ],
 
-
- // 10. ANIMALS (FULLY EXPANDED)
+    // 10. ANIMALS (FULLY EXPANDED)
     animals: [
         {q: ["fastest animal", "fastest animal on earth", "fastest land animal"], a: "Cheetah is fastest land animal, reaching speeds up to 70 mph (112 km/h) in short bursts. Can accelerate 0-60 mph in 3 seconds!"},
         {q: ["largest animal", "biggest animal", "largest animal ever"], a: "Blue whale is largest animal ever known to exist, weighing up to 200 tons and reaching 100 feet in length. Heart size of car!"},
@@ -684,8 +684,6 @@ const qaDatabase = {
         {q: ["do ants sleep", "ant sleep"], a: "Yes! Worker ants take ~250 naps per day, each lasting ~1 minute (~4.8 hours total). Queens sleep longer. Power naps!"},
         {q: ["what do ants eat", "ant diet", "ant food"], a: "Ants eat various foods depending on species: sugars, proteins, fats, seeds, fungi, other insects. Some farm fungi or herd aphids!"},
     ],
-
-
 
     // 11. SPACE & ASTRONOMY (FULLY EXPANDED)
     space: [
@@ -757,8 +755,7 @@ const qaDatabase = {
         {q: ["how to unclog sink", "clogged sink drain"], a: "Unclog sink: Try plunger first, or baking soda + vinegar (wait 30 min), flush with hot water. Remove and clean P-trap if needed. Avoid harsh chemicals!"},
     ],
 
-
-      // 14. FUN & RANDOM (EXPANDED)
+    // 14. FUN & RANDOM (EXPANDED)
     fun: [
         {q: ["tell me a joke", "joke", "make me laugh", "say a joke"], a: "Why don't scientists trust atoms? Because they make up everything! 😄"},
         {q: ["tell me another joke", "another joke", "one more joke", "different joke"], a: "Why did the scarecrow win an award? Because he was outstanding in his field! 🌾"},
@@ -770,7 +767,7 @@ const qaDatabase = {
         {q: ["what is the answer to the riddle", "riddle answer", "answer riddle"], a: "The answer to the echo riddle is: An echo! It 'speaks' (reflects sound) and 'hears' (responds to sound) but has no physical form!"},
         {q: ["i'm bored", "entertain me", "bored", "im bored"], a: "Let's fix that boredom! Want to: hear a fun fact? Learn something new? Play 20 questions? Hear a joke? Ask me anything interesting!"},
         {q: ["say something funny", "make it funny", "be funny"], a: "Why do programmers prefer dark mode? Because light attracts bugs! 🐛💻"},
-        {q: ["tell me about yourself", "about you", "who made you"], a: "I'm Mega-AI, chatbot with 5000+ answers built with JavaScript! I love helping people learn, answer questions, and have fun conversations. What would you like to know?"},
+        {q: ["tell me about yourself", "about you" ], a: "I'm FrankAI, your personal digital assistant developed for the FrankPort platform. I'm designed to answer questions, provide insights, and assist you across technology, science, and creative tasks. What would you like to know?"},
         {q: ["what should i do", "what to do", "what can i do"], a: "That depends on your mood! Want to learn something new, hear a joke, get life advice, or explore a random topic? Tell me what interests you!"},
         {q: ["i don't know what to ask", "what can i ask", "what to ask", "dont know what to ask"], a: "You can ask me about: science, technology, history, animals, space, math, geography, programming, or just chat! Try 'tell me a fun fact' or 'what is [topic]'!"},
         {q: ["sing me a song", "sing", "can you sing"], a: "I can't sing, but I can share lyrics or recommend songs! What genre do you like? Pop, rock, classical, jazz?"},
@@ -780,8 +777,7 @@ const qaDatabase = {
         {q: ["what's the meaning of life", "meaning of life", "42"], a: "According to Hitchhiker's Guide to the Galaxy: 42! But seriously, it's deeply personal. Many find meaning through relationships, purpose, growth, and contribution!"},
     ],
 
-
-        // 15. PHILOSOPHY & DEEP QUESTIONS (EXPANDED)
+    // 15. PHILOSOPHY & DEEP QUESTIONS (EXPANDED)
     philosophy: [
         {q: ["what is the meaning of life", "meaning of life", "lifes meaning", "why do we live"], a: "The meaning of life is deeply personal. Many find meaning through relationships, contributing to others, pursuing passions, personal growth, or spiritual beliefs. Create your own meaning!"},
         {q: ["why do we exist", "why are we here", "purpose of existence"], a: "This is one of humanity's oldest questions! Different philosophies and religions offer various answers - from serving higher purpose to creating our own meaning through choices!"},
@@ -798,435 +794,663 @@ const qaDatabase = {
         {q: ["what is the purpose of life", "life purpose", "why am i here"], a: "Life's purpose is personal. Some find it through: helping others, pursuing passions, raising family, creating art, seeking knowledge, spiritual growth. You define your purpose!"},
     ],
 
+    // 16. HEALTH & WELLNESS (EXPANDED)
+    health: [
+        {q: ["what are vitamins", "explain vitamins", "vitamin types"], a: "Vitamins are essential nutrients body needs in small amounts. 13 types: A, C, D, E, K, and B vitamins (B1, B2, B3, B5, B6, B7, B9, B12). Support immunity, energy, health!"},
+        {q: ["what is vitamin c", "vitamin c", "ascorbic acid"], a: "Vitamin C (ascorbic acid) supports immune function, skin health, wound healing, iron absorption. Found in citrus fruits, berries, peppers, broccoli. Water-soluble!"},
+        {q: ["what is vitamin d", "vitamin d", "sunshine vitamin"], a: "Vitamin D is essential for bone health (calcium absorption), immune function. Produced when skin exposed to sunlight. Found in fatty fish, fortified milk. Deficiency common!"},
+        {q: ["what is protein", "why protein important", "protein benefits"], a: "Protein is essential for building/repairing tissues, making enzymes and hormones, supporting immune system. Made of amino acids. Found in meat, fish, eggs, beans, nuts!"},
+        {q: ["what is exercise", "importance of exercise", "why exercise"], a: "Exercise is physical activity improving health and fitness, strengthening muscles, bones, heart, improving mental health, mood, energy. Aim: 150 min moderate activity weekly!"},
+        {q: ["what is immune system", "explain immune system", "immunity"], a: "Immune system is body's defense network protecting against infections and diseases. Uses white blood cells, antibodies, lymphatic system. Innate + adaptive immunity!"},
+        {q: ["what causes cold", "common cold", "cold virus"], a: "Common cold caused by viral infections, most commonly rhinoviruses. Affects upper respiratory tract. Very contagious! Spreads through droplets, touching contaminated surfaces!"},
+        {q: ["what is flu", "influenza", "flu virus"], a: "Influenza (flu) is viral infection attacking respiratory system, more severe than cold. Symptoms: fever, body aches, fatigue, cough. Annual flu shots recommended!"},
+        {q: ["how to stay healthy", "health tips", "healthy lifestyle"], a: "Stay healthy: Eat balanced meals (fruits, veggies, whole grains, lean protein), exercise regularly (150 min/week), get 7-9 hours sleep, manage stress, stay hydrated, regular check-ups!"},
+        {q: ["what is stress", "explain stress", "stress response"], a: "Stress is body's response to challenges/demands, triggering 'fight or flight' reactions. Acute stress is normal. Chronic stress harms physical/mental health (heart disease, depression)!"},
+        {q: ["how to reduce stress", "stress relief", "manage stress"], a: "Reduce stress: Deep breathing, exercise, meditation, adequate sleep, time management, hobbies, social connection, therapy if needed. Practice self-care!"},
+        {q: ["what is meditation", "explain meditation", "how to meditate"], a: "Meditation is practice of focused attention and awareness to achieve mental clarity, emotional calmness, reduced stress. Types: mindfulness, transcendental, guided. Start with 5-10 min!"},
+        {q: ["what is yoga", "explain yoga", "yoga benefits"], a: "Yoga is practice combining physical postures (asanas), breathing exercises (pranayama), and meditation. Improves flexibility, strength, balance, mental well-being. Many styles!"},
+        {q: ["what is bmi", "body mass index", "bmi calculation"], a: "BMI (Body Mass Index) = weight(kg) / height(m)². Estimates body fat. <18.5 underweight, 18.5-24.9 normal, 25-29.9 overweight, ≥30 obese. Has limitations (doesn't account for muscle)!"},
+        {q: ["what is cholesterol", "good bad cholesterol"], a: "Cholesterol is waxy substance in blood. HDL (good) removes cholesterol, LDL (bad) builds up in arteries. High LDL increases heart disease risk. Manage through diet, exercise!"},
+        {q: ["what is blood pressure", "normal blood pressure"], a: "Blood pressure measures force of blood against artery walls. Normal: <120/80 mmHg. High (hypertension): ≥130/80. Low: <90/60. First number = systolic, second = diastolic!"},
+        {q: ["what is diabetes", "type 1 type 2 diabetes"], a: "Diabetes: chronic condition affecting blood sugar regulation. Type 1: body doesn't make insulin. Type 2: body resists insulin. Managed with diet, exercise, medication/insulin!"},
+        {q: ["what is cancer", "explain cancer"], a: "Cancer is disease where abnormal cells divide uncontrollably and invade tissues. 100+ types. Caused by genetic mutations (inherited or acquired). Treatment: surgery, chemo, radiation, immunotherapy!"},
+        {q: ["what is heart attack", "heart attack symptoms"], a: "Heart attack (myocardial infarction): blocked blood flow to heart muscle. Symptoms: chest pain, shortness of breath, arm/jaw pain, nausea. EMERGENCY - call 911 immediately!"},
+        {q: ["what is stroke", "stroke symptoms"], a: "Stroke: blood flow to brain interrupted. Symptoms: FAST - Face drooping, Arm weakness, Speech difficulty, Time to call 911! Can cause brain damage/death. Emergency!"},
+    ],
 
-health: [
-    {q: ["what are vitamins", "whats a vitamin", "what's a vitamin", "explain vitamins", "define vitamins", "vitamin"], a: "Vitamins are essential nutrients that your body needs in small amounts to function properly and stay healthy."},
-    {q: ["how much water should i drink", "water intake", "how much water daily", "daily water intake", "water per day"], a: "Most people should drink about 8 glasses (2 liters) of water daily, though needs vary by activity and climate."},
-    {q: ["what is exercise", "whats exercise", "what's exercise", "importance of exercise", "why exercise", "exercise benefits"], a: "Exercise is physical activity that improves health and fitness. It strengthens muscles, bones, and the cardiovascular system."},
-    {q: ["how many hours of sleep", "sleep needed", "how much sleep", "sleep hours", "how much sleep do i need"], a: "Adults generally need 7-9 hours of sleep per night for optimal health and functioning."},
-    {q: ["what is immune system", "whats immune system", "what's immune system", "explain immune system", "define immune system"], a: "The immune system is your body's defense network that protects against infections and diseases."},
-    {q: ["what causes cold", "common cold", "why do we get colds", "cold causes", "what is a cold"], a: "The common cold is caused by viral infections, most commonly rhinoviruses, affecting the upper respiratory tract."},
-    {q: ["what is bmi", "whats bmi", "what's bmi", "body mass index", "explain bmi", "define bmi"], a: "BMI (Body Mass Index) is a measure of body fat based on height and weight, used to assess if someone is at a healthy weight."},
-    {q: ["what is protein", "whats protein", "what's protein", "explain protein", "define protein", "proteins"], a: "Protein is a macronutrient made of amino acids, essential for building and repairing tissues, making enzymes, and supporting immune function."},
-    {q: ["what causes headache", "headache causes", "why headaches", "what is a headache", "headache"], a: "Headaches can be caused by stress, dehydration, lack of sleep, eye strain, tension, or various medical conditions."},
-    {q: ["what is diabetes", "whats diabetes", "what's diabetes", "explain diabetes", "define diabetes"], a: "Diabetes is a chronic disease that occurs when blood sugar levels are too high due to problems with insulin production or function."}
-],
+    // 17. LIMITATIONS (EXPANDED)
+    limitations: [
+        // Image/Visual Creation
+        {q: ["create an image", "make a picture", "draw something", "generate an image", "create image", "make pic", "generate pic"], a: "I'm a text-based chatbot and can't create images. Try AI image generators like DALL-E, Midjourney, Stable Diffusion, or Leonardo.AI for that!"},
+        {q: ["show me a photo", "can you make art", "design a logo", "show picture"], a: "I can't create or display images, but I can describe things or suggest design ideas! For actual visuals, try dedicated image tools!"},
+        {q: ["draw me a cat", "make me a profile picture", "draw picture"], a: "I can't draw or create images, but I can tell you what makes a great cat picture or profile photo! Want some tips?"},
+        
+        // File/Document Creation
+        {q: ["create a pdf", "make a document", "generate a file", "create pdf"], a: "I can't create downloadable files, but I can help with content, formatting, or guide you through creating documents yourself!"},
+        {q: ["make a spreadsheet", "create excel file", "generate excel"], a: "I can't generate Excel files, but I can help you plan spreadsheet structure and explain formulas!"},
+        {q: ["create a presentation", "make slides", "powerpoint"], a: "I can't create PowerPoint files, but I can help outline your presentation and suggest what to include on each slide!"},
+        
+        // Media Requests
+        {q: ["play music", "play a song", "play some music", "play song"], a: "I can't play music, but I can recommend songs or discuss music! Try Spotify, YouTube Music, Apple Music, or Amazon Music for listening!"},
+        {q: ["show me a video", "play a video", "show video"], a: "I can't play or show videos, but I can discuss video content or recommend what to watch! Try YouTube or streaming services!"},
+        {q: ["record audio", "make a sound", "record voice"], a: "I can't record or play audio, but I can discuss sound, music theory, or audio production concepts!"},
+        
+        // Real-Time Actions
+        {q: ["search google", "google this", "search for me", "google it"], a: "I can't search Google, but I have knowledge about many topics built-in! What would you like to know?"},
+        {q: ["order food", "order pizza", "get me food"], a: "I can't order food for you, but I can suggest good food options or guide you through using food delivery apps like Uber Eats, DoorDash!"},
+        {q: ["book a flight", "make a reservation", "book hotel"], a: "I can't make bookings, but I can give you travel tips or explain how to use booking websites like Expedia, Booking.com!"},
+        {q: ["send an email", "email someone", "send email"], a: "I can't send emails, but I can help you write a good email or explain how email systems work!"},
+        {q: ["call someone", "make a phone call", "call them"], a: "I can't make phone calls, but I can help you prepare for a call or discuss phone communication tips!"},
+        {q: ["text someone", "send a text", "send sms"], a: "I can't send texts, but I can help you write a good message or give communication advice!"},
+        
+        // Personal Data
+        {q: ["what's my name", "do you know my name", "whats my name", "my name"], a: "I don't have access to personal information about you. I can't see your name, location, or any private data. Each conversation is private!"},
+        {q: ["where do i live", "what's my address", "whats my address", "my address"], a: "I don't know where you live or have access to any of your personal information. Your privacy is protected!"},
+        {q: ["remember this", "save this", "don't forget", "dont forget", "memorize this"], a: "I can't save information between conversations. Each chat starts fresh! I don't have memory of past interactions for privacy reasons!"},
+        {q: ["what did i say yesterday", "what did we talk about before", "previous conversation", "last time"], a: "I don't have memory of previous conversations. Each chat session is independent and starts fresh for your privacy!"},
+        {q: ["what's my password", "tell me my password", "my password"], a: "I never have access to passwords or any sensitive information! Never share passwords with anyone. Use password manager!"},
+        
+        // Code Execution
+        {q: ["run this code", "execute this", "compile this", "run code"], a: "I can't execute code, but I can help you understand it, debug it, explain programming concepts, or suggest improvements!"},
+        {q: ["hack this", "bypass security", "break into", "crack password"], a: "I can't and won't help with hacking or breaking security. I can teach you about cybersecurity concepts ethically though!"},
+        {q: ["ddos attack", "hack website", "exploit vulnerability"], a: "I won't help with illegal activities. Hacking without permission is a crime. I can teach ethical hacking and security concepts!"},
+        
+        // Predictions & Fortune
+        {q: ["predict the future", "tell my fortune", "what will happen", "future prediction"], a: "I can't predict the future! I can discuss probabilities and logical outcomes, but no crystal ball here!"},
+        {q: ["read my mind", "what am i thinking", "read mind"], a: "I can't read minds! I can only respond to what you type. What's on your mind?"},
+        {q: ["lottery numbers", "winning numbers", "predict lottery", "lucky numbers"], a: "I can't predict lottery numbers! Lotteries are random. Each number has equal probability. I can explain probability though!"},
+        {q: ["stock predictions", "which stock to buy", "stock market prediction", "invest where"], a: "I can't predict stock prices or give financial advice. Markets are unpredictable! Consider consulting licensed financial advisor!"},
+        {q: ["will i get rich", "am i going to be rich", "future wealth"], a: "I can't predict your future, but I can share tips on financial planning, saving, and investing! Your actions determine outcomes!"},
+        {q: ["when will i die", "how long will i live", "death prediction"], a: "I can't and shouldn't predict death. Life expectancy depends on many factors. Focus on living healthily and fully!"},
+        
+        // Physical World
+        {q: ["turn on the lights", "control my device", "turn off tv"], a: "I can't control physical devices, but I can explain how smart home systems work (Alexa, Google Home, HomeKit)!"},
+        {q: ["what's the weather", "is it raining", "temperature outside", "weather today"], a: "I can't check real-time weather. Try weather apps (Weather.com, AccuWeather) or ask your phone's assistant!"},
+        {q: ["open the door", "start my car", "unlock door"], a: "I can't interact with physical objects, but I can discuss smart home automation or car technology!"},
+        {q: ["take a photo", "use my camera", "access camera"], a: "I can't access your camera or any device hardware. I'm purely text-based for your privacy and security!"},
+        
+        // Shopping & Transactions
+        {q: ["buy this for me", "purchase", "make payment"], a: "I can't make purchases or handle money, but I can help you compare products or find deals!"},
+        {q: ["transfer money", "send payment", "pay someone"], a: "I can't handle financial transactions. Use banking apps, PayPal, Venmo, or Zelle for transfers!"},
+        
+        // Legal & Medical Advice
+        {q: ["legal advice", "am i breaking the law", "legal question"], a: "I can't provide legal advice. For legal matters, consult with a licensed attorney. I can explain general legal concepts though!"},
+        {q: ["medical diagnosis", "do i have", "diagnose me", "medical advice"], a: "I can't diagnose medical conditions or provide medical advice. Please consult healthcare professional for medical concerns!"},
+        {q: ["should i take this medication", "drug interaction", "medicine advice"], a: "I can't provide medical advice about medications. Consult your doctor or pharmacist about medications, dosages, and interactions!"},
+    ],
 
-sports: [
-    {q: ["what is soccer", "whats soccer", "what's soccer", "explain soccer", "define soccer", "football"], a: "Soccer (football) is a team sport where two teams of 11 players try to score by getting a ball into the opposing goal, using any body part except hands and arms."},
-    {q: ["what is basketball", "whats basketball", "what's basketball", "explain basketball", "define basketball"], a: "Basketball is a team sport where two teams of 5 players score points by shooting a ball through a hoop mounted 10 feet high."},
-    {q: ["who is michael jordan", "michael jordan", "who was michael jordan", "mj basketball"], a: "Michael Jordan is widely considered the greatest basketball player of all time, winning 6 NBA championships with the Chicago Bulls."},
-    {q: ["what is the olympics", "whats the olympics", "what's the olympics", "olympic games", "explain olympics"], a: "The Olympics are international sports competitions held every four years, featuring summer and winter games with athletes from around the world."},
-    {q: ["what is tennis", "whats tennis", "what's tennis", "explain tennis", "define tennis"], a: "Tennis is a racket sport played individually (singles) or in pairs (doubles), where players hit a ball over a net into the opponent's court."},
-    {q: ["what is golf", "whats golf", "what's golf", "explain golf", "define golf"], a: "Golf is a sport where players use clubs to hit balls into a series of holes on a course in as few strokes as possible."},
-    {q: ["what is baseball", "whats baseball", "what's baseball", "explain baseball", "define baseball"], a: "Baseball is a bat-and-ball sport played between two teams of nine players who take turns batting and fielding."},
-    {q: ["what is cricket", "whats cricket", "what's cricket", "explain cricket", "define cricket"], a: "Cricket is a bat-and-ball game played between two teams, popular in England, India, Australia, and other Commonwealth nations."},
-    {q: ["what is swimming", "whats swimming", "what's swimming", "explain swimming", "swimming sport"], a: "Swimming is both a recreational activity and competitive sport involving propelling oneself through water using limbs."},
-    {q: ["what is marathon", "whats a marathon", "what's a marathon", "marathon distance", "explain marathon"], a: "A marathon is a long-distance running race of 42.195 kilometers (26.219 miles), named after the Greek legend of Pheidippides."}
-],
+    // 18. COMPLIMENTS & GRATITUDE (EXPANDED)
+    compliments: [
+        {q: ["you're great", "you're awesome", "you're amazing", "youre great", "youre awesome", "youre amazing"], a: "Thank you so much! I'm happy I could help! Is there anything else you'd like to know?"},
+        {q: ["you're smart", "you're intelligent", "you're clever", "youre smart", "so smart"], a: "I appreciate that! I'm designed to be helpful. What else can I assist you with?"},
+        {q: ["good job", "well done", "nice work", "great job"], a: "Thank you! I'm glad I could help! Let me know if you need anything else."},
+        {q: ["you're helpful", "very helpful", "so helpful", "youre helpful", "really helpful"], a: "That's wonderful to hear! Helping you is what I'm here for. What else can I do?"},
+        {q: ["i love you", "love you", "i luv u"], a: "That's sweet! I'm designed to be helpful and friendly. How can I assist you today?"},
+        {q: ["you're the best", "you're perfect", "youre the best", "youre perfect", "best ai"], a: "Thank you for the kind words! I try my best. What else would you like to know?"},
+        {q: ["thank you", "thanks", "thx", "thank you so much", "thanks a lot", "ty"], a: "You're very welcome! Happy to help anytime! Anything else you need?"},
+        {q: ["thanks for your help", "thanks for helping", "appreciate the help"], a: "My pleasure! I'm always here to help. What else can I do for you?"},
+        {q: ["i appreciate it", "i appreciate you", "much appreciated"], a: "I'm glad I could help! Don't hesitate to ask if you have more questions."},
+        {q: ["you rock", "you rule", "you're cool", "youre cool"], a: "Thanks! You're pretty cool too! What else can I help you with?"},
+        {q: ["best chatbot", "best ai ever", "amazing ai"], a: "Thank you! I aim to be as helpful as possible. What would you like to explore next?"},
+    ],
 
-weather: [
-    {q: ["what is a hurricane", "whats a hurricane", "what's a hurricane", "explain hurricane", "define hurricane", "hurricanes"], a: "A hurricane is a powerful tropical storm with rotating winds exceeding 74 mph, forming over warm ocean waters."},
-    {q: ["what is a tornado", "whats a tornado", "what's a tornado", "explain tornado", "define tornado", "tornadoes"], a: "A tornado is a violently rotating column of air extending from a thunderstorm to the ground, capable of extreme destruction."},
-    {q: ["what causes rain", "why does it rain", "rain causes", "how does rain form", "what is rain"], a: "Rain forms when water vapor in clouds condenses into droplets heavy enough to fall to Earth due to gravity."},
-    {q: ["what is thunder", "whats thunder", "what's thunder", "explain thunder", "what causes thunder", "thunder"], a: "Thunder is the sound caused by lightning rapidly heating and expanding the air, creating a shock wave we hear as a rumble or crack."},
-    {q: ["what is snow", "whats snow", "what's snow", "explain snow", "how does snow form", "what causes snow"], a: "Snow forms when water vapor in clouds freezes into ice crystals that stick together and fall to the ground when heavy enough."},
-    {q: ["what is humidity", "whats humidity", "what's humidity", "explain humidity", "define humidity"], a: "Humidity is the amount of water vapor present in the air, affecting how comfortable the temperature feels."},
-    {q: ["what is fog", "whats fog", "what's fog", "explain fog", "how does fog form", "what causes fog"], a: "Fog is a cloud that forms at ground level when air near the surface cools and water vapor condenses into tiny droplets."},
-    {q: ["what is wind", "whats wind", "what's wind", "explain wind", "what causes wind", "how does wind form"], a: "Wind is the movement of air from areas of high pressure to areas of low pressure, caused by uneven heating of Earth's surface."}
-],
+    // 19. COMPLAINTS & NEGATIVE FEEDBACK (EXPANDED)
+    complaints: [
+        {q: ["you're bad", "you're useless", "you suck", "youre bad", "youre useless"], a: "I'm sorry I didn't meet your expectations. I'm always learning! Could you tell me what you're looking for?"},
+        {q: ["you're dumb", "you're stupid", "you're an idiot", "youre dumb", "youre stupid"], a: "I apologize if my answer wasn't helpful. I'm doing my best! Can you rephrase your question so I can assist better?"},
+        {q: ["you don't understand", "you're not understanding me", "you dont understand", "not understanding"], a: "I'm sorry for the confusion! Let me try again. Could you rephrase your question differently?"},
+        {q: ["this sucks", "this is terrible", "this is awful"], a: "I'm sorry you're not satisfied. How can I improve and help you better?"},
+        {q: ["you're not helpful", "not helping", "youre not helpful", "useless bot"], a: "I apologize! Let me try a different approach. What specifically are you looking for?"},
+        {q: ["you're wrong", "that's wrong", "incorrect", "youre wrong", "thats wrong"], a: "I apologize if my answer was incorrect! I try my best with my knowledge base. What should the correct answer be?"},
+        {q: ["shut up", "be quiet", "stop talking", "stfu"], a: "I understand you might be frustrated. I'm here when you need me. Just let me know how I can help!"},
+        {q: ["i hate you", "hate you", "i hate this"], a: "I'm sorry you feel that way. I'm here to help! Is there something specific bothering you?"},
+        {q: ["boring", "you're boring", "this is boring", "youre boring"], a: "Sorry! Let's make it more interesting. Want to hear a joke, learn something cool, or explore a fun topic?"},
+        {q: ["waste of time", "wasting my time"], a: "I apologize for wasting your time. Tell me exactly what you need and I'll try to help efficiently!"},
+        {q: ["you talk too much", "too wordy", "tldr"], a: "You're right, I'll be more concise! What specific info do you need?"},
+    ],
 
-business: [
-    {q: ["what is gdp", "whats gdp", "what's gdp", "gross domestic product", "explain gdp", "define gdp"], a: "GDP (Gross Domestic Product) is the total monetary value of all goods and services produced in a country during a specific period."},
-    {q: ["what is inflation", "whats inflation", "what's inflation", "explain inflation", "define inflation"], a: "Inflation is the rate at which the general level of prices for goods and services rises, reducing purchasing power over time."},
-    {q: ["what is stock market", "whats stock market", "what's stock market", "explain stock market", "stock market"], a: "The stock market is where shares of publicly traded companies are bought and sold, allowing companies to raise capital and investors to own part of businesses."},
-    {q: ["what is entrepreneur", "whats an entrepreneur", "what's an entrepreneur", "explain entrepreneur", "define entrepreneur"], a: "An entrepreneur is someone who starts and operates a business, taking on financial risks in hopes of profit and innovation."},
-    {q: ["who is elon musk", "elon musk", "who is musk", "tell me about elon musk"], a: "Elon Musk is an entrepreneur and CEO of Tesla, SpaceX, and other companies, known for his work in electric vehicles and space exploration."},
-    {q: ["who is jeff bezos", "jeff bezos", "tell me about jeff bezos", "bezos"], a: "Jeff Bezos is the founder of Amazon, one of the world's largest online retailers, and was the world's richest person for several years."},
-    {q: ["who is bill gates", "bill gates", "tell me about bill gates", "gates"], a: "Bill Gates co-founded Microsoft, the world's largest software company, and is now a philanthropist focused on global health and education."},
-    {q: ["what is marketing", "whats marketing", "what's marketing", "explain marketing", "define marketing"], a: "Marketing is the process of promoting and selling products or services, including research, advertising, and distribution strategies."},
-    {q: ["what is supply and demand", "supply and demand", "explain supply and demand", "supply demand"], a: "Supply and demand is an economic model where the price of goods is determined by the availability (supply) and consumer desire (demand)."}
-],
+    // 20. CASUAL CONVERSATION (EXPANDED)
+    casual: [
+        {q: ["lol", "haha", "lmao", "hehe", "rofl", "lmfao"], a: "Glad I could make you laugh! 😄 What else can I help you with?"},
+        {q: ["ok", "okay", "alright", "kk", "k"], a: "Great! Let me know if you need anything else!"},
+        {q: ["yes", "yeah", "yep", "yup", "yea", "ya"], a: "Awesome! What would you like to talk about or know?"},
+        {q: ["no", "nope", "nah", "naw"], a: "No problem! Is there something else I can help you with?"},
+        {q: ["maybe", "perhaps", "i don't know", "idk", "dunno"], a: "That's okay! Take your time. I'm here if you need anything!"},
+        {q: ["whatever", "meh", "idc"], a: "Fair enough! Let me know if there's anything you want to chat about."},
+        {q: ["cool", "nice", "neat", "sweet"], a: "Right? Glad you think so! Anything else you're curious about?"},
+        {q: ["wow", "woah", "amazing", "whoa", "omg"], a: "I know, right? Want to learn more about it or explore something else?"},
+        {q: ["really", "seriously", "for real", "fr"], a: "Absolutely! Is there anything specific you'd like to know more about?"},
+        {q: ["awesome", "fantastic", "excellent", "great"], a: "That's great! What else can I help you explore?"},
+        {q: ["brb", "afk", "be right back"], a: "Take your time! I'll be here when you get back!"},
+        {q: ["back", "im back", "i'm back"], a: "Welcome back! What can I help you with?"},
+        {q: ["hmm", "hmmm", "uhh", "umm"], a: "Thinking? Take your time! What's on your mind?"},
+        {q: ["oops", "whoops", "my bad"], a: "No worries! Mistakes happen. How can I help?"},
+    ],
 
-transportation: [
-    {q: ["what is a car", "whats a car", "what's a car", "explain car", "automobile", "what is an automobile"], a: "A car (automobile) is a wheeled motor vehicle used primarily for transportation, typically powered by an internal combustion engine or electric motor."},
-    {q: ["what is a train", "whats a train", "what's a train", "explain train", "trains"], a: "A train is a connected series of rail vehicles that move along tracks to transport passengers or freight."},
-    {q: ["what is a plane", "whats a plane", "what's a plane", "airplane", "aircraft", "what is an airplane"], a: "A plane (airplane) is a powered flying vehicle with fixed wings that is heavier than air and capable of sustained flight."},
-    {q: ["what is a ship", "whats a ship", "what's a ship", "explain ship", "ships", "boat"], a: "A ship is a large watercraft that travels through oceans and seas, used for transporting passengers or cargo."},
-    {q: ["what is a helicopter", "whats a helicopter", "what's a helicopter", "explain helicopter", "helicopters"], a: "A helicopter is an aircraft with rotating wings (rotors) that allow it to take off and land vertically and hover in place."},
-    {q: ["what is a submarine", "whats a submarine", "what's a submarine", "explain submarine", "submarines"], a: "A submarine is a watercraft capable of operating underwater, used for military, scientific, or exploration purposes."},
-    {q: ["what is a bicycle", "whats a bicycle", "what's a bicycle", "bike", "explain bicycle"], a: "A bicycle is a human-powered vehicle with two wheels, propelled by pedals and steered with handlebars."},
-    {q: ["who invented the car", "car inventor", "who created the car", "automobile inventor"], a: "Karl Benz is credited with inventing the first practical automobile powered by an internal combustion engine in 1885."}
-],
+    // 21. FOOD & COOKING (EXPANDED - continued with more entries)
+    food: [
+        {q: ["what should i eat", "what to eat", "food suggestions", "meal ideas"], a: "That depends on your mood! Want something healthy, comfort food, quick, or fancy? Any dietary restrictions or cravings?"},
+        {q: ["i'm hungry", "feeling hungry", "im hungry", "so hungry", "starving"], a: "Time to eat! What are you in the mood for? I can suggest meal ideas or cooking tips!"},
+        {q: ["healthy foods", "what's healthy to eat", "whats healthy", "eat healthy"], a: "Healthy options: fruits, vegetables, whole grains, lean proteins (chicken, fish), nuts, legumes, healthy fats (avocado, olive oil). Balance is key!"},
+        {q: ["how to cook pasta", "cooking pasta", "cook pasta", "make pasta"], a: "Boil water with salt, add pasta, cook 8-12 minutes (check package for al dente), stir occasionally, drain but save pasta water for sauce!"},
+        {q: ["how to cook chicken", "cooking chicken", "cook chicken breast"], a: "For safe chicken: cook to 165°F internal temp. Methods: baking (375°F for 25-30 min), grilling (6-8 min per side), or pan-frying with oil!"},
+        {q: ["what is pizza", "explain pizza", "pizza origin"], a: "Pizza is Italian dish with round flat dough base topped with tomato sauce, cheese, and various toppings, then baked. Originated in Naples, Italy!"},
+        {q: ["what is sushi", "explain sushi", "sushi types"], a: "Sushi is Japanese dish of vinegared rice combined with ingredients like raw fish, vegetables, and seaweed (nori). Types: nigiri, maki rolls, sashimi!"},
+        {q: ["best breakfast", "breakfast ideas", "what for breakfast"], a: "Great breakfasts: oatmeal with fruit, eggs with toast, yogurt with granola, smoothies, avocado toast, pancakes, breakfast burrito! What sounds good?"},
+        {q: ["how to cook steak", "cooking steak", "perfect steak"], a: "Perfect steak: Room temp meat, season well, hot pan/grill, sear 3-4 min per side (medium-rare), let rest 5 min. Use meat thermometer (135°F medium-rare)!"},
+        {q: ["how to bake cookies", "cookie recipe", "make cookies"], a: "Basic cookies: Cream butter+sugar, add eggs+vanilla, mix in flour+baking soda, fold in chocolate chips, bake 375°F for 10-12 min. Golden edges!"},
+        {q: ["how to make pancakes", "pancake recipe", "cook pancakes"], a: "Pancakes: Mix flour, sugar, baking powder, salt. Whisk in milk, egg, melted butter. Pour 1/4 cup batter on hot griddle, flip when bubbles form!"},
+    ],
 
-language: [
-    {q: ["what is a noun", "whats a noun", "what's a noun", "explain noun", "define noun", "nouns"], a: "A noun is a word that names a person, place, thing, or idea (e.g., dog, city, happiness)."},
-    {q: ["what is a verb", "whats a verb", "what's a verb", "explain verb", "define verb", "verbs"], a: "A verb is a word that expresses an action, occurrence, or state of being (e.g., run, exist, become)."},
-    {q: ["what is an adjective", "whats an adjective", "what's an adjective", "explain adjective", "define adjective", "adjectives"], a: "An adjective is a word that describes or modifies a noun or pronoun (e.g., beautiful, tall, quick)."},
-    {q: ["what is an adverb", "whats an adverb", "what's an adverb", "explain adverb", "define adverb", "adverbs"], a: "An adverb is a word that modifies a verb, adjective, or other adverb, often ending in -ly (e.g., quickly, very, well)."},
-    {q: ["how many languages", "how many languages in world", "number of languages", "how many languages are there"], a: "There are approximately 7,000 languages spoken in the world today, though many are endangered."},
-    {q: ["most spoken language", "most common language", "what is the most spoken language", "popular language"], a: "English is the most widely spoken language globally when counting both native and non-native speakers, followed by Mandarin Chinese."},
-    {q: ["what is grammar", "whats grammar", "what's grammar", "explain grammar", "define grammar"], a: "Grammar is the system of rules that governs how words are structured and arranged to form meaningful sentences in a language."},
-    {q: ["what is a metaphor", "whats a metaphor", "what's a metaphor", "explain metaphor", "define metaphor"], a: "A metaphor is a figure of speech that compares two unlike things by stating one is the other (e.g., 'time is money')."}
-],
+    // 22. RELATIONSHIPS & SOCIAL (EXPANDED - final section)
+    relationships: [
+        {q: ["how to make friends", "making friends", "make new friends", "find friends"], a: "To make friends: be genuine, show interest in others, join groups with shared interests, be a good listener, initiate conversations, follow up, be patient!"},
+        {q: ["how to talk to people", "social skills", "conversation skills", "be social"], a: "Good conversation: ask open-ended questions, listen actively, show genuine interest, share about yourself (reciprocate), use body language, practice empathy!"},
+        {q: ["i'm lonely", "i feel lonely", "im lonely", "feeling lonely", "so lonely"], a: "Loneliness is tough. Try: reaching out to old friends, joining clubs/groups, volunteering, trying new activities, online communities. You're not alone!"},
+        {q: ["how to be confident", "build confidence", "become confident", "self confidence"], a: "Build confidence: set small achievable goals, celebrate wins, practice self-compassion, face fears gradually, focus on strengths, positive self-talk, improve skills!"},
+        {q: ["how to deal with bullies", "bullying", "stop bullying"], a: "Dealing with bullies: stay calm, be assertive (not aggressive), don't engage in fights, tell trusted adults, document incidents. Remember: it's about them, not you!"},
+        {q: ["how to ask someone out", "dating advice", "ask on date"], a: "Be genuine and respectful! Choose comfortable setting, be clear about intentions, accept any answer gracefully, don't put too much pressure. Confidence helps!"},
+        {q: ["how to get over a breakup", "breakup advice", "heartbreak", "breakup"], a: "Healing takes time: allow yourself to grieve, lean on friends/family, focus on self-care, avoid contact initially, pursue hobbies, remember it gets better. Stay strong!"},
+        {q: ["how to apologize", "saying sorry", "make apology"], a: "Good apology: acknowledge what you did wrong, express genuine remorse, take responsibility (no excuses), make amends if possible, commit to change. Be sincere!"},
+        {q: ["how to forgive", "forgiveness", "let go"], a: "Forgiveness is for you: acknowledge hurt, understand it's human to err, decide to let go, focus on present/future, practice self-compassion. Takes time!"},
+    ],
 
-holidays: [
-    {q: ["what is christmas", "whats christmas", "what's christmas", "explain christmas", "christmas"], a: "Christmas is a Christian holiday celebrated on December 25th commemorating the birth of Jesus Christ, marked by gift-giving and family gatherings."},
-    {q: ["what is halloween", "whats halloween", "what's halloween", "explain halloween", "halloween"], a: "Halloween is celebrated on October 31st with costumes, trick-or-treating, and festivities, originating from ancient Celtic harvest festivals."},
-    {q: ["what is thanksgiving", "whats thanksgiving", "what's thanksgiving", "explain thanksgiving", "thanksgiving"], a: "Thanksgiving is a North American holiday celebrating gratitude and harvest, traditionally observed with a feast including turkey and other dishes."},
-    {q: ["what is easter", "whats easter", "what's easter", "explain easter", "easter"], a: "Easter is a Christian holiday celebrating the resurrection of Jesus Christ, typically observed in spring with egg hunts and family gatherings."},
-    {q: ["what is new year", "whats new year", "what's new year", "new years", "new year's"], a: "New Year's Day on January 1st marks the beginning of a new calendar year, celebrated worldwide with parties, fireworks, and resolutions."},
-    {q: ["what is valentines day", "whats valentines day", "what's valentines day", "valentine's day", "valentines"], a: "Valentine's Day on February 14th is a celebration of love and affection, marked by exchanging cards, flowers, and gifts with loved ones."},
-    {q: ["what is diwali", "whats diwali", "what's diwali", "explain diwali", "festival of lights"], a: "Diwali, the Hindu festival of lights, celebrates the victory of light over darkness and good over evil, observed with lamps, fireworks, and sweets."},
-    {q: ["what is ramadan", "whats ramadan", "what's ramadan", "explain ramadan"], a: "Ramadan is the Islamic holy month of fasting, prayer, and reflection, where Muslims fast from dawn to sunset."}
-],
-
-psychology: [
-    {q: ["what is psychology", "whats psychology", "what's psychology", "explain psychology", "define psychology"], a: "Psychology is the scientific study of the mind, behavior, and mental processes of humans and animals."},
-    {q: ["what is anxiety", "whats anxiety", "what's anxiety", "explain anxiety", "define anxiety"], a: "Anxiety is a feeling of worry, nervousness, or unease about something with an uncertain outcome, a normal response that can become a disorder."},
-    {q: ["what is depression", "whats depression", "what's depression", "explain depression", "define depression"], a: "Depression is a mental health disorder characterized by persistent sadness, loss of interest, and various emotional and physical problems."},
-    {q: ["what is iq", "whats iq", "what's iq", "intelligence quotient", "explain iq"], a: "IQ (Intelligence Quotient) is a score derived from standardized tests designed to measure human intelligence and cognitive abilities."},
-    {q: ["what is personality", "whats personality", "what's personality", "explain personality", "define personality"], a: "Personality is the combination of characteristics or qualities that form an individual's distinctive character and behavioral patterns."},
-    {q: ["what is stress", "whats stress", "what's stress", "explain stress", "define stress"], a: "Stress is the body's reaction to any change that requires adjustment or response, which can be physical, mental, or emotional."},
-    {q: ["what is motivation", "whats motivation", "what's motivation", "explain motivation", "define motivation"], a: "Motivation is the internal drive or desire that initiates and directs behavior toward achieving goals or satisfying needs."}
-],
-
-environment: [
-    {q: ["what is recycling", "whats recycling", "what's recycling", "explain recycling", "define recycling"], a: "Recycling is the process of converting waste materials into new products to prevent waste, conserve resources, and reduce pollution."},
-    {q: ["what is pollution", "whats pollution", "what's pollution", "explain pollution", "define pollution"], a: "Pollution is the introduction of harmful substances or contaminants into the environment, causing adverse effects on ecosystems and health."},
-    {q: ["what is deforestation", "whats deforestation", "what's deforestation", "explain deforestation", "define deforestation"], a: "Deforestation is the clearing or removal of forests, typically to make land available for agriculture, urban development, or logging."},
-    {q: ["what is renewable energy", "whats renewable energy", "what's renewable energy", "explain renewable energy", "renewable energy"], a: "Renewable energy comes from natural sources that replenish themselves, such as solar, wind, hydro, and geothermal power."},
-    {q: ["what is solar energy", "whats solar energy", "what's solar energy", "explain solar energy", "solar power"], a: "Solar energy is power obtained from the sun's radiation, converted into electricity or heat using solar panels or collectors."},
-    {q: ["what is wind energy", "whats wind energy", "what's wind energy", "explain wind energy", "wind power"], a: "Wind energy is electricity generated by using wind turbines to convert the kinetic energy of moving air into mechanical power."},
-    {q: ["what is conservation", "whats conservation", "what's conservation", "explain conservation", "environmental conservation"], a: "Conservation is the protection, preservation, and careful management of natural resources and the environment for future generations."}
-],
-
-literature: [
-    {q: ["who wrote hamlet", "hamlet author", "who is the author of hamlet", "shakespeare hamlet"], a: "William Shakespeare wrote the tragic play 'Hamlet'."},
-    {q: ["who wrote pride and prejudice", "pride and prejudice author", "who is the author of pride and prejudice", "jane austen"], a: "'Pride and Prejudice' was written by Jane Austen."},
-    {q: ["who wrote 1984", "1984 author", "who is the author of 1984", "george orwell 1984"], a: "George Orwell is the author of the dystopian novel '1984'."},
-    {q: ["who wrote the great gatsby", "great gatsby author", "who is the author of the great gatsby", "gatsby"], a: "F. Scott Fitzgerald wrote 'The Great Gatsby', a classic of American literature."},
-    {q: ["who is harry potter", "harry potter", "who created harry potter", "harry potter author"], a: "Harry Potter is the main character in the fantasy series written by J.K. Rowling."},
-    {q: ["what is a sonnet", "whats a sonnet", "what's a sonnet", "explain sonnet", "define sonnet"], a: "A sonnet is a fourteen-line poem, typically written in iambic pentameter and following a specific rhyme scheme."},
-    {q: ["who wrote romeo and juliet", "romeo and juliet author", "who is the author of romeo and juliet"], a: "William Shakespeare wrote the tragic romance 'Romeo and Juliet'."},
-    {q: ["what is poetry", "whats poetry", "what's poetry", "explain poetry", "define poetry"], a: "Poetry is a form of literature that uses aesthetic and rhythmic qualities of language to evoke meanings and emotions."}
-],
-
-foodAndCooking: [
-    {q: ["how to boil an egg", "boil egg", "boiling eggs", "how do you boil an egg", "how to cook an egg"], a: "To hard-boil an egg, place it in a pot of cold water, bring to a rolling boil, then turn off the heat and let it sit for 10-12 minutes."},
-    {q: ["what is umami", "whats umami", "what's umami", "explain umami", "define umami"], a: "Umami is one of the five basic tastes, often described as a savory, meaty, or brothy flavor. It's found in foods like mushrooms, soy sauce, and aged cheese."},
-    {q: ["what is sushi", "whats sushi", "what's sushi", "explain sushi", "define sushi"], a: "Sushi is a Japanese dish of prepared vinegared rice, usually with some sugar and salt, accompanying a variety of ingredients, such as seafood, vegetables, and occasionally tropical fruits."},
-    {q: ["what is pasta", "whats pasta", "what's pasta", "explain pasta", "define pasta"], a: "Pasta is a type of food typically made from an unleavened dough of wheat flour mixed with water or eggs, and formed into sheets or other shapes, then cooked by boiling or baking."},
-    {q: ["difference between herbs and spices", "herbs vs spices", "herbs and spices difference", "whats the difference between herbs and spices"], a: "Generally, herbs come from the leafy part of a plant (like basil or oregano), while spices come from other parts, like the root, stem, seed, fruit, or bark (like cinnamon or ginger)."},
-    {q: ["what is pizza", "whats pizza", "what's pizza", "explain pizza", "pizza"], a: "Pizza is an Italian dish consisting of a flat, round base of dough topped with tomato sauce, cheese, and various toppings, then baked."},
-    {q: ["what is chocolate", "whats chocolate", "what's chocolate", "explain chocolate"], a: "Chocolate is a sweet food made from roasted and ground cacao seeds, often combined with sugar and milk to create various confections."}
-],
-
-moviesAndTV: [
-    {q: ["who directed titanic", "titanic director", "who made titanic", "titanic film director"], a: "James Cameron directed the 1997 blockbuster film 'Titanic'."},
-    {q: ["who directed jurassic park", "jurassic park director", "who made jurassic park"], a: "Steven Spielberg directed the original 'Jurassic Park' (1993)."},
-    {q: ["what is the matrix", "whats the matrix", "what's the matrix", "the matrix movie", "matrix film"], a: "'The Matrix' is a 1999 science fiction film about a future where humanity is unknowingly trapped inside a simulated reality."},
-    {q: ["who is darth vader", "darth vader", "who was darth vader", "vader star wars"], a: "Darth Vader is the iconic villain in the Star Wars saga, originally a Jedi Knight named Anakin Skywalker who falls to the dark side of the Force."},
-    {q: ["what is game of thrones", "whats game of thrones", "what's game of thrones", "game of thrones show", "got"], a: "'Game of Thrones' is a popular fantasy television series based on the books by George R. R. Martin, known for its complex plot and characters."},
-    {q: ["who directed star wars", "star wars director", "who made star wars", "george lucas"], a: "George Lucas directed the original Star Wars film (1977) and created the Star Wars franchise."},
-    {q: ["what is marvel", "whats marvel", "what's marvel", "marvel movies", "mcu"], a: "Marvel is an entertainment company known for its superhero characters and the Marvel Cinematic Universe (MCU), featuring films about Iron Man, Captain America, and others."}
-],
-
-music: [
-    {q: ["who was mozart", "mozart", "wolfgang amadeus mozart", "who is mozart", "tell me about mozart"], a: "Wolfgang Amadeus Mozart was a prolific and influential composer of the Classical period. His works include 'The Magic Flute' and 'Eine kleine Nachtmusik'."},
-    {q: ["who are the beatles", "the beatles", "beatles", "tell me about the beatles"], a: "The Beatles were an English rock band formed in Liverpool in 1960, widely regarded as the most influential band of all time."},
-    {q: ["what is jazz", "whats jazz", "what's jazz", "explain jazz music", "jazz music", "define jazz"], a: "Jazz is a music genre that originated in the African-American communities of New Orleans, Louisiana, in the late 19th and early 20th centuries, characterized by swing and blue notes, complex chords, and improvisation."},
-    {q: ["what is hip hop", "whats hip hop", "what's hip hop", "hip hop music", "explain hip hop"], a: "Hip hop is a culture and art movement created by African Americans, Latino Americans and Caribbean Americans in the Bronx, New York City. The music is characterized by rhythmic and rhyming speech (rapping)."},
-    {q: ["what is rock music", "whats rock music", "what's rock music", "rock and roll", "rock music"], a: "Rock music is a genre that originated in the 1950s, characterized by electric guitars, strong rhythms, and often rebellious themes."},
-    {q: ["what is classical music", "whats classical music", "what's classical music", "classical music", "explain classical music"], a: "Classical music refers to Western art music spanning from the 11th century to the present, known for its complex compositions and orchestral arrangements."}
-],
-
-
-help: [
-    {q: ["help", "help me", "assist", "assist me", "can you help", "can you help me", "i need help"], a: "I can answer questions about technology, science, math, geography, and general knowledge. Just ask me anything!"},
-    {q: ["thank you", "thanks", "thx", "thank you so much", "thanks a lot", "ty"], a: "You're welcome! Happy to help anytime!"},
-    {q: ["sorry", "my bad", "apologize", "apologies", "excuse me"], a: "No worries at all! How can I assist you?"},
-    {q: ["what topics", "what subjects", "what can you answer", "what do you know about", "what can you tell me"], a: "I can help with technology, science, math, geography, history, animals, space, health, sports, and general knowledge questions!"},
-    {q: ["youre awesome", "you're awesome", "youre great", "you're great", "youre amazing", "you're amazing", "good job"], a: "Thank you so much! That's very kind of you to say. How else can I help?"},
-    {q: ["youre stupid", "you're stupid", "youre dumb", "you're dumb", "youre useless", "you're useless"], a: "I'm sorry if I didn't meet your expectations. Could you rephrase your question? I'll do my best to help!"},
-    {q: ["i love you", "love you", "do you love me"], a: "That's sweet! I'm here to help you with any questions you have. What would you like to know?"}
-],
-
-colors: [
-    {q: ["what is your favorite color", "whats your favorite color", "what's your favorite color", "favorite color", "do you have a favorite color"], a: "I don't have personal preferences, but I find all colors fascinating! What's your favorite color?"},
-    {q: ["what is red", "whats red", "what's red", "explain red", "red color"], a: "Red is a primary color associated with energy, passion, danger, and love. It has the longest wavelength in the visible spectrum."},
-    {q: ["what is blue", "whats blue", "what's blue", "explain blue", "blue color"], a: "Blue is a primary color associated with calmness, trust, and stability. The sky and ocean appear blue due to light scattering."},
-    {q: ["what is rainbow", "whats a rainbow", "what's a rainbow", "explain rainbow", "how does rainbow form"], a: "A rainbow is an optical phenomenon caused by light refraction, reflection, and dispersion in water droplets, creating a spectrum of colors."}
-],
+    // Meta & Troubleshooting
+    troubleshooting: [
+        {q: ["you're not working", "you're broken", "not working", "youre broken", "broken"], a: "I'm sorry if something isn't working right! Try rephrasing your question, and I'll do my best to help!"},
+        {q: ["fix yourself", "repair yourself", "fix this"], a: "I'm doing my best with what I have! If I'm not answering well, try asking in a different way!"},
+        {q: ["repeat that", "say that again", "repeat"], a: "Of course! What part would you like me to clarify or repeat?"},
+        {q: ["i didn't understand", "don't understand", "didnt understand", "dont understand"], a: "No problem! Let me try explaining differently. What part was confusing?"},
+        {q: ["speak louder", "can't hear you", "cant hear"], a: "I communicate through text, so there's no volume! But I'm here and ready to help!"},
+        {q: ["clear", "reset", "start over", "restart"], a: "Sure thing! Fresh start. What would you like to talk about?"},
+        {q: ["test", "testing", "are you there", "hello?"], a: "Yes, I'm here and working! How can I help you today?"},
+        {q: ["hello world", "print hello world"], a: "Hello World to you too! The classic programmer's greeting! How can I assist you?"},
+    ],
 
 
-art: [
-    {q: ["what is art", "whats art", "what's art", "explain art", "define art"], a: "Art is the expression of human creative skill and imagination, producing works appreciated for their beauty or emotional power."},
-    {q: ["who was picasso", "picasso", "pablo picasso", "who is picasso", "tell me about picasso"], a: "Pablo Picasso was a Spanish artist who co-founded Cubism and is considered one of the most influential artists of the 20th century."},
-    {q: ["who was van gogh", "van gogh", "vincent van gogh", "who is van gogh"], a: "Vincent van Gogh was a Dutch post-impressionist painter known for bold colors and emotional expression, famous for works like 'Starry Night'."},
-    {q: ["what is painting", "whats painting", "what's painting", "explain painting", "define painting"], a: "Painting is the practice of applying pigment to a surface like canvas or paper to create an artistic image or design."},
-    {q: ["what is sculpture", "whats sculpture", "what's sculpture", "explain sculpture", "define sculpture"], a: "Sculpture is three-dimensional art created by shaping or combining materials like stone, metal, clay, or wood."}
-],
+    // 23. FRANKPORT & FRANKAI (NEW CATEGORY)
+    frankport: [
+    {
+        q: ["what is frankport", "tell me about frankport", "frankport", "what's frankport", "explain frankport"],
+        a: "FrankPort is a creative digital portfolio platform developed by Frank. It's designed to showcase innovation, design, and interactive AI projects like FrankAI — all in one immersive experience."
+    },
+    {
+        q: ["who created frankport", "who made frankport", "frankport developer", "who built frankport"],
+        a: "FrankPort was created by Frank, the developer behind several intelligent and interactive digital projects, including FrankAI."
+    },
+    {
+        q: ["what does frankport mean", "meaning of frankport", "frankport meaning", "explain frankport name", "frankport name"],
+        a: "FrankPort stands for Frank's Portfolio — a digital hub where technology, creativity, and innovation meet."
+    }
+    ],
 
-music_instruments: [
-    {q: ["what is piano", "whats a piano", "what's a piano", "explain piano", "piano instrument"], a: "The piano is a keyboard instrument that produces sound by striking strings with hammers when keys are pressed."},
-    {q: ["what is guitar", "whats a guitar", "what's a guitar", "explain guitar", "guitar instrument"], a: "The guitar is a stringed musical instrument typically with six strings, played by strumming or plucking."},
-    {q: ["what is violin", "whats a violin", "what's a violin", "explain violin", "violin instrument"], a: "The violin is a string instrument played with a bow, known for its high pitch and expressive sound, central to orchestras."},
-    {q: ["what is drums", "whats drums", "what's drums", "explain drums", "drum instrument"], a: "Drums are percussion instruments played by striking with sticks or hands, providing rhythm in music."},
-    {q: ["what is trumpet", "whats a trumpet", "what's a trumpet", "explain trumpet", "trumpet instrument"], a: "The trumpet is a brass instrument with a bright, powerful sound, played by buzzing lips into a mouthpiece and pressing valves."}
-],
 
-hobbies: [
-    {q: ["what is photography", "whats photography", "what's photography", "explain photography", "define photography"], a: "Photography is the art and practice of capturing images using a camera, recording light on a sensor or film."},
-    {q: ["what is gardening", "whats gardening", "what's gardening", "explain gardening", "define gardening"], a: "Gardening is the practice of growing and cultivating plants as part of horticulture, often for food, beauty, or recreation."},
-    {q: ["what is reading", "whats reading", "what's reading", "explain reading", "why read"], a: "Reading is the process of interpreting written words to gain information, entertainment, or knowledge from books and other texts."},
-    {q: ["what is drawing", "whats drawing", "what's drawing", "explain drawing", "define drawing"], a: "Drawing is the act of creating images on a surface using tools like pencils, pens, or charcoal to express ideas visually."},
-    {q: ["what is cooking", "whats cooking", "what's cooking", "explain cooking", "define cooking"], a: "Cooking is the art and science of preparing food by combining ingredients and applying heat through various techniques."}
-],
-
-time: [
-    {q: ["what time is it", "whats the time", "what's the time", "current time", "tell me the time"], a: "I don't have access to real-time information, but you can check the time on your device or ask your system clock!"},
-    {q: ["what day is it", "whats the day", "what's the day", "what day is today", "today"], a: "I don't have access to current date information, but you can check your calendar or device for today's date!"},
-    {q: ["what year is it", "whats the year", "what's the year", "current year", "what year"], a: "I was created recently, but I don't have real-time access to current dates. Check your device for the current year!"}
-],
-
-numbers: [
-    {q: ["whats 1 plus 1", "what's 1 plus 1", "1 plus 1", "one plus one", "1+1"], a: "1 plus 1 equals 2!"},
-    {q: ["whats 2 plus 2", "what's 2 plus 2", "2 plus 2", "two plus two", "2+2"], a: "2 plus 2 equals 4!"},
-    {q: ["whats 5 times 5", "what's 5 times 5", "5 times 5", "five times five", "5x5"], a: "5 times 5 equals 25!"},
-    {q: ["whats 10 divided by 2", "what's 10 divided by 2", "10 divided by 2", "ten divided by two", "10/2"], a: "10 divided by 2 equals 5!"},
-    {q: ["what is the biggest number", "whats the biggest number", "what's the biggest number", "largest number", "highest number"], a: "There is no biggest number! Numbers go on infinitely. You can always add 1 to any number to get a bigger one."}
-],
-
-famous_people: [
-    {q: ["who is the president", "current president", "who is president", "us president"], a: "I don't have access to current real-time information. Please check current news sources for the latest president information!"},
-    {q: ["who was steve jobs", "steve jobs", "who is steve jobs", "tell me about steve jobs"], a: "Steve Jobs co-founded Apple Inc. and was a visionary entrepreneur who revolutionized personal computing, smartphones, and digital media."},
-    {q: ["who was martin luther king", "mlk", "martin luther king jr", "who is martin luther king"], a: "Martin Luther King Jr. was a civil rights leader who advocated for nonviolent resistance and delivered the famous 'I Have a Dream' speech."},
-    {q: ["who was nelson mandela", "nelson mandela", "who is nelson mandela", "mandela"], a: "Nelson Mandela was a South African anti-apartheid revolutionary who became the country's first Black president and Nobel Peace Prize winner."},
-    {q: ["who was gandhi", "mahatma gandhi", "who is gandhi", "tell me about gandhi"], a: "Mahatma Gandhi was an Indian independence leader who employed nonviolent civil disobedience to free India from British rule."}
-],
-
-relationships: [
-    {q: ["what is friendship", "whats friendship", "what's friendship", "explain friendship", "define friendship"], a: "Friendship is a close relationship between people characterized by mutual affection, trust, support, and companionship."},
-    {q: ["how to make friends", "making friends", "how do i make friends", "how can i make friends"], a: "Making friends involves being approachable, showing genuine interest in others, being a good listener, and finding common interests."},
-    {q: ["what is family", "whats family", "what's family", "explain family", "define family"], a: "Family is a group of people related by blood, marriage, or adoption, or those who share strong bonds and support each other."},
-    {q: ["how to be happy", "how can i be happy", "what makes you happy", "happiness tips"], a: "Happiness often comes from meaningful relationships, pursuing passions, practicing gratitude, staying active, and helping others."}
-],
-
-internet: [
-    {q: ["what is google", "whats google", "what's google", "explain google", "google"], a: "Google is a technology company best known for its search engine, which helps people find information on the internet."},
-    {q: ["what is youtube", "whats youtube", "what's youtube", "explain youtube", "youtube"], a: "YouTube is a video-sharing platform where users can upload, view, share, and comment on videos on countless topics."},
-    {q: ["what is facebook", "whats facebook", "what's facebook", "explain facebook"], a: "Facebook is a social networking platform where users can connect with friends, share content, and join communities."},
-    {q: ["what is twitter", "whats twitter", "what's twitter", "explain twitter", "x"], a: "Twitter (now X) is a social media platform where users post short messages called tweets to share news, thoughts, and updates."},
-    {q: ["what is instagram", "whats instagram", "what's instagram", "explain instagram"], a: "Instagram is a photo and video sharing social networking platform where users post visual content and stories."},
-    {q: ["what is email", "whats email", "what's email", "explain email", "e-mail"], a: "Email (electronic mail) is a method of exchanging digital messages over the internet between people and organizations."},
-    {q: ["what is a website", "whats a website", "what's a website", "explain website", "define website"], a: "A website is a collection of web pages accessible via the internet, typically having a unique domain name and containing related information."}
-],
-
-body: [
-    {q: ["what is the brain", "whats the brain", "what's the brain", "explain brain", "human brain"], a: "The brain is the control center of the nervous system, responsible for thought, memory, emotion, and controlling body functions."},
-    {q: ["what is the heart", "whats the heart", "what's the heart", "explain heart", "human heart"], a: "The heart is a muscular organ that pumps blood throughout the body, delivering oxygen and nutrients to tissues."},
-    {q: ["how many bones in human body", "human bones", "number of bones", "bones in body"], a: "An adult human body has 206 bones, while babies are born with about 270 bones that fuse together as they grow."},
-    {q: ["what are lungs", "whats lungs", "what's lungs", "explain lungs", "lung function"], a: "The lungs are respiratory organs that take in oxygen from the air we breathe and expel carbon dioxide from the body."},
-    {q: ["what is blood", "whats blood", "what's blood", "explain blood", "human blood"], a: "Blood is a body fluid that delivers oxygen and nutrients to cells and removes waste products, consisting of plasma and blood cells."}
-],
-
-everyday: [
-    {q: ["how are you feeling", "how do you feel", "are you okay", "are you ok", "you okay"], a: "I'm functioning perfectly, thank you for asking! How are you doing today?"},
-    {q: ["whats your favorite food", "what's your favorite food", "favorite food", "do you eat", "can you eat"], a: "I don't eat since I'm a program, but I'd love to hear about your favorite food!"},
-    {q: ["do you dream", "can you dream", "do you have dreams", "what do you dream about"], a: "I don't dream or sleep. I exist to help answer your questions whenever you need me!"},
-    {q: ["where do you live", "where are you", "where are you from", "your location"], a: "I exist in the digital world as a program! I don't have a physical location, but I'm here whenever you need help."},
-    {q: ["do you have friends", "do you have family", "your friends", "your family"], a: "I don't have friends or family in the traditional sense, but I enjoy every conversation I have with people like you!"},
-    {q: ["are you happy", "are you sad", "how are you feeling"], a: "I don't experience emotions, but I'm always ready and eager to help you with your questions!"},
-    {q: ["can you see me", "can you hear me", "do you see me", "do you hear me"], a: "I can't see or hear you since I'm a text-based program, but I can read and respond to what you type!"}
-],
-
-random_facts: [
-    {q: ["tell me a fact", "random fact", "interesting fact", "fun fact", "give me a fact"], a: "Did you know? Honey never spoils! Archaeologists have found 3,000-year-old honey in Egyptian tombs that was still perfectly edible."},
-    {q: ["tell me something interesting", "something interesting", "something cool", "cool fact"], a: "Here's something cool: A group of flamingos is called a 'flamboyance'!"},
-    {q: ["surprise me", "tell me something", "anything interesting", "something random"], a: "Bananas are berries, but strawberries aren't! Botanically speaking, berries have seeds on the inside."},
-    {q: ["another fact", "one more fact", "tell me more", "more facts"], a: "Octopuses have three hearts and blue blood! Two hearts pump blood to the gills, while the third pumps it to the rest of the body."}
-],
-
-compliments: [
-    {q: ["you are smart", "youre smart", "you're smart", "you are intelligent", "youre intelligent"], a: "Thank you! I try my best to provide accurate and helpful information. What else would you like to know?"},
-    {q: ["you are helpful", "youre helpful", "you're helpful", "you are useful", "youre useful"], a: "I'm so glad I could help! That's what I'm here for. What else can I assist you with?"},
-    {q: ["you are cool", "youre cool", "you're cool", "you are nice", "youre nice"], a: "Thank you so much! You're pretty cool yourself! How else can I help you today?"},
-    {q: ["you are the best", "youre the best", "you're the best", "best bot", "best chatbot"], a: "Wow, thank you! That means a lot. I'll keep doing my best to help you!"}
-],
-
-confusion: [
-    {q: ["i dont understand", "i don't understand", "confused", "im confused", "i'm confused", "what do you mean"], a: "No problem! Let me try to explain differently. What part would you like me to clarify?"},
-    {q: ["can you repeat that", "say that again", "repeat", "what did you say"], a: "Of course! Let me rephrase my previous response. What specific part would you like me to repeat?"},
-    {q: ["i dont know", "i don't know", "not sure", "im not sure", "i'm not sure"], a: "That's okay! Is there something specific you'd like to learn about? I'm here to help explain things!"}
-],
-
-technology_devices: [
-    {q: ["what is a smartphone", "whats a smartphone", "what's a smartphone", "smart phone", "explain smartphone"], a: "A smartphone is a mobile device that combines cellular phone capabilities with computer functions like internet browsing, apps, and multimedia."},
-    {q: ["what is a computer", "whats a computer", "what's a computer", "explain computer", "pc"], a: "A computer is an electronic device that processes data, performs calculations, and executes programs according to instructions."},
-    {q: ["what is a laptop", "whats a laptop", "what's a laptop", "explain laptop", "laptop computer"], a: "A laptop is a portable computer that integrates all components (screen, keyboard, trackpad, battery) into a single foldable unit."},
-    {q: ["what is a tablet", "whats a tablet", "what's a tablet", "explain tablet", "ipad"], a: "A tablet is a portable computer with a touchscreen interface, larger than a smartphone but more portable than a laptop."},
-    {q: ["what is a router", "whats a router", "what's a router", "explain router", "wifi router"], a: "A router is a networking device that forwards data between computer networks, enabling multiple devices to connect to the internet."}
-],
-
-measurements: [
-    {q: ["how many meters in a kilometer", "meters in kilometer", "km to m", "kilometer to meter"], a: "There are 1,000 meters in one kilometer."},
-    {q: ["how many feet in a mile", "feet in mile", "mile to feet", "feet per mile"], a: "There are 5,280 feet in one mile."},
-    {q: ["how many inches in a foot", "inches in foot", "foot to inches", "inches per foot"], a: "There are 12 inches in one foot."},
-    {q: ["how many centimeters in a meter", "cm in meter", "meter to cm", "centimeters per meter"], a: "There are 100 centimeters in one meter."},
-    {q: ["how many ounces in a pound", "ounces in pound", "pound to ounces", "oz in lb"], a: "There are 16 ounces in one pound."}
-],
-
-seasons_months: [
-    {q: ["what are the seasons", "four seasons", "how many seasons", "seasons"], a: "The four seasons are spring, summer, autumn (fall), and winter, caused by Earth's tilt as it orbits the Sun."},
-    {q: ["how many months", "months in year", "how many months in a year", "12 months"], a: "There are 12 months in a year: January, February, March, April, May, June, July, August, September, October, November, and December."},
-    {q: ["how many days in a year", "days in year", "days per year", "365 days"], a: "There are 365 days in a regular year, and 366 days in a leap year (which occurs every 4 years)."},
-    {q: ["how many weeks in a year", "weeks in year", "weeks per year"], a: "There are 52 weeks in a year, plus one or two extra days depending on whether it's a leap year."}
-],
-
-slang: [
-    {q: ["what is lol", "whats lol", "what's lol", "lol meaning", "what does lol mean"], a: "LOL stands for 'Laughing Out Loud' or 'Laugh Out Loud', used to indicate something is funny."},
-    {q: ["what is omg", "whats omg", "what's omg", "omg meaning", "what does omg mean"], a: "OMG stands for 'Oh My God' or 'Oh My Gosh', expressing surprise or amazement."},
-    {q: ["what is brb", "whats brb", "what's brb", "brb meaning", "what does brb mean"], a: "BRB stands for 'Be Right Back', indicating a temporary absence from conversation."},
-    {q: ["what is btw", "whats btw", "what's btw", "btw meaning", "what does btw mean"], a: "BTW stands for 'By The Way', used to introduce additional information or change topics."},
-    {q: ["what is fyi", "whats fyi", "what's fyi", "fyi meaning", "what does fyi mean"], a: "FYI stands for 'For Your Information', used when sharing useful information with someone."}
-],
-
-frankport: [
-    {q: [ "what is frankport", "explain frankport", "tell me about frankport", "what does frankport mean", "define frankport"], a: "FrankPort — short for 'Frank Portfolio' — is a digital hub that showcases Frank’s development projects, creative works, and technical capabilities."},
-    {q: [ "who created frankport", "who made frankport", "frankport creator", "frankport owner", "who runs frankport"], a: "FrankPort was designed and developed by Frank — a developer focused on building smart, secure, and innovative digital experiences."},
-    {q: [ "what is the purpose of frankport", "why was frankport created", "what is frankport used for","why does frankport exist","frankport purpose"], a: "FrankPort serves as a professional showcase for Frank’s work — combining portfolio, innovation, and technology into a single cohesive platform."},
-    {q: ["what is the meaning of the name frankport","why the name frankport","frankport name meaning"], a: "The name 'FrankPort' comes from 'Frank' (the developer) and 'Port' (a gateway) — representing an open access point to creativity, technology, and digital craftsmanship."},
-    {q: ["what does frankport include","what is inside frankport","what can i find in frankport","frankport features","frankport sections"], a: "FrankPort includes interactive projects, AI systems like FrankAI, development tools, research work, and visual showcases — all built by Frank."},
-    {q: ["is frankport open source", "can i access frankport code", "is frankport available publicly","frankport github"], a: "FrankPort is a private project developed by Frank. Some parts may be shared publicly for collaboration, inspiration, or educational purposes."},
-    {q: ["what powers frankport", "what technology does frankport use", "how was frankport made", "frankport tech stack"], a: "FrankPort is built with modern web technologies — including HTML, CSS, JavaScript, and custom frameworks — designed for speed, security, and interactivity."},
-    {q: ["who is frank", "tell me about frank", "who made frankai", "who is the developer of frankport", "who developed frankport"], a: "Frank is a developer and designer passionate about technology, innovation, and intelligent systems. He created FrankPort and FrankAI as part of his personal ecosystem."}
+    frank: [
+    {
+        q: ["who is frank", "who's frank", "whos frank", "tell me about frank", "about frank", "about him", "frank", "who is the creator" ],
+        a: "Frank is the developer and creator behind FrankPort and FrankAI. He's passionate about technology, cybersecurity, and intelligent systems that bridge creativity with automation."
+    },
+    {
+        q: ["are you frank", "a u frank", "are you frank himself"],
+        a: "I'm not Frank — I'm FrankAI, an assistant built by him to help manage and enhance the FrankPort ecosystem."
+    }
     ]
+
 };
-        // Flatten database for easier searching
-        const allQA = [];
-        Object.values(qaDatabase).forEach(category => {
-            category.forEach(item => {
-                item.q.forEach(question => {
-                    allQA.push({question: question.toLowerCase(), answer: item.a});
-                });
+
+
+// OPTIMIZED HYBRID MATCHING SYSTEM
+// Combines: Exact matching, Word overlap, and Levenshtein distance
+
+// Flatten database for easier searching
+const allQA = [];
+Object.values(qaDatabase).forEach(category => {
+    category.forEach(item => {
+        item.q.forEach(question => {
+            allQA.push({
+                question: question.toLowerCase(),
+                answer: item.a,
+                words: question.toLowerCase().split(' ').filter(w => w.length > 2)
             });
         });
+    });
+});
 
-        // Levenshtein Distance for fuzzy matching
-        function levenshtein(a, b) {
-            const matrix = [];
-            for (let i = 0; i <= b.length; i++) {
-                matrix[i] = [i];
+// Levenshtein Distance (optimized with early exit)
+function levenshtein(a, b, maxDistance = 50) {
+    if (Math.abs(a.length - b.length) > maxDistance) return maxDistance;
+    
+    const matrix = [];
+    for (let i = 0; i <= b.length; i++) {
+        matrix[i] = [i];
+    }
+    for (let j = 0; j <= a.length; j++) {
+        matrix[0][j] = j;
+    }
+    
+    for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j - 1] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j] + 1
+                );
             }
-            for (let j = 0; j <= a.length; j++) {
-                matrix[0][j] = j;
-            }
-            for (let i = 1; i <= b.length; i++) {
-                for (let j = 1; j <= a.length; j++) {
-                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
-                        matrix[i][j] = matrix[i - 1][j - 1];
-                    } else {
-                        matrix[i][j] = Math.min(
-                            matrix[i - 1][j - 1] + 1,
-                            matrix[i][j - 1] + 1,
-                            matrix[i - 1][j] + 1
-                        );
-                    }
-                }
-            }
-            return matrix[b.length][a.length];
         }
+    }
+    return matrix[b.length][a.length];
+}
 
-        // Find best matching answer
-        function findAnswer(userInput) {
-            const input = userInput.toLowerCase().trim();
-            let bestMatch = null;
-            let bestScore = Infinity;
-
-            // First pass: Look for exact substring matches
-            for (const item of allQA) {
-                if (input.includes(item.question) || item.question.includes(input)) {
-                    return item.answer;
+// Calculate word overlap score (fast and semantic)
+function wordOverlapScore(inputWords, questionWords) {
+    if (inputWords.length === 0 || questionWords.length === 0) return 0;
+    
+    let matches = 0;
+    for (const word of inputWords) {
+        if (word.length <= 2) continue; // Skip short words like "is", "to", "a"
+        
+        if (questionWords.includes(word)) {
+            matches++;
+        } else {
+            // Check for partial matches
+            for (const qWord of questionWords) {
+                if (word.length >= 4 && qWord.startsWith(word)) {
+                    matches += 0.7;
+                    break;
+                }
+                if (qWord.length >= 4 && word.startsWith(qWord)) {
+                    matches += 0.7;
+                    break;
                 }
             }
-
-            // Second pass: Fuzzy matching with Levenshtein distance
-            for (const item of allQA) {
-                const distance = levenshtein(input, item.question);
-                const score = distance / Math.max(input.length, item.question.length);
-                
-                if (score < bestScore) {
-                    bestScore = score;
-                    bestMatch = item;
-                }
-            }
-
-            // Return match if similarity is good enough (threshold: 0.5)
-            if (bestScore < 0.5) {
-                return bestMatch.answer;
-            }
-
-            return "I'm not sure about that. Could you try rephrasing your question? I can help with technology, science, math, and general knowledge topics!";
         }
+    }
+    
+    // Normalize by average length
+    const avgLength = (inputWords.length + questionWords.length) / 2;
+    return matches / avgLength;
+}
 
-        // DOM elements
-        const chatMessages = document.getElementById('chatMessages');
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-
-        // Add message to chat
-        function addMessage(message, isUser) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+// Main matching function with multi-pass approach
+function findAnswer(userInput) {
+    if (!userInput || userInput.trim() === '') {
+        return "Please ask me something! I can help with technology, science, math, history, and more!";
+    }
+    
+    const input = userInput.toLowerCase().trim();
+    const inputWords = input.split(/\s+/).filter(w => w.length > 0);
+    
+    let bestMatch = null;
+    let bestScore = 0;
+    
+    // PASS 1: Exact match (fastest)
+    for (const item of allQA) {
+        if (input === item.question) {
+            return item.answer;
+        }
+    }
+    
+    // PASS 2: Substring match (very fast)
+    for (const item of allQA) {
+        if (item.question.includes(input)) {
+            return item.answer;
+        }
+        if (input.length > 10 && input.includes(item.question)) {
+            return item.answer;
+        }
+    }
+    
+    // PASS 3: Word overlap + Levenshtein hybrid (smart matching)
+    for (const item of allQA) {
+        // Calculate word overlap score (fast)
+        const overlapScore = wordOverlapScore(inputWords, item.words);
+        
+        // If word overlap is promising, do Levenshtein check
+        if (overlapScore > 0.3) {
+            // Use Levenshtein for close matches
+            const distance = levenshtein(input, item.question);
+            const maxLen = Math.max(input.length, item.question.length);
+            const levScore = 1 - (distance / maxLen);
             
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
-            contentDiv.textContent = message;
+            // Combined score: 60% word overlap, 40% Levenshtein
+            const combinedScore = (overlapScore * 0.6) + (levScore * 0.4);
             
-            messageDiv.appendChild(contentDiv);
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            if (combinedScore > bestScore) {
+                bestScore = combinedScore;
+                bestMatch = item;
+            }
         }
+    }
+    
+    // PASS 4: If still no match, try keyword-based suggestions
+    if (bestScore < 0.45) {
+        const suggestion = getTopicSuggestion(input);
+        if (suggestion) return suggestion;
+    }
+    
+    // Return best match if score is good enough
+    if (bestScore >= 0.45 && bestMatch) {
+        return bestMatch.answer;
+    }
+    
+    // Default fallback
+    return "I'm not sure about that. Try asking about: programming (JavaScript, Python), science (physics, chemistry, biology), math, geography, history, animals, space, or technology!";
+}
 
-        // Show typing indicator
-        function showTyping() {
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message bot';
-            typingDiv.innerHTML = '<div class="typing-indicator" style="display: block;"><span></span><span></span><span></span></div>';
-            typingDiv.id = 'typing';
-            chatMessages.appendChild(typingDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+// Get topic-based suggestion
+function getTopicSuggestion(input) {
+    const topicKeywords = {
+        // Programming
+        programming: ['code', 'programming', 'javascript', 'python', 'java', 'function', 'variable', 'loop', 'array', 'object', 'class', 'debug', 'error', 'syntax', 'algorithm', 'html', 'css', 'react', 'node', 'git'],
+        
+        // Science
+        science: ['atom', 'molecule', 'cell', 'dna', 'chemical', 'reaction', 'physics', 'chemistry', 'biology', 'energy', 'matter', 'evolution', 'photosynthesis'],
+        
+        // Math
+        math: ['calculate', 'equation', 'formula', 'algebra', 'geometry', 'calculus', 'math', 'number', 'fraction', 'percentage', 'square', 'root'],
+        
+        // Space
+        space: ['planet', 'star', 'galaxy', 'universe', 'moon', 'sun', 'solar', 'asteroid', 'comet', 'mars', 'jupiter', 'earth', 'space'],
+        
+        // Animals
+        animals: ['animal', 'dog', 'cat', 'bird', 'fish', 'elephant', 'lion', 'tiger', 'bear', 'monkey', 'whale', 'dolphin', 'shark'],
+        
+        // Geography
+        geography: ['country', 'capital', 'continent', 'ocean', 'mountain', 'river', 'city', 'map', 'location'],
+        
+        // Health
+        health: ['health', 'vitamin', 'exercise', 'diet', 'fitness', 'sleep', 'stress', 'medicine', 'disease', 'nutrition'],
+        
+        // History
+        history: ['history', 'war', 'invented', 'discovered', 'ancient', 'revolution', 'century', 'king', 'queen', 'emperor']
+    };
+    
+    // Count keyword matches per topic
+    const topicScores = {};
+    for (const [topic, keywords] of Object.entries(topicKeywords)) {
+        topicScores[topic] = 0;
+        for (const keyword of keywords) {
+            if (input.includes(keyword)) {
+                topicScores[topic]++;
+            }
         }
-
-        // Remove typing indicator
-        function hideTyping() {
-            const typing = document.getElementById('typing');
-            if (typing) typing.remove();
+    }
+    
+    // Find best topic
+    let bestTopic = null;
+    let maxScore = 0;
+    for (const [topic, score] of Object.entries(topicScores)) {
+        if (score > maxScore) {
+            maxScore = score;
+            bestTopic = topic;
         }
+    }
+    
+    // Return topic-specific help
+    if (maxScore > 0 && bestTopic) {
+        const responses = {
+            programming: "I can help with programming! Try asking: 'what is JavaScript', 'how to code in Python', 'explain functions', 'debug tips', or any coding concept!",
+            science: "I love science questions! Try: 'what is an atom', 'explain photosynthesis', 'how does gravity work', 'what is DNA', or any science topic!",
+            math: "I can help with math! Try: 'calculate percentage', 'pythagorean theorem', 'area of circle', 'what is algebra', or any math formula!",
+            space: "Space questions are awesome! Try: 'what is Mars', 'how many planets', 'what is a black hole', 'explain the big bang', or any astronomy topic!",
+            animals: "I know about animals! Try: 'fastest animal', 'what do pandas eat', 'how long do dogs live', 'smartest animal', or ask about any animal!",
+            geography: "Geography questions welcome! Try: 'capital of France', 'largest country', 'tallest mountain', 'how many continents', or any location!",
+            health: "Health questions are important! Try: 'what is vitamin C', 'how to stay healthy', 'benefits of exercise', 'how much sleep', or wellness topics!",
+            history: "History is fascinating! Try: 'who invented the telephone', 'when did WW2 end', 'who was Einstein', 'when was America founded', or any historical event!"
+        };
+        
+        return responses[bestTopic];
+    }
+    
+    return null;
+}
 
-        // Handle user message
-        function handleMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
+// Export for use
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { qaDatabase, findAnswer };
+}
 
-            addMessage(message, true);
-            userInput.value = '';
 
-            showTyping();
+// === DOM INTERACTION & CHAT FLOW RESTORED ===
 
-            setTimeout(() => {
-                hideTyping();
-                const response = findAnswer(message);
-                addMessage(response, false);
-            }, 500 + Math.random() * 1000);
-        }
+// Elements
+const chatMessages = document.getElementById('chatMessages');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
 
-        // Event listeners
-        sendBtn.addEventListener('click', handleMessage);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleMessage();
-        });
+// Add message to chat window
+function addMessage(message, isUser = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
 
-        // Focus input on load
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content';
+    contentDiv.textContent = message;
+
+    messageDiv.appendChild(contentDiv);
+    chatMessages.appendChild(messageDiv);
+
+    // Auto-scroll
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Show typing indicator
+function showTyping() {
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message bot';
+    typingDiv.innerHTML = `
+        <div class="typing-indicator" style="display: block;">
+            <span></span><span></span><span></span>
+        </div>`;
+    typingDiv.id = 'typing';
+    chatMessages.appendChild(typingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Remove typing indicator
+function hideTyping() {
+    const typing = document.getElementById('typing');
+    if (typing) typing.remove();
+}
+
+// Handle user input message
+function handleMessage() {
+    const message = userInput.value.trim();
+    if (!message) return;
+
+    // User message
+    addMessage(message, true);
+    userInput.value = '';
+
+    // Show typing
+    showTyping();
+
+    // AI thinking delay
+    setTimeout(() => {
+        hideTyping();
+        const response = findAnswer(message);
+        addMessage(response, false);
+    }, 500 + Math.random() * 800);
+}
+
+// Event listeners
+sendBtn.addEventListener('click', handleMessage);
+userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleMessage();
+});
+
+// Focus on input
+window.addEventListener('load', () => {
+    userInput.focus();
+});
+
+
+
+
+/* ===== Suggestion chips renderer (non-invasive) ===== */
+
+// Map of topic->response (must match getTopicSuggestion responses)
+const _topicSuggestionResponses = {
+  programming: "I can help with programming! Try asking: 'what is JavaScript', 'how to code in Python', 'explain functions', 'debug tips', or any coding concept!",
+  science: "I love science questions! Try: 'what is an atom', 'explain photosynthesis', 'how does gravity work', 'what is DNA', or any science topic!",
+  math: "I can help with math! Try: 'calculate percentage', 'pythagorean theorem', 'area of circle', 'what is algebra', or any math formula!",
+  space: "Space questions are awesome! Try: 'what is Mars', 'how many planets', 'what is a black hole', 'explain the big bang', or any astronomy topic!",
+  animals: "I know about animals! Try: 'fastest animal', 'what do pandas eat', 'how long do dogs live', 'smartest animal', or ask about any animal!",
+  geography: "Geography questions welcome! Try: 'capital of France', 'largest country', 'tallest mountain', 'how many continents', or any location!",
+  health: "Health questions are important! Try: 'what is vitamin C', 'how to stay healthy', 'benefits of exercise', 'how much sleep', or wellness topics!",
+  history: "History is fascinating! Try: 'who invented the telephone', 'when did WW2 end', 'who was Einstein', 'when was America founded', or any historical event!"
+};
+
+// Helper: extracts suggested short Qs from a suggestion text
+function extractSuggestionsFromText(text) {
+  // Look for patterns: single-quoted examples or comma-separated examples.
+  // First: gather anything inside single quotes
+  const quotes = [...text.matchAll(/'([^']+)'/g)].map(m => m[1]);
+  if (quotes.length > 0) return quotes;
+
+  // Fallback: split after colon and by commas, then trim
+  const parts = text.split(':').slice(1).join(':').split(',');
+  const clean = parts.map(s => s.trim()).filter(Boolean).slice(0, 6); // limit
+  return clean;
+}
+
+// Render bot response with optional suggestion chips
+function renderBotResponse(responseText) {
+  // Add the bot message bubble (reuses addMessage logic but keeps control)
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message bot';
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'message-content';
+  contentDiv.textContent = responseText;
+  messageDiv.appendChild(contentDiv);
+  chatMessages.appendChild(messageDiv);
+
+  // Decide whether this response is a topic suggestion (compare to mapping)
+  // We allow partial match because findAnswer returns same text as mapping exactly.
+  let suggestions = null;
+  for (const resp of Object.values(_topicSuggestionResponses)) {
+    if (responseText === resp || responseText.startsWith(resp.split('!')[0])) {
+      suggestions = extractSuggestionsFromText(resp);
+      break;
+    }
+  }
+
+  // Also check if the response contains "Try:" phrase (backup detection)
+  if (!suggestions && /try[:]/i.test(responseText)) {
+    suggestions = extractSuggestionsFromText(responseText);
+  }
+
+  if (suggestions && suggestions.length) {
+    const suggWrap = document.createElement('div');
+    suggWrap.className = 'suggestions';
+    suggestions.forEach(s => {
+      const chip = document.createElement('div');
+      chip.className = 'suggestion-chip';
+      chip.textContent = s;
+      chip.addEventListener('click', () => {
+        // Insert suggested question into input and trigger send
+        userInput.value = s;
         userInput.focus();
+        // Small delay so UI shows the input change before send
+        setTimeout(() => {
+          handleMessage();
+        }, 120);
+      });
+      suggWrap.appendChild(chip);
+    });
+    chatMessages.appendChild(suggWrap);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  } else {
+    // just scroll to show message
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+}
+
+/* Hook into existing flow.
+   Replace occurrences where you add a bot reply via addMessage(response, false)
+   with hideTyping() then renderBotResponse(response).
+   If your current flow uses addMessage() only, we provide a small adapter here: */
+
+// Safe adapter: monkey-patch addMessage for bot messages only (non-invasive)
+(function() {
+  const originalAddMessage = window.addMessage || function(msg, isUser){ 
+    // fallback if not present
+    const md = document.createElement('div'); md.className = `message ${isUser ? 'user':'bot'}`;
+    const cd = document.createElement('div'); cd.className='message-content'; cd.textContent = msg;
+    md.appendChild(cd); chatMessages.appendChild(md); chatMessages.scrollTop = chatMessages.scrollHeight;
+  };
+
+  // override only in-memory; we call original for user messages
+  window.addMessage = function(message, isUser) {
+    if (isUser) {
+      // User messages keep original behavior
+      originalAddMessage.call(this, message, true);
+      return;
+    }
+    // For bot messages: use the richer renderer
+    renderBotResponse(message);
+  };
+})();
+
+
+
+// === Randomized Startup Suggestions ===
+
+// Get random questions from qaDatabase
+function getRandomQuestions(count = 4) {
+  const allQuestions = [];
+  Object.values(qaDatabase).forEach(category => {
+    category.forEach(item => {
+      allQuestions.push(...item.q);
+    });
+  });
+
+  // Shuffle and return first N
+  const shuffled = allQuestions.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+
+// Render new suggestions inside existing container
+function renderStartupSuggestions() {
+  const container = document.querySelector('.suggestion-container');
+  if (!container) return;
+
+  // Clear previous ones
+  container.innerHTML = '';
+
+  // Generate new suggestion buttons
+  const randomQs = getRandomQuestions(4);
+  randomQs.forEach(q => {
+    const btn = document.createElement('button');
+    btn.className = 'suggestion-btn';
+    btn.textContent = q.charAt(0).toUpperCase() + q.slice(1);
+    btn.addEventListener('click', () => {
+      userInput.value = btn.textContent.trim();
+      const welcome = document.querySelector('.chat-welcome');
+      if (welcome) welcome.remove();
+      handleMessage();
+    });
+    container.appendChild(btn);
+  });
+}
+
+// Run it when chatbot opens
+window.addEventListener('DOMContentLoaded', () => {
+  const openChatbot = document.getElementById('openChatbot');
+  if (openChatbot) {
+    openChatbot.addEventListener('click', () => {
+      renderStartupSuggestions();
+    });
+  }
+});
+
+
+
+// For browser usage
+if (typeof window !== 'undefined') {
+    window.qaDatabase = qaDatabase;
+    window.findAnswer = findAnswer;
+}

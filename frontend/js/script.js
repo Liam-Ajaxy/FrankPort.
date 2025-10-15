@@ -5681,7 +5681,7 @@ document.getElementById('shortcutsOverlay')?.addEventListener('click', (e) => {
         steps: [
             {
                 id: 1,
-                icon: 'fa-sparkles',
+                icon: 'fa-wand-magic-sparkles',
                 title: 'Welcome to FrankAI',
                 description: 'An intelligent assistant built into the FrankPort ecosystem, ready to help you with any questions about technology, science, general knowledge, and more.',
                 type: 'features',
@@ -5740,7 +5740,8 @@ document.getElementById('shortcutsOverlay')?.addEventListener('click', (e) => {
                     </button>
                     <div class="frankai-header-inner">
                         <div class="frankai-header-icon" id="headerIcon">
-                            <i class="fas fa-sparkles"></i>
+                            <i class="fas fa-magic"></i>
+
                         </div>
                         <div class="frankai-header-text">
                             <h2>Meet FrankAI</h2>

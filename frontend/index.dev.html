@@ -1353,15 +1353,28 @@
     <div id="chatbotOverlay" class="chatbot-overlay">
     <div class="chat-container">
         <div class="chat-header">
-        FrankAI Assistant
+        <div class="ai-logo-container">
+            <img src="images/AI ChatBot FrankAi.png" alt="FrankAI Logo" class="header-logo" />
+            <span class="header-title">FrankAI</span>
+        </div>
         <button id="closeChatbot" class="close-chat-btn">Done</button>
         </div>
+
         <div class="chat-messages" id="chatMessages">
-        <div class="message bot">
-            <div class="message-content">
-            Hello! I'm <b>FrankAI</b> your smart assistant. I can answer questions about technology, science, general knowledge, and more. How can I help you today?
-            </div>
+        <div class="chat-welcome">
+        <img src="images/AI ChatBot FrankAi.png" alt="FrankAI Logo" class="frankai-logo" />
+        <h2 class="frankai-name">FrankAI</h2>
+        <p class="frankai-tagline">Your intelligent assistant built for <b>FrankPort</b>.</p>
+        
+        <div class="suggestion-container">
+        <button class="suggestion-btn">What is JavaScript?</button>
+        <button class="suggestion-btn">Explain artificial intelligence</button>
+        <button class="suggestion-btn">How does gravity work?</button>
+        <button class="suggestion-btn">What is the capital of Japan?</button>
+        <button class="suggestion-btn">What is Pi in math?</button>
         </div>
+        </div>
+
         </div>
         <!-- AI Disclaimer (collapsible) -->
         <div class="chat-warning" id="chatWarning">

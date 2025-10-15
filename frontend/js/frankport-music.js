@@ -39,7 +39,7 @@
 
                     .frankport-music-floating-btn {
                         position: fixed;
-                        bottom: 20px;
+                        bottom: 25px;
                         left: 20px;
                         width: 40px;
                         height: 40px;
