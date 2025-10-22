@@ -157,7 +157,7 @@
             <div class="admin-menu-dropdown" id="adminMenuDropdown">
                 <div class="admin-menu-item" onclick="copyPortfolioLink()">
                     <i class="fas fa-link"></i>
-                    <span>Copy Portfolio Link</span>
+                    <span>Copy FrankPort Link</span>
                 </div>
                 
                 <div class="admin-menu-item" onclick="toggleNotifications()">
@@ -346,9 +346,9 @@
                     </a>
                 </div>
                 <div class="hero-social">
-                    <button onclick="requestSecureAccess('GitHub')" class="social-link" aria-label="GitHub">
+                    <a href="https://github.com/Liam-Ajaxy" class="social-link" aria-label="GitHub" target="_blank">
                         <i class="fab fa-github"></i>
-                    </button>
+                    </a>
                     <button onclick="requestSecureAccess('LinkedIn')" class="social-link" aria-label="LinkedIn">
                         <i class="fab fa-linkedin"></i>
                     </button>
@@ -967,7 +967,7 @@
                             </div>
                             <div class="contact-text">
                                 <h4>Whatsapp</h4>
-                                <a href="https://wa.me/+250794359825?text=Hi%20Frank%2C%20I%20just%20checked%20out%20your%20portfolio%20and%20I%27m%20interested%20in%20chatting%20about%20working%20together." target="_blank" rel="noopener"><span data-translate="contact-whatsapp">Let's Chat on WhatsApp</span>
+                                <a href="https://wa.me/+250794359825?text=Hi%20Frank%2C%20I%20just%20checked%20out%20your%20portfolio%20and%20I%27m%20interested%20in%20chatting%20about%20working%20together." target="_blank" rel="noopener"><span class="contact-anchor" data-translate="contact-whatsapp">Let's Chat on WhatsApp</span>
                                        <i class="fas fa-external-link-alt"></i>
                                 </a>
                             </div>
@@ -979,7 +979,7 @@
                             <div class="contact-text">
                                 <h4>Email</h4>
                                <a href="mailto:user74251224.us@gmail.com?subject=Collaboration%20Opportunity&body=Hello%20Frank%2C%0D%0A%0D%0AI%20came%20across%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20potential%20project%20with%20you.%0D%0A%0D%0ABest%20regards%2C" target="_blank" rel="noopener">
-                                 <span data-translate="contact-email">Drop Me a Message</span> <i class="fas fa-envelope"></i>
+                                 <span class="contact-anchor" data-translate="contact-email">Drop Me a Message</span> <i class="fas fa-envelope"></i>
                                 </a>
                             </div>
                         </div>
@@ -989,7 +989,7 @@
                             </div>
                             <div class="contact-text">
                                 <h4 data-translate="contact-phone">Phone</h4>
-                                <a href="tel:+250794359825"><span data-translate="contact-quick-call">Quick Call</span></a>
+                                <a href="tel:+250794359825"><span class="contact-anchor" data-translate="contact-quick-call">Quick Call</span></a>
                             </div>
                         </div>
                         <div class="contact-item">
@@ -1005,9 +1005,9 @@
                     <div class="contact-social">
                         <h4 data-translate="contact-follow">Follow Me</h4>
                         <div class="social-links">
-                            <button onclick="requestSecureAccess('GitHub')" class="social-link" aria-label="GitHub">
+                            <a href="https://github.com/Liam-Ajaxy" class="social-link" aria-label="GitHub" target="_blank">
                                 <i class="fab fa-github"></i>
-                            </button>
+                            </a>
                             <button onclick="requestSecureAccess('LinkedIn')" class="social-link" aria-label="LinkedIn">
                                 <i class="fab fa-linkedin"></i>
                             </button>
@@ -1289,7 +1289,7 @@
                         </ul>
                     </div>
                     <div class="footer-column">
-                    <h4 data-translate="footer-accessibility">Accessibility</h4>
+                    <h4>Theme</h4>
                     <ul>
                         <li><button class="theme-button" onclick="themeController.setTheme('dark')" aria-label="Dark Mode" data-translate="footer-dark-mode">Dark Mode</button></li>
                         <!-- <li><button class="theme-button" onclick="themeController.setTheme('dark-blue')" aria-label="Dark Blue Mode" data-translate="footer-dark-blue-mode">Default</button></li> -->
@@ -1297,9 +1297,19 @@
                     </ul>
                     </div>
                      <div class="footer-column">
-                        <h4 >Help</h4>
+                        <h4>Help</h4>
                         <ul>
                              <li><button class="legal-link" onclick="openShortcutsPanel()" aria-label="Keyboard Shortcuts">Shortcuts</button></li>
+                             <li><button class="legal-link" onclick="feedbackSystem.openModal()" aria-label="Feedback System">Feedback</button></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Connect</h4>
+                        <ul>
+                             <li><a href="https://github.com/Liam-Ajaxy" class="legal-link" aria-label="GitHub" target="_blank">GitHub</a></li>
+                             <li><a href="https://wa.me/+250794359825?text=Hi%20Frank%2C%20I%20just%20checked%20out%20your%20portfolio%20and%20I%27m%20interested%20in%20chatting%20about%20working%20together." class="legal-link"  aria-label="WhatsApp" target="_blank">WhatsApp</a></li>
+                             <li> <button onclick="requestSecureAccess('LinkedIn')" class="legal-link" aria-label="LinkedIn">LinkedIn</button></li>
+                             <li><button onclick="requestSecureAccess('GitLab')" class="legal-link" aria-label="GitLab">GitLab</button></li>
                         </ul>
                     </div>
                 </div>
@@ -1313,9 +1323,9 @@
                             class="social-link" target="_blank" rel="noopener" aria-label="WhatsApp">
                             <i class="fab fa-whatsapp"></i>
                         </a>
-                        <button onclick="requestSecureAccess('GitHub')" class="social-link" aria-label="GitHub">
+                        <a href="https://github.com/Liam-Ajaxy" class="social-link" aria-label="GitHub" target="_blank">
                             <i class="fab fa-github"></i>
-                        </button>
+                        </a>
                         <button onclick="requestSecureAccess('LinkedIn')" class="social-link" aria-label="LinkedIn">
                             <i class="fab fa-linkedin"></i>
                         </button>

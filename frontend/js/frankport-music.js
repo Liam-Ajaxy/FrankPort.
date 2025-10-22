@@ -958,40 +958,25 @@
             }
 
             requestAudioPermission() {
-                // Create a user interaction prompt for audio autoplay
-                if (!sessionStorage.getItem('frankport-audio-permission')) {
-                    const notice = document.createElement('div');
-                    notice.style.cssText = `
-                        position: fixed;
-                        top: 50px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        background: var(--admin-bg);
-                        color: var(--text-primary);
-                        padding: 12px 20px;
-                        border-radius: 8px;
-                        border: 1px solid var(--border-color);
-                        z-index: 1000;
-                        font-size: 12px;
-                        max-width: 400px;
-                        text-align: center;
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                    `;
-                    notice.innerHTML = `
-                        🎵 Click anywhere to enable audio playback
-                        <button style="margin-left: 10px; background: var(--accent-gold); color: #000; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">OK</button>
-                    `;
-                    
-                    const enableAudio = () => {
-                        sessionStorage.setItem('frankport-audio-permission', 'true');
-                        notice.remove();
-                        document.removeEventListener('click', enableAudio);
-                    };
-                    
-                    notice.querySelector('button').addEventListener('click', enableAudio);
-                    document.addEventListener('click', enableAudio);
-                    document.body.appendChild(notice);
-                }
+            if (!sessionStorage.getItem('frankport-audio-permission')) {
+                const notice = document.createElement('div');
+                notice.className = 'audio-notice'; // 👈style via this Class
+                notice.innerHTML = `
+                <i class="fa-solid fa-music audio-icon"></i>
+                <span>Click anywhere to enable audio playback</span>
+                <button class="audio-ok-btn">OK</button>
+                `;
+
+                const enableAudio = () => {
+                sessionStorage.setItem('frankport-audio-permission', 'true');
+                notice.remove();
+                document.removeEventListener('click', enableAudio);
+                };
+
+                notice.querySelector('.audio-ok-btn').addEventListener('click', enableAudio);
+                document.addEventListener('click', enableAudio);
+                document.body.appendChild(notice);
+            }
             }
         }
 

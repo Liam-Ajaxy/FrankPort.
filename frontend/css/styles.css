@@ -1299,6 +1299,10 @@ section {
   color: var(--accent-gold);
 }
 
+.contact-text .contact-anchor:hover {
+  color: var(--accent-gold);
+}
+
 .contact-social h4 {
   margin-bottom: 1rem;
   color: var(--text-primary);
@@ -1916,15 +1920,15 @@ section {
   gap: 0.75rem;          /* spacing between items */
   min-width: 320px;
   max-width: 350px;
-  padding: 0.6rem 1rem;
+  padding: 0.4rem 1rem;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 12px;
   background: #0D0D0D;
   backdrop-filter: blur(10px);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 6px 20px var(--shadow-dark);
+  border: none;
+  box-shadow: 0 6px 20px var(--border-color);
   color: var(--text-primary);
-  animation: toast-slide-in 1s var(--transition-smooth), fadeOut 0.45s ease forwards;
+  animation: toast-slide-in 500ms var(--transition-smooth), fadeOut 1s ease forwards;
   animation-delay: 0s, var(--toast-duration, 3s);
   opacity: 0;
   pointer-events: auto;
@@ -1936,21 +1940,20 @@ section {
 }
 
 .toast-icon {
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
 }
 
 /* Toast Types */
 .toast.success {
-  background-color: #03150a;
-  color: #166534;
-  border: 2px solid #166534;
+  background-color: #008232;
+  color: white;
 }
 body.light-mode .toast.success {
   background-color: #f0fdf4;
@@ -1963,9 +1966,8 @@ body.light-mode .toast.success {
 }
 
 .toast.error {
-  background: #120202;
+  background: #720c0c;
   color: #ffffff;
-  border: 2px solid #7f1d1d;
 }
 body.light-mode .toast.error {
   background-color: #7f1d1d;
@@ -1981,9 +1983,8 @@ body.light-mode .toast.error .toast-icon {
 }
 
 .toast.info {
-  background-color: #040013;
+  background-color: #007bff;
   color: #ffffff;
-  border: 2px solid #1e3a8a;
 }
 body.light-mode .toast.info {
   background-color: #007bff;
@@ -2001,12 +2002,11 @@ body.light-mode .toast.info .toast-icon {
 }
 
 .toast.warning {
-  background-color: #281407;
+  background-color: #a0470c;
   color: #ffffff;
-  border: 2px solid #ca6120;
 }
 body.light-mode .toast.warning {
-  background-color: #92460e;
+  background-color: #7e3704;
   color: #ffffff;
   border: none;
 }
@@ -2027,12 +2027,12 @@ body.light-mode .toast.warning .toast-icon {
 
 /* Animations */
 @keyframes toast-slide-in {
-  from { transform: translateX(120%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 @keyframes fadeOut {
-  to { opacity: 0; transform: translateX(120%); }
+  to { opacity: 0; transform: scale(0); }
 }
 
 /* Responsive adjustments */
@@ -5695,10 +5695,10 @@ body.light-mode .notification-header {
 .toast {
     background: #28a745;
     color: white;
-    padding: 12px 20px;
+    padding: 2px 20px;
     border-radius: 6px;
     margin-bottom: 10px;
-    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
     transform: translateX(400px);
     transition: transform 0.3s ease;
 }
@@ -5707,9 +5707,6 @@ body.light-mode .notification-header {
     transform: translateX(0);
 }
 
-.toast.error {
-    background: #130406;
-}
 body.light-mode .toast.error {
     background: #721;
     color: #ffffff;
@@ -8278,6 +8275,7 @@ body.light-mode {
   font-size: 14px;
   cursor: pointer;
   transition: transform 0.25s, box-shadow 0.25s;
+  box-shadow: 0 12px 30px var(--border-color);
 }
 .chatbot-btn:hover {
     transform: translateY(-3px);
@@ -8289,6 +8287,7 @@ body.light-mode .chatbot-btn {
     background: var(--text-primary);
     color: #ffffff;
     border-color: var(--text-primary);
+    box-shadow: 0 12px 30px var(--border-color);
 }
 body.light-mode .chatbot-btn:hover {
     background: var(--accent-gold);
@@ -9507,4 +9506,87 @@ body.light-mode .frankai-header-text p {
             grid-template-columns: 1fr;
         }
     }
+}
+
+
+
+/* --- Audio Notice Card --- */
+.audio-notice {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0D0D0D;
+  color: var(--accent-gold);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--accent-gold);
+  z-index: 1000;
+  font-size: 12px;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.audio-notice:hover {
+  background: var(--admin-bg);
+}
+
+/* --- Font Awesome Music Icon --- */
+.audio-notice .audio-icon {
+  flex-shrink: 0;
+  font-size: 16px;
+  color: var(--accent-gold);
+}
+
+/* --- OK Button --- */
+.audio-notice .audio-ok-btn {
+  margin-left: 10px;
+  background: var(--accent-gold);
+  color: #000;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.25s, transform 0.25s;
+}
+
+.audio-notice .audio-ok-btn:hover {
+  background: #ffb733;
+  transform: scale(1.05);
+}
+
+/* --- Light Mode Overrides --- */
+body.light-mode .audio-notice {
+  background: var(--text-primary);
+  color: #ffffff;
+  border-color: var(--text-primary);
+  box-shadow: 0 12px 30px var(--shadow-dark);
+}
+
+body.light-mode .audio-notice:hover {
+  background: var(--accent-gold);
+  color: var(--text-primary);
+  border-color: var(--accent-gold);
+}
+
+body.light-mode .audio-notice .audio-icon {
+  color: #ffffff;
+}
+
+body.light-mode .audio-notice .audio-ok-btn {
+  background: #ffffff;
+  color: var(--text-primary);
+}
+
+body.light-mode .audio-notice .audio-ok-btn:hover {
+  background: var(--accent-gold);
+  color: white;
+  border: 1px solid white;
 }
