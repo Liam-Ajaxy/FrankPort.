@@ -3346,7 +3346,7 @@ class LanguageManager {
                 'project-voltchat-category': 'Chat App by Volt',
                 'project-voltchat-desc': 'Secure real-time messaging app with group chat and encryption-ready architecture.',
                 'project-frankport-desc': 'A creative portfolio website featuring smooth animations, interactive elements, and modern design principles. Optimized for performance and accessibility.',
-                'project-development-progress': 'Development is in Progress.',
+                'project-development-progress': 'Development in Progress.',
                 'project-currently-using': 'You are currently using FrankPort.',
 
                 // Skills Section
@@ -4581,8 +4581,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (currentScrollY > lastScrollY) {
                 // scrolling down → hide
-                adminToggleBtn.style.opacity = '0';
-                adminToggleBtn.style.pointerEvents = 'none';
+                adminToggleBtn.style.opacity = '0.2';
+                // adminToggleBtn.style.pointerEvents = 'none';
             } else {
                 // scrolling up → show
                 adminToggleBtn.style.opacity = '1';
@@ -4591,9 +4591,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
             lastScrollY = currentScrollY;
         });
+
+         // Create toast element once
+        const hoverToast = document.createElement('div');
+        hoverToast.textContent = 'Scroll up to restore menu visibility';
+        hoverToast.style.cssText = `
+            position: fixed;
+            top: 50px;
+            right: 60px;
+            background: rgba(0,0,0,0.8);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 2000;
+        `;
+        document.body.appendChild(hoverToast);
+
+        // Show toast only if button is faded (opacity <= 0.2)
+        adminToggleBtn.addEventListener('mouseenter', () => {
+            const currentOpacity = parseFloat(getComputedStyle(adminToggleBtn).opacity);
+            if (currentOpacity <= 0.2) {
+                hoverToast.style.opacity = '1';
+            }
+        });
+
+        adminToggleBtn.addEventListener('mouseleave', () => {
+            hoverToast.style.opacity = '0';
+        });
+
+        // Update toast style dynamically
+        const updateToastTheme = () => {
+        if (document.body.classList.contains('light-mode')) {
+            hoverToast.style.background = 'rgba(255,255,255,0.95)';
+            hoverToast.style.color = 'var(--text-primary)';
+        } else {
+            hoverToast.style.background = 'rgba(0,0,0,0.85)';
+            hoverToast.style.color = 'var(--text-muted)';
+        }
+        };
+
+        updateToastTheme();
+        const observer = new MutationObserver(updateToastTheme);
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
     }
 });
 
+// ==================== Admin Menu Functions ==================== //
 // Copy Portfolio Link Function
 async function copyPortfolioLink() {
     const url = window.location.href;
@@ -4601,7 +4650,7 @@ async function copyPortfolioLink() {
     try {
         // Modern Clipboard API
         await navigator.clipboard.writeText(url);
-        showToast('Portfolio link copied to clipboard!', 'success');
+        showToast('FrankPort link copied to clipboard!', 'success');
     } catch (err) {
         // Fallback method for older browsers
         const textArea = document.createElement('textarea');
@@ -4614,7 +4663,7 @@ async function copyPortfolioLink() {
         
         try {
             document.execCommand('copy');
-            showToast('Portfolio link copied to clipboard!', 'success');
+            showToast('FrankPort link copied to clipboard!', 'success');
         } catch (fallbackErr) {
             showToast('Failed to copy link. Please copy manually: ' + url, 'error');
         }
@@ -4711,23 +4760,57 @@ function loadNotifications() {
 }
 
 // Open Admin Dashboard
+// Open Admin Dashboard
 function openAdminDashboard() {
     const dashboard = document.getElementById('adminDashboard');
-    if (dashboard) {
-        dashboard.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
+    if (!dashboard) return;
 
-    // Close admin menu
+    dashboard.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Close admin menu if open
     document.getElementById('adminMenuDropdown').classList.remove('active');
 
     // Decide what to show
     if (isAdminLoggedIn) {
-        showAdminContent();   // directly show post/manage
+        showAdminContent();
     } else {
-        showPasswordLogin();  // default login card
+        showPasswordLogin();
+    }
+
+   // One-time click handler for outside-card clicks
+dashboard.addEventListener('click', function handleOutsideClick(e) {
+    // Only login cards (ignore admin content)
+    const activeCard = document.querySelector('#adminLogin:not([style*="display: none"])') ||
+                       document.querySelector('#adminBackupLogin:not([style*="display: none"])');
+
+    if (!activeCard) return; // no login card visible → do nothing
+
+    // If click is outside the card AND NOT on form-switch buttons
+    if (!activeCard.contains(e.target) && 
+        !e.target.classList.contains('forgot-password-btn') &&
+        !e.target.classList.contains('back-to-password-btn') && 
+        !e.target.classList.contains('close-admin')) {
+        e.stopPropagation();
+        triggerCardWarning(activeCard);
+    }
+});
+}
+
+// Pulse warning for the card + optional toast
+function triggerCardWarning(card) {
+    if (!card || card.classList.contains('warning-active')) return;
+
+    card.classList.add('warning-active', 'pulse-card');
+    setTimeout(() => {
+        card.classList.remove('pulse-card', 'warning-active');
+    }, 600);
+
+    if (typeof showToast === 'function') {
+        showToast("Login session active. Sign in or close.", "warning");
     }
 }
+
 
 // Close Admin Dashboard
 function closeAdminDashboard() {
@@ -5424,7 +5507,27 @@ const FeatureHighlight = {
         // Auto-hide after 6 seconds
         this.autoHideTimer = setTimeout(() => {
             this.dismiss(true);
-        }, 10000);
+        }, 6000);
+
+        // Pause auto-hide when hovered
+        const tooltip = document.getElementById('featureTooltip');
+        if (tooltip) {
+            tooltip.addEventListener('mouseenter', () => {
+                if (this.autoHideTimer) {
+                    clearTimeout(this.autoHideTimer);
+                    this.autoHideTimer = null;
+                }
+            });
+
+            tooltip.addEventListener('mouseleave', () => {
+                // Restart timer on leave
+                if (!this.autoHideTimer && this.isActive) {
+                    this.autoHideTimer = setTimeout(() => {
+                        this.dismiss(true);
+                    }, 4000); // or keep 10000 for full 10s
+                }
+            });
+        }
         
         // Focus management for accessibility
         document.getElementById('featureTooltip').focus();
